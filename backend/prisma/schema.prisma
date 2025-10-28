@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"               // указываем SQLite
+  url      = env("DATABASE_URL")    // обязательно!
+}
+
+model Cloth {
+  id          Int          @id @default(autoincrement())
+  code        String       @unique
+  name        String
+  color       String
+  price       Float
+  photos      Photo[]
+  status      ClothStatus  @default(AVAILABLE)
+  rentals     Rental[]
+}
+
+model Photo {
+  id      Int    @id @default(autoincrement())
+  url     String
+  clothId Int
+  cloth   Cloth  @relation(fields: [clothId], references: [id], onDelete: Cascade)
+}
+
+model Rental {
+  id         Int          @id @default(autoincrement())
+  startDate  DateOnly
+  endDate    DateOnly
+  rentDate   DateOnly
+  userId     Int
+  clothId    Int
+  status     RentalStatus @default(CONFIRMED)
+  cloth Cloth @relation(fields: [clothId], references: [id])
+}
+
+enum ClothStatus {
+  AVAILABLE
+  RESERVED
+  RENTED
+  CLEANING
+  DAMAGED
+  UNAVAILABLE
+}
+
+enum RentalStatus {
+  CONFIRMED
+  IN_USE
+  RETURNED
+  CANCELED
+}
