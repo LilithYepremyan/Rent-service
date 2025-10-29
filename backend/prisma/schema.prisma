@@ -16,6 +16,9 @@ model Cloth {
   photos      Photo[]
   status      ClothStatus  @default(AVAILABLE)
   rentals     Rental[]
+
+  @@index([code])
+  @@index([status])
 }
 
 model Photo {
@@ -32,8 +35,15 @@ model Rental {
   rentDate   DateOnly
   userId     Int
   clothId    Int
+  firstName  String
+  lastName   String
+  phone      String
   status     RentalStatus @default(CONFIRMED)
   cloth Cloth @relation(fields: [clothId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+
 }
 
 enum ClothStatus {
