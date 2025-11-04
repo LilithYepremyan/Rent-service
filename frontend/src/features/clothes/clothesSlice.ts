@@ -3,7 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import type { Rental } from "../rentals/rentalsSlice";
 
-interface Photo {
+export interface Photo {
   id: number;
   url: string;
 }

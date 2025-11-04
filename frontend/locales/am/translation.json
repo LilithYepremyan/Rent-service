@@ -3,5 +3,14 @@
   "clothesList": "Հագուստների ցանկ",
   "calendar": "Օրացույց",
   "admin": "Ադմին",
-  "cleaning": "Քիմմաքրում"
+  "cleaning": "Քիմմաքրում",
+  "code": "Կոդ",
+  "color": "Գույն",
+  "price": "Գին",
+  "tenantName": "Հաճախորդի անուն",
+  "phone": "Հեռախոսահամար",
+  "noClothesForCleaning": "Այսօր չկան հագուստներ քիմմաքրման համար",
+  "clothesForCleaning": "Հագուստներ քիմմաքրման համար",
+  "bookedForToday": "Այսօրվա ամրագրումները",
+  "loading": "Բեռնվում է․․․"
 }

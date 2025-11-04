@@ -14,7 +14,6 @@ const ClothCard: React.FC<ClothCardProps> = ({ cloth, onBook, onDelete }) => {
       style={{
         borderRadius: 12,
         overflow: "hidden",
-        background: "#fff",
         textAlign: "center",
         boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
         transition: "transform 0.3s, box-shadow 0.3s",
@@ -35,14 +34,13 @@ const ClothCard: React.FC<ClothCardProps> = ({ cloth, onBook, onDelete }) => {
           alt={cloth.name}
           style={{
             width: "100%",
-            height: 220,
-            objectFit: "cover",
+            objectFit: "contain",
             transition: "transform 0.3s",
           }}
         />
       )}
 
-      <div style={{ padding: "15px" }}>
+      <div>
         <h3 style={{ fontSize: "1.1rem", margin: "10px 0", color: "#333" }}>
           {cloth.name}
         </h3>
@@ -51,7 +49,7 @@ const ClothCard: React.FC<ClothCardProps> = ({ cloth, onBook, onDelete }) => {
         </p>
         <p style={{ margin: "5px 0", color: "#555" }}>Цвет: {cloth.color}</p>
         <p style={{ margin: "5px 0", fontWeight: 600, color: "#111" }}>
-          Цена: {cloth.price} ₽
+          Цена: {cloth.price} AMD
         </p>
 
         <div
@@ -59,7 +57,7 @@ const ClothCard: React.FC<ClothCardProps> = ({ cloth, onBook, onDelete }) => {
             display: "flex",
             justifyContent: "center",
             gap: "10px",
-            marginTop: "10px",
+            margin: "10px",
             flexWrap: "wrap",
           }}
         >

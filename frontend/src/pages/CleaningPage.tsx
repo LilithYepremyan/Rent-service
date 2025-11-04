@@ -1,19 +1,25 @@
-import type { RootState } from "@reduxjs/toolkit/query";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllRentals } from "../features/rentals/rentalsSlice";
-import type { Rental } from "../features/rentals/rentalsSlice";
+import { getAllRentals, type Rental } from "../features/rentals/rentalsSlice";
+import { useTranslation } from "react-i18next";
+import ProductCard from "../components/ProductCard";
+import Badge from "../components/Badge";
+import type { RootState, AppDispatch } from "../app/store";
 
 const CleaningPage: React.FC = () => {
-  const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const dispatch = useDispatch<AppDispatch>();
   const rentals = useSelector((state: RootState) => state.rentals.items);
-  console.log("CleaningList rentals:", rentals);
 
   const today = new Date().toISOString().split("T")[0];
-  console.log("Today:", today);
-  const todayRentals = rentals.filter(
-    (r) => r.startDate.split("T")[0] === today
+
+  const todayCleanings = useMemo(
+    () => rentals.filter((r) => r.startDate.split("T")[0] === today),
+    [rentals, today]
   );
+
+  const count = todayCleanings.length;
+  console.log("count", count);
 
   useEffect(() => {
     dispatch(getAllRentals());
@@ -21,24 +27,18 @@ const CleaningPage: React.FC = () => {
 
   return (
     <div>
-      <h2>Вещи на химчистку</h2>
-      {/* {rentals.filter((rental: Rental) => rental.status === "cleaning")
-        .length === 0 ? (
-        <p>Нет вещей на химчистку.</p>
-      ) : ( */}
-      <ul>
-        {
-          todayRentals.map((rental) => (
-            // rental.startDate.split("T")[0] ===
-            // today4
-            <li key={rental.cloth.name}>{rental.cloth.name} </li>
-          ))
-          // .map((rental) => (
-          //   <li key={rental.cloth.name}>{rental.cloth.name} </li>
-          // ))
-        }
-      </ul>
-      {/* )} */}
+      <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+        <h2>{t("clothesForCleaning")}</h2>
+        <Badge count={count} />
+      </div>
+
+      {count === 0 ? (
+        <p>{t("noClothesForCleaning")}</p>
+      ) : (
+        todayCleanings.map((rental: Rental) => (
+          <ProductCard key={rental.id} product={rental} />
+        ))
+      )}
     </div>
   );
 };

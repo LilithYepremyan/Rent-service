@@ -30,9 +30,9 @@ model Photo {
 
 model Rental {
   id         Int          @id @default(autoincrement())
-  startDate  DateOnly
-  endDate    DateOnly
-  rentDate   DateOnly
+  startDate  DateTime
+  endDate    DateTime
+  rentDate   DateTime
   userId     Int
   clothId    Int
   firstName  String

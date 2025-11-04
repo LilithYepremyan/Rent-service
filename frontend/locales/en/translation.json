@@ -3,5 +3,14 @@
   "clothesList": "Clothes List",
   "calendar": "Calendar",
   "admin": "Admin",
-  "cleaning": "Dry Cleaning"
+  "cleaning": "Dry Cleaning",
+  "code": "Code",
+  "color": "Color",
+  "price": "Price",
+  "tenantName": "Tenant Name",
+  "phone": "Phone",
+  "noClothesForCleaning": "No clothes for cleaning today",
+  "clothesForCleaning": "Clothes for cleaning",
+  "bookedForToday": "Booked for today",
+  "loading": "Loading..."
 }

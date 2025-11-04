@@ -88,12 +88,9 @@ app.post("/rent", async (req, res) => {
     const { clothId, rentDate, userId, firstName, lastName, phone } = req.body;
 
     if (!clothId || !rentDate || !userId || !firstName || !lastName || !phone) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Нужны clothId, rentDate, userId, firstName, lastName и phone",
-        });
+      return res.status(400).json({
+        message: "Нужны clothId, rentDate, userId, firstName, lastName и phone",
+      });
     }
 
     // Разбираем дату
@@ -264,7 +261,7 @@ app.get("/rentals", async (req, res) => {
 
     const rentals = await prisma.rental.findMany({
       where,
-      include: { cloth: true },
+      include: { cloth: { include: { photos: true } } },
       orderBy: { id: "desc" },
     });
 

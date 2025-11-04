@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import BookingModal from "../components/BookingModal";
-import { deleteCloth, getAllClothes, type Cloth } from "../features/clothes/clothesSlice";
+import {
+  deleteCloth,
+  getAllClothes,
+  type Cloth,
+} from "../features/clothes/clothesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch } from "../app/store";
 import type { RootState } from "@reduxjs/toolkit/query";
@@ -25,7 +29,14 @@ const ClothesPage: React.FC = () => {
   };
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20, padding: 20 }}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(4, 1fr)",
+        gap: 20,
+        padding: 20,
+      }}
+    >
       {clothes.map((cloth: Cloth) => (
         <ClothCard
           key={cloth.id}
@@ -38,7 +49,7 @@ const ClothesPage: React.FC = () => {
         />
       ))}
 
-      <BookingModal  
+      <BookingModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         cloth={selectedCloth}

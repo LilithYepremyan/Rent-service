@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 import axios from "axios";
+import type { Cloth } from "../clothes/clothesSlice";
 
 export interface Rental {
   id: number;
@@ -14,6 +15,7 @@ export interface Rental {
   firstName: string;
   lastName: string;
   phone: string;
+  cloth: Cloth;
 }
 
 interface RentalsState {

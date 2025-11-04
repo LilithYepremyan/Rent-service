@@ -3,5 +3,14 @@
   "clothesList": "Список одежды",
   "calendar": "Календарь",
   "admin": "Админка",
-  "cleaning": "Химчистка"
+  "cleaning": "Химчистка",
+  "code": "Код",
+  "color": "Цвет",
+  "price": "Цена",
+  "tenantName": "Имя арендатора",
+  "phone": "Телефон",
+  "noClothesForCleaning": "Сегодня нет вещей на химчистку",
+  "clothesForCleaning": "Вещи на химчистку",
+  "bookedForToday": "Арендовано сегодня",
+  "loading": "Загрузка..."
 }
