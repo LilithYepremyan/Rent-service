@@ -12,5 +12,9 @@
   "noClothesForCleaning": "Այսօր չկան հագուստներ քիմմաքրման համար",
   "clothesForCleaning": "Հագուստներ քիմմաքրման համար",
   "bookedForToday": "Այսօրվա ամրագրումները",
-  "loading": "Բեռնվում է․․․"
+  "loading": "Բեռնվում է․․․",
+  "image": "Նկար",
+  "description": "Նկարագրություն",
+  "passport": "Անձնագրի տվյալներ",
+  "deposit": "Կանխավճար"
 }

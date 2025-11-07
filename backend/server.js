@@ -85,11 +85,20 @@ app.get("/clothes/:code", async (req, res) => {
 // ✅ Создание брони
 app.post("/rent", async (req, res) => {
   try {
-    const { clothId, rentDate, userId, firstName, lastName, phone } = req.body;
-
-    if (!clothId || !rentDate || !userId || !firstName || !lastName || !phone) {
+    const { clothId, rentDate, customer } = req.body;
+    const { firstName, lastName, phone, passport, deposit, description } =
+      customer;
+    if (!clothId || !rentDate  || !customer) {
       return res.status(400).json({
-        message: "Нужны clothId, rentDate, userId, firstName, lastName и phone",
+        message: "Нужны clothId, rentDate, customer info",
+      });
+    }
+
+    // Проверка минимальных данных
+    if (  !customer) {
+      return res.status(400).json({
+        message:
+          "В customer должны быть userId, firstName, lastName, phone, passport, deposit",
       });
     }
 
@@ -131,10 +140,15 @@ app.post("/rent", async (req, res) => {
         rentDate: rent,
         startDate,
         endDate,
-        userId,
-        firstName,
-        lastName,
-        phone,
+        // userId,  
+        customer: {
+          firstName,
+          lastName,
+          phone,
+          passport,
+          deposit,
+          description,
+        },
       },
     });
 

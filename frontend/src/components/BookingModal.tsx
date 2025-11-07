@@ -1,9 +1,8 @@
 import Calendar from "react-calendar";
 import { getAllRentals, type Rental } from "../features/rentals/rentalsSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import type { RootState } from "@reduxjs/toolkit/query";
-import type { AppDispatch } from "../app/store";
+import { useEffect, useMemo, useState } from "react";
+import type { AppDispatch, RootState } from "../app/store";
 import axios from "axios";
 
 interface Photo {
@@ -21,21 +20,36 @@ interface Cloth {
   photos: Photo[];
 }
 
+export interface Customer {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  passport: string;
+  deposit: number;
+  description: string;
+}
+
 interface ModalProps {
   visible: boolean;
   onClose: () => void;
-  cloth: Cloth | null;
+  cloth: Cloth;
   refreshData: () => void;
 }
+
+const isSameDate = (date1: Date, date2: Date) => {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+  );
+};
 
 // ✅ Функция бронирования вынесена отдельно
 const bookCloth = async (
   clothId: number,
   rentDate: string,
   userId: number,
-  firstName: string,
-  lastName: string,
-  phone: string
+  customer: Customer
 ) => {
   const formattedDate = rentDate.toString().split("T")[0];
 
@@ -45,15 +59,13 @@ const bookCloth = async (
       clothId,
       rentDate: formattedDate,
       userId,
-      firstName,
-      lastName,
-      phone,
+      customer,
     });
     alert("✅ Бронирование успешно!");
     return response.data;
   } catch (error: any) {
     console.error(error);
-    alert(error.response?.data?.message || "Ошибка при бронировании");
+    alert(error.response?.data?.message || "Ошибка при бронировани и");
   }
 };
 const BookingModal: React.FC<ModalProps> = ({
@@ -63,23 +75,30 @@ const BookingModal: React.FC<ModalProps> = ({
   refreshData,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const rentals = useSelector((state: RootState) => state.rentals.items);
+  const rentals = useSelector((state: RootState) => state.rentals.rentals);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
+  const [passport, setPassport] = useState("");
+  const [deposit, setDeposit] = useState(0);
+  const [description, setDescription] = useState("");
 
   useEffect(() => {
     if (cloth) {
       dispatch(getAllRentals());
+
+      console.log("cloth", cloth.id);
     }
   }, [cloth, dispatch]);
 
-  if (!visible || !cloth) return null;
-
   // фильтруем брони по текущей одежде
-  const clothRentals = rentals.filter((r: Rental) => r.clothId === cloth.id);
+  const clothRentals = useMemo(
+    () => rentals.filter((r: Rental) => r.clothId === cloth?.id),
+    [rentals, cloth]
+  );
 
+  if (!visible || !cloth) return null;
   const getDayStatus = (date: Date) => {
     for (const r of clothRentals) {
       const rentDate = new Date(r.rentDate);
@@ -90,27 +109,15 @@ const BookingModal: React.FC<ModalProps> = ({
       const nextDay = new Date(rentDate);
       nextDay.setDate(rentDate.getDate() + 1);
 
-      if (
-        rentDate.getFullYear() === date.getFullYear() &&
-        rentDate.getMonth() === date.getMonth() &&
-        rentDate.getDate() === date.getDate()
-      ) {
+      if (isSameDate(rentDate, date)) {
         return "booked"; // день бронирования
       }
 
-      if (
-        prevDay.getFullYear() === date.getFullYear() &&
-        prevDay.getMonth() === date.getMonth() &&
-        prevDay.getDate() === date.getDate()
-      ) {
+      if (isSameDate(prevDay, date)) {
         return "before-booked"; // день до
       }
 
-      if (
-        nextDay.getFullYear() === date.getFullYear() &&
-        nextDay.getMonth() === date.getMonth() &&
-        nextDay.getDate() === date.getDate()
-      ) {
+      if (isSameDate(nextDay, date)) {
         return "after-booked"; // день после
       }
     }
@@ -139,7 +146,14 @@ const BookingModal: React.FC<ModalProps> = ({
       .toISOString()
       .split("T")[0];
 
-    await bookCloth(cloth.id, localDate, 1, firstName, lastName, phone);
+    await bookCloth(cloth.id, localDate, 1, {
+      firstName,
+      lastName,
+      phone,
+      passport,
+      deposit,
+      description,
+    });
 
     refreshData();
     onClose();
@@ -216,6 +230,42 @@ const BookingModal: React.FC<ModalProps> = ({
             placeholder="Телефон"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
+            style={{
+              width: "100%",
+              marginBottom: 8,
+              padding: 6,
+              borderRadius: 5,
+            }}
+          />
+          <input
+            type="text"
+            placeholder="Паспортные данные"
+            value={passport}
+            onChange={(e) => setPassport(e.target.value)}
+            style={{
+              width: "100%",
+              marginBottom: 8,
+              padding: 6,
+              borderRadius: 5,
+            }}
+          />
+          <input
+            type="number"
+            placeholder="Аванс"
+            value={deposit}
+            onChange={(e) => setDeposit(Number(e.target.value))}
+            style={{
+              width: "100%",
+              marginBottom: 8,
+              padding: 6,
+              borderRadius: 5,
+            }}
+          />
+          <input
+            type="text"
+            placeholder="Описание"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             style={{
               width: "100%",
               marginBottom: 8,

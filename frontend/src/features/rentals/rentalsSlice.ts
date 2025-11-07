@@ -3,6 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 import axios from "axios";
 import type { Cloth } from "../clothes/clothesSlice";
+import type { Customer } from "../../components/BookingModal";
 
 export interface Rental {
   id: number;
@@ -11,7 +12,8 @@ export interface Rental {
   startDate: string;
   endDate: string;
   status: string;
-  userId: number;
+  // userId: number;
+  customer: Customer;
   firstName: string;
   lastName: string;
   phone: string;
@@ -19,16 +21,16 @@ export interface Rental {
 }
 
 interface RentalsState {
-  items: Rental[];
+  rentals: Rental[];
   loading: boolean;
 }
 
 const initialState: RentalsState = {
-  items: [],
+  rentals: [],
   loading: false,
 };
 
-export const getAllRentals = createAsyncThunk(
+export const getAllRentals = createAsyncThunk<Rental[], void>(
   "rentals/fetchRentals",
   async () => {
     const response = await axios.get<Rental[]>("http://localhost:5000/rentals");
@@ -49,7 +51,7 @@ const rentalsSlice = createSlice({
     builder.addCase(
       getAllRentals.fulfilled,
       (state, action: PayloadAction<Rental[]>) => {
-        state.items = action.payload;
+        state.rentals = action.payload;
         state.loading = false;
       }
     );

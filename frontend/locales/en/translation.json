@@ -12,5 +12,9 @@
   "noClothesForCleaning": "No clothes for cleaning today",
   "clothesForCleaning": "Clothes for cleaning",
   "bookedForToday": "Booked for today",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "image": "Image",
+  "description": "Description",
+  "passport": "Passport",
+  "deposit": "Deposit"
 }

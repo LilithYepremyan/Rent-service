@@ -6,8 +6,7 @@ import {
   type Cloth,
 } from "../features/clothes/clothesSlice";
 import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch } from "../app/store";
-import type { RootState } from "@reduxjs/toolkit/query";
+import type { AppDispatch, RootState } from "../app/store";
 import ClothCard from "../components/ClothCard";
 
 const ClothesPage: React.FC = () => {

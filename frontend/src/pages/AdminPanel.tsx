@@ -1,34 +1,39 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import axios from "axios";
 
 const AdminPanel: React.FC = () => {
-  const [form, setForm] = useState({ code: "", name: "", color: "", price: "" });
+  const [form, setForm] = useState({
+    code: "",
+    name: "",
+    color: "",
+    price: "",
+  });
   const [photos, setPhotos] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [status, setStatus] = useState<string | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  }, []);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFiles = Array.from(e.target.files);
       setPhotos(selectedFiles);
       setPreviewUrls(selectedFiles.map((file) => URL.createObjectURL(file)));
     }
-  };
+  }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("loading");
 
     try {
       const formData = new FormData();
-      formData.append("code", form.code);
-      formData.append("name", form.name);
-      formData.append("color", form.color);
-      formData.append("price", form.price);
+      Object.entries(form).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
       photos.forEach((photo) => formData.append("photos", photo));
 
       await axios.post("http://localhost:5000/clothes", formData, {
@@ -36,14 +41,17 @@ const AdminPanel: React.FC = () => {
       });
 
       setStatus("success");
-      setForm({ code: "", name: "", color: "", price: "" });
-      setPhotos([]);
-      setPreviewUrls([]);
+      setTimeout(() => {
+        setForm({ code: "", name: "", color: "", price: "" });
+        setPhotos([]);
+        setPreviewUrls([]);
+        setStatus(null);
+      }, 1500);
     } catch (error) {
       console.error(error);
       setStatus("error");
     }
-  };
+  }, [form, photos]);
 
   return (
     <div
@@ -59,7 +67,9 @@ const AdminPanel: React.FC = () => {
         fontFamily: "Arial, sans-serif",
       }}
     >
-      <h2 style={{ marginBottom: "20px", color: "#2563eb" }}>Добавление одежды</h2>
+      <h2 style={{ marginBottom: "20px", color: "#2563eb" }}>
+        Добавление одежды
+      </h2>
       <form
         onSubmit={handleSubmit}
         style={{ display: "flex", flexDirection: "column", gap: 15 }}
@@ -70,7 +80,15 @@ const AdminPanel: React.FC = () => {
             key={field}
             name={field}
             type={field === "price" ? "number" : "text"}
-            placeholder={field === "code" ? "Код" : field === "name" ? "Название" : field === "color" ? "Цвет" : "Цена"}
+            placeholder={
+              field === "code"
+                ? "Код"
+                : field === "name"
+                ? "Название"
+                : field === "color"
+                ? "Цвет"
+                : "Цена"
+            }
             value={form[field as keyof typeof form]}
             onChange={handleChange}
             required
@@ -94,7 +112,14 @@ const AdminPanel: React.FC = () => {
           style={{ padding: "6px", borderRadius: "8px", cursor: "pointer" }}
         />
 
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 10,
+            flexWrap: "wrap",
+            justifyContent: "center",
+          }}
+        >
           {previewUrls.map((url, idx) => (
             <img
               key={idx}
@@ -108,8 +133,6 @@ const AdminPanel: React.FC = () => {
                 boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
                 transition: "transform 0.3s",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
             />
           ))}
         </div>
@@ -126,16 +149,18 @@ const AdminPanel: React.FC = () => {
             cursor: "pointer",
             transition: "all 0.3s",
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
-          onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
         >
           Добавить
         </button>
       </form>
 
       {status === "loading" && <p style={{ marginTop: 15 }}>Добавление...</p>}
-      {status === "success" && <p style={{ marginTop: 15, color: "green" }}>✅ Одежда добавлена!</p>}
-      {status === "error" && <p style={{ marginTop: 15, color: "red" }}>❌ Ошибка при добавлении</p>}
+      {status === "success" && (
+        <p style={{ marginTop: 15, color: "green" }}>✅ Одежда добавлена!</p>
+      )}
+      {status === "error" && (
+        <p style={{ marginTop: 15, color: "red" }}>❌ Ошибка при добавлении</p>
+      )}
     </div>
   );
 };

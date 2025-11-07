@@ -1,15 +1,15 @@
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllRentals, type Rental } from "../features/rentals/rentalsSlice";
+import { getAllRentals } from "../features/rentals/rentalsSlice";
 import { useTranslation } from "react-i18next";
-import ProductCard from "../components/ProductCard";
 import Badge from "../components/Badge";
 import type { RootState, AppDispatch } from "../app/store";
+import ProductTable from "../components/ProductTable/ProductTable";
 
 const CleaningPage: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
-  const rentals = useSelector((state: RootState) => state.rentals.items);
+  const rentals = useSelector((state: RootState) => state.rentals.rentals);
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -35,9 +35,8 @@ const CleaningPage: React.FC = () => {
       {count === 0 ? (
         <p>{t("noClothesForCleaning")}</p>
       ) : (
-        todayCleanings.map((rental: Rental) => (
-          <ProductCard key={rental.id} product={rental} />
-        ))
+      
+        <ProductTable  products={todayCleanings} />
       )}
     </div>
   );

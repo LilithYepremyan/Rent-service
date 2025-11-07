@@ -12,5 +12,9 @@
   "noClothesForCleaning": "Сегодня нет вещей на химчистку",
   "clothesForCleaning": "Вещи на химчистку",
   "bookedForToday": "Арендовано сегодня",
-  "loading": "Загрузка..."
+  "loading": "Загрузка...",
+  "image": "Изображение",
+  "description": "Описание",
+  "passport": "Паспорт",
+  "deposit": "Депозит"
 }

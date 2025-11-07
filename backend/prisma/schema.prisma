@@ -33,11 +33,8 @@ model Rental {
   startDate  DateTime
   endDate    DateTime
   rentDate   DateTime
-  userId     Int
   clothId    Int
-  firstName  String
-  lastName   String
-  phone      String
+  customer   Json
   status     RentalStatus @default(CONFIRMED)
   cloth Cloth @relation(fields: [clothId], references: [id])
   createdAt DateTime @default(now())

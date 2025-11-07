@@ -8,7 +8,8 @@ const Item = ({ label, value }: { label: string; value: string | number }) => (
 );
 
 const ProductCard = ({ product }: { product: Rental }) => {
-  const { cloth, firstName, lastName, phone } = product;
+  const { cloth, customer } = product;
+
   const photoUrl = cloth?.photos?.[0]?.url
     ? `http://localhost:5000${cloth.photos[0].url}`
     : "/no-image.png";
@@ -44,12 +45,19 @@ const ProductCard = ({ product }: { product: Rental }) => {
           <Item label={t("code")} value={cloth?.name} />
           <Item label={t("color")} value={cloth?.color} />
           <Item label={t("price")} value={cloth?.price} />
-          <Item label={t("tenantName")} value={`${firstName} ${lastName}`} />
-          <Item label={t("phone")} value={phone} />
+          <Item
+            label={t("tenantName")}
+            value={`${customer.firstName} ${customer.lastName}`}
+          />
+          <Item label={t("phone")} value={customer.phone} />
+          
         </div>
       </div>
       <div>
-        <input type="checkbox" style={{ width: "25px", height: "25px"  , cursor: "pointer", }} />
+        <input
+          type="checkbox"
+          style={{ width: "25px", height: "25px", cursor: "pointer" }}
+        />
       </div>
     </div>
   );
