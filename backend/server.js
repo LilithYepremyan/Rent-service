@@ -88,14 +88,14 @@ app.post("/rent", async (req, res) => {
     const { clothId, rentDate, customer } = req.body;
     const { firstName, lastName, phone, passport, deposit, description } =
       customer;
-    if (!clothId || !rentDate  || !customer) {
+    if (!clothId || !rentDate || !customer) {
       return res.status(400).json({
         message: "Нужны clothId, rentDate, customer info",
       });
     }
 
     // Проверка минимальных данных
-    if (  !customer) {
+    if (!customer) {
       return res.status(400).json({
         message:
           "В customer должны быть userId, firstName, lastName, phone, passport, deposit",
@@ -104,7 +104,6 @@ app.post("/rent", async (req, res) => {
 
     // Разбираем дату
     const [year, month, day] = rentDate.split("-").map(Number);
-    // const rent = new Date(year, month - 1, day);
     const rent = new Date(Date.UTC(year, month - 1, day));
 
     const startDate = new Date(rent);
@@ -114,12 +113,14 @@ app.post("/rent", async (req, res) => {
     startDate.setUTCDate(startDate.getUTCDate() - 1);
     endDate.setUTCDate(endDate.getUTCDate() + 1);
 
-    const formatLocalDate = (d) => {
-      const yyyy = d.getUTCFullYear();
-      const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
-      const dd = String(d.getUTCDate()).padStart(2, "0");
-      return `${yyyy}-${mm}-${dd}`;
+    const formatYMD = (date) => {
+      const d = new Date(date); // date из Prisma (UTC)
+      const year = d.getUTCFullYear();
+      const month = String(d.getUTCMonth() + 1).padStart(2, "0");
+      const day = String(d.getUTCDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
     };
+
     // Проверка пересечений
     const overlapping = await prisma.rental.findFirst({
       where: {
@@ -140,7 +141,7 @@ app.post("/rent", async (req, res) => {
         rentDate: rent,
         startDate,
         endDate,
-        // userId,  
+        // userId,
         customer: {
           firstName,
           lastName,
@@ -161,9 +162,10 @@ app.post("/rent", async (req, res) => {
     // Отправляем даты как YYYY-MM-DD, без смещений
     res.json({
       ...rental,
-      rentDate: formatLocalDate(rent),
-      startDate: formatLocalDate(startDate),
-      endDate: formatLocalDate(endDate),
+
+      rentDate: formatYMD(rent),
+      startDate: formatYMD(startDate),
+      endDate: formatYMD(endDate),
     });
   } catch (error) {
     console.error(error);
@@ -196,18 +198,6 @@ app.delete("/rent/:id", async (req, res) => {
   }
 });
 
-// ✅ Получить все брони на дату
-// app.get("/rentals", async (req, res) => {
-//   const { date } = req.query;
-//   const d = new Date(date);
-
-//   const rentals = await prisma.rental.findMany({
-//     where: { OR: [{ startDate: { lte: d }, endDate: { gte: d } }] },
-//     include: { cloth: true },
-//   });
-
-//   res.json(rentals);
-// });
 
 // ✅ Удаление одежды
 app.delete("/clothes/:id", async (req, res) => {

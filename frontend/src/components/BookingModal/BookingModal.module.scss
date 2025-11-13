@@ -1,0 +1,128 @@
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+  backdrop-filter: blur(3px);
+}
+.calendarContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  align-items: center;
+}
+
+.modalContainer {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px 28px;
+  width: 900px;
+  height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.3s ease-in-out;
+
+  .modalTitle {
+    text-align: center;
+    margin-bottom: 16px;
+    color: #333;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  .formFields {
+    input {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 0.95rem;
+      transition: border-color 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #a4c3b2;
+        box-shadow: 0 0 0 3px rgba(164, 195, 178, 0.25);
+      }
+    }
+  }
+
+  .btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &.btnConfirm {
+      background: #7cc59b;
+      color: white;
+      font-weight: 600;
+      margin-top: 8px;
+
+      &:hover:not(:disabled) {
+        background: #68b28c;
+      }
+
+      &:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+    }
+
+    &.btnCancel {
+      background: #f2f2f2;
+      color: #333;
+      margin-top: 6px;
+
+      &:hover {
+        background: #e6e6e6;
+      }
+    }
+  }
+
+  .react-calendar {
+    border: none;
+    width: 100%;
+    border-radius: 10px;
+    background: #fafafa;
+    padding: 8px;
+    margin-bottom: 14px;
+
+    &__tile--active {
+      background: #7cc59b !important;
+      color: white !important;
+    }
+
+    .booked {
+      background-color: #ffb3b3 !important;
+      color: #fff !important;
+      border-radius: 50%;
+    }
+
+    .before-booked,
+    .after-booked {
+      background-color: #ffe4e1 !important;
+      border-radius: 50%;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

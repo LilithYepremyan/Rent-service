@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import BookingModal from "../components/BookingModal";
 import {
   deleteCloth,
   getAllClothes,
@@ -8,6 +7,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../app/store";
 import ClothCard from "../components/ClothCard";
+import BookingModal from "../components/BookingModal/BookingModal";
+import { toast } from "react-toastify";
 
 const ClothesPage: React.FC = () => {
   const clothes = useSelector((state: RootState) => state.clothes.items);
@@ -23,7 +24,7 @@ const ClothesPage: React.FC = () => {
   const handleDelete = async (clothId: number) => {
     if (window.confirm("Удалить этот элемент?")) {
       await dispatch(deleteCloth(clothId));
-      alert("✅ Успешно удалено!");
+      toast.success("Успешно удалено!");
     }
   };
 

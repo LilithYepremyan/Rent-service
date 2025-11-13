@@ -19,6 +19,7 @@ const ProductTable = ({ products }: { products: Rental[] }) => {
             <th>{t("passport")}</th>
             <th>{t("deposit")}</th>
             <th>{t("description")}</th>
+            <th>{t("needToPay")}</th>
             <th> {t("done")}</th>
           </tr>
         </thead>
@@ -49,6 +50,7 @@ const ProductTable = ({ products }: { products: Rental[] }) => {
               <td>{rental.customer?.passport || "-"}</td>
               <td>{rental.customer?.deposit || "-"}</td>
               <td>{rental.customer?.description || "-"}</td>
+              <td>{rental.cloth?.price - rental.customer?.deposit}</td>
               <td>
                 <input className={styles.done} type="checkbox" />
               </td>
