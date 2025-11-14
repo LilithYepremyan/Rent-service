@@ -2,9 +2,9 @@ import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllRentals } from "../features/rentals/rentalsSlice";
 import { useTranslation } from "react-i18next";
-import Badge from "../components/Badge";
-import type { RootState, AppDispatch } from "../app/store";
 import ProductTable from "../components/ProductTable/ProductTable";
+import Badge from "../components/Badge/Badge";
+import type { RootState, AppDispatch } from "../app/store";
 
 const CleaningPage: React.FC = () => {
   const { t } = useTranslation();
@@ -35,8 +35,7 @@ const CleaningPage: React.FC = () => {
       {count === 0 ? (
         <p>{t("noClothesForCleaning")}</p>
       ) : (
-      
-        <ProductTable  products={todayCleanings} />
+        <ProductTable products={todayCleanings} />
       )}
     </div>
   );

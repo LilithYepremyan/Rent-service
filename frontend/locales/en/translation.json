@@ -16,5 +16,7 @@
   "image": "Image",
   "description": "Description",
   "passport": "Passport",
-  "deposit": "Deposit"
+  "deposit": "Deposit",
+  "needToPay": "Need to Pay",
+  "done": "Done"
 }

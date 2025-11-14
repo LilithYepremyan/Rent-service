@@ -6,9 +6,9 @@ import {
 } from "../features/clothes/clothesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../app/store";
-import ClothCard from "../components/ClothCard";
 import BookingModal from "../components/BookingModal/BookingModal";
 import { toast } from "react-toastify";
+import ClothCard from "../components/ClothCard/ClothCard";
 
 const ClothesPage: React.FC = () => {
   const clothes = useSelector((state: RootState) => state.clothes.items);

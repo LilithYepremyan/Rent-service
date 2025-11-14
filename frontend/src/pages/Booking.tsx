@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllClothes } from "../features/clothes/clothesSlice";
 import { useTranslation } from "react-i18next";
 import type { RootState, AppDispatch } from "../app/store";
-import Badge from "../components/Badge";
 import ProductTable from "../components/ProductTable/ProductTable";
+import Badge from "../components/Badge/Badge";
 
 const Booking: React.FC = () => {
   const { t } = useTranslation();

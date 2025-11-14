@@ -5,9 +5,9 @@ import AdminPanel from "./pages/AdminPanel";
 import CalendarView from "./pages/CalendarView";
 import CleaningList from "./pages/CleaningPage";
 import ClothesList from "./pages/ClothesPage";
-import NavBar from "./components/NavBar";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import NavBar from "./components/NavBar/NavBar";
 
 const App: React.FC = () => {
   return (

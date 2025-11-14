@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
-import type { Rental } from "../features/rentals/rentalsSlice";
+import type { Rental } from "../../features/rentals/rentalsSlice";
+import styles from "./ProductCard.module.scss";
 
 const Item = ({ label, value }: { label: string; value: string | number }) => (
   <p>
@@ -15,30 +16,13 @@ const ProductCard = ({ product }: { product: Rental }) => {
     : "/no-image.png";
   const { t } = useTranslation();
   return (
-    <div
-      key={product.id}
-      style={{
-        marginBottom: "20px",
-        display: "flex",
-        alignItems: "flex-end",
-        justifyContent: "space-between",
-        gap: "20px",
-        border: "1px solid black",
-        borderRadius: "10px",
-        padding: "10px 20px",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+    <div key={product.id} className={styles.container}>
+      <div>
         {product.cloth?.photos[0] && (
           <img
             src={photoUrl}
             alt={product.cloth.name}
-            style={{
-              width: "120px",
-              height: "170px",
-              borderRadius: "8px",
-              objectFit: "cover",
-            }}
+            className={styles.photo}
           />
         )}
         <div>
@@ -50,14 +34,10 @@ const ProductCard = ({ product }: { product: Rental }) => {
             value={`${customer.firstName} ${customer.lastName}`}
           />
           <Item label={t("phone")} value={customer.phone} />
-          
         </div>
       </div>
       <div>
-        <input
-          type="checkbox"
-          style={{ width: "25px", height: "25px", cursor: "pointer" }}
-        />
+        <input type="checkbox" className={styles.checkbox} />
       </div>
     </div>
   );
