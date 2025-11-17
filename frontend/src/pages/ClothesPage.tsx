@@ -9,10 +9,12 @@ import type { AppDispatch, RootState } from "../app/store";
 import BookingModal from "../components/BookingModal/BookingModal";
 import { toast } from "react-toastify";
 import ClothCard from "../components/ClothCard/ClothCard";
+import { useTranslation } from "react-i18next";
 
 const ClothesPage: React.FC = () => {
   const clothes = useSelector((state: RootState) => state.clothes.items);
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation();
 
   const [selectedCloth, setSelectedCloth] = useState<Cloth | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -22,9 +24,9 @@ const ClothesPage: React.FC = () => {
   }, [dispatch]);
 
   const handleDelete = async (clothId: number) => {
-    if (window.confirm("Удалить этот элемент?")) {
+    if (window.confirm(t("deleteItem"))) {
       await dispatch(deleteCloth(clothId));
-      toast.success("Успешно удалено!");
+      toast.success(t("successfullyDeleted"));
     }
   };
 

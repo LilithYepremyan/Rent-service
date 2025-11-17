@@ -1,4 +1,3 @@
-
 import Calendar from "react-calendar";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useMemo, useState } from "react";
@@ -10,6 +9,8 @@ import {
   getAllRentals,
   type Rental,
 } from "../../features/rentals/rentalsSlice";
+import { useTranslation } from "react-i18next";
+import { t } from "i18next";
 
 interface Photo {
   id: number;
@@ -69,11 +70,11 @@ const bookCloth = async (
       userId,
       customer,
     });
-    toast.success("Бронирование успешно!");
+    toast.success(t("bookingSuccessful"));
     return response.data;
   } catch (error: any) {
     console.error("Ошибка при бронировании:", error);
-    toast.error("Ошибка при бронировании. Попробуйте снова.");
+    toast.error(t("bookingError"));
     return null;
   }
 };
@@ -86,6 +87,7 @@ const BookingModal: React.FC<ModalProps> = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const rentals = useSelector((state: RootState) => state.rentals.rentals);
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -146,18 +148,18 @@ const BookingModal: React.FC<ModalProps> = ({
 
   const handleConfirm = async () => {
     if (!selectedDate || !firstName || !lastName || !phone || !passport) {
-      toast.warn("Заполните все обязательные поля и выберите дату!");
+      toast.warn(t("fillAllFields"));
       return;
     }
 
     console.log("selectedDate:", selectedDate);
     if (isBooked(selectedDate)) {
-      toast.error("Эта дата уже забронирована!");
+      toast.error(t("dateAlreadyBooked"));
       return;
     }
 
     if (deposit < 0) {
-      toast.warn("Аванс не может быть отрицательным");
+      toast.warn(t("depositCannotBeNegative"));
       return;
     }
 
@@ -185,14 +187,16 @@ const BookingModal: React.FC<ModalProps> = ({
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContainer}>
-        <h3 className={styles.modalTitle}>Бронирование: {cloth.name}</h3>
+        <h3 className={styles.modalTitle}>
+          {t("booking")}: {cloth.name}
+        </h3>
 
         <div className={styles.calendarContainer}>
           <Calendar
             onChange={(date) => {
               if (!(date instanceof Date)) return;
               if (isBooked(date)) {
-                toast.error("Эта дата уже забронирована");
+                toast.error(t("dateAlreadyBooked"));
                 return;
               }
               setSelectedDate(date);
@@ -205,7 +209,7 @@ const BookingModal: React.FC<ModalProps> = ({
           />
 
           <div className={styles.formFields}>
-            <label>Имя *</label>
+            <label>{t("firstName")} *</label>
             <input
               type="text"
               value={firstName}
@@ -213,7 +217,7 @@ const BookingModal: React.FC<ModalProps> = ({
               required
             />
 
-            <label>Фамилия *</label>
+            <label>{t("lastName")} *</label>
             <input
               type="text"
               value={lastName}
@@ -221,7 +225,7 @@ const BookingModal: React.FC<ModalProps> = ({
               required
             />
 
-            <label>Телефон *</label>
+            <label>{t("phone")} *</label>
             <input
               type="tel"
               value={phone}
@@ -230,7 +234,7 @@ const BookingModal: React.FC<ModalProps> = ({
               required
             />
 
-            <label>Паспорт *</label>
+            <label>{t("passport")} *</label>
             <input
               type="text"
               value={passport}
@@ -238,7 +242,7 @@ const BookingModal: React.FC<ModalProps> = ({
               required
             />
 
-            <label>Аванс</label>
+            <label>{t("deposit")}</label>
             <input
               type="number"
               value={deposit}
@@ -246,7 +250,7 @@ const BookingModal: React.FC<ModalProps> = ({
               onChange={(e) => setDeposit(Number(e.target.value))}
             />
 
-            <label>Описание</label>
+            <label>{t("description")}</label>
             <input
               type="text"
               value={description}
@@ -258,7 +262,7 @@ const BookingModal: React.FC<ModalProps> = ({
               className={`${styles.btn} ${styles.btnConfirm}`}
               disabled={!selectedDate || isBooked(selectedDate) || loading}
             >
-              {loading ? "Сохраняем..." : "Подтвердить бронь"}
+              {loading ? t("save") : t("confirmBooking")}
             </button>
 
             <button
@@ -269,7 +273,7 @@ const BookingModal: React.FC<ModalProps> = ({
               className={`${styles.btn} ${styles.btnCancel}`}
               disabled={loading}
             >
-              Отмена
+              {t("cancel")}
             </button>
           </div>
         </div>

@@ -35,7 +35,7 @@ const ProductTable = ({ products }: { products: Rental[] }) => {
                     alt={rental.cloth.name}
                   />
                 ) : (
-                  <div className={styles.noImage}>No Image</div>
+                  <div className={styles.noImage}>{t("noImg")}</div>
                 )}
               </td>
               <td>{rental.cloth?.name || "-"}</td>

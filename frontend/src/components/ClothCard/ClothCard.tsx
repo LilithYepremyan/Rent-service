@@ -43,10 +43,10 @@ const ClothCard: React.FC<ClothCardProps> = ({ cloth, onBook, onDelete }) => {
         <p className={styles.info}>
           {t("price")} {cloth.price} AMD
         </p>
-
+      
         <div className={styles.actions}>
-          <ActionButton onClick={onBook} color="blue" text="Забронировать" />
-          <ActionButton onClick={onDelete} color="red" text="Удалить" />
+          <ActionButton onClick={onBook} color="blue" text={t("booking")} />
+          <ActionButton onClick={onDelete} color="red" text={t("delete")} />
         </div>
       </div>
     </div>

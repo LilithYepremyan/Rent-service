@@ -18,5 +18,25 @@
   "passport": "Passport",
   "deposit": "Deposit",
   "needToPay": "Need to Pay",
-  "done": "Done"
+  "done": "Done",
+  "firstName": "First Name",
+  "lastName": "Last Name",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "noImg": "No Image",
+  "add": "Add",
+  "addCloth": "Add Cloth",
+  "calendarForBooking": "Calendar for Booking",
+  "createBooking": "Create Booking",
+  "bookingSuccessful": "Booking successful!",
+  "bookingFailed": "Booking failed. Please try again.",
+  "bookingError": "Error during booking. Please try again.",
+  "fillAllFields": "Please fill all  fields and select a date",
+  "dateAlreadyBooked": "This date is already booked!",
+  "depositCantBeNegative": "Deposit cannot be negative!",
+  "save": "Saving...",
+  "confirmBooking": "Confirm Booking",
+  "deleteItem": "Delete this item?",
+  "successfullyDeleted": "Successfully Deleted"
+
 }

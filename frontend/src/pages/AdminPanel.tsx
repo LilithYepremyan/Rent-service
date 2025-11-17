@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from "react";
 import axios from "axios";
+import { t } from "i18next";
 
 const AdminPanel: React.FC = () => {
   const [form, setForm] = useState({
@@ -68,7 +69,7 @@ const AdminPanel: React.FC = () => {
       }}
     >
       <h2 style={{ marginBottom: "20px", color: "#2563eb" }}>
-        Добавление одежды
+        {t("addCloth")}
       </h2>
       <form
         onSubmit={handleSubmit}
@@ -150,7 +151,7 @@ const AdminPanel: React.FC = () => {
             transition: "all 0.3s",
           }}
         >
-          Добавить
+          {t("add")}
         </button>
       </form>
 
