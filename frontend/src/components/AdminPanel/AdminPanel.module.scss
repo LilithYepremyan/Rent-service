@@ -1,0 +1,75 @@
+.wrapper {
+  max-width: 450px;
+  margin: 50px auto;
+  padding: 30px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.title {
+  margin-bottom: 20px;
+  color: #2563eb;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.label {
+  text-align: left;
+  margin-bottom: 4px;
+}
+
+.input {
+  padding: 10px 15px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  outline: none;
+  font-size: 0.95rem;
+  transition: all 0.3s;
+}
+
+.fileLabel {
+  margin-top: 20px;
+  padding: 10px 15px;
+  font-size: 15px;
+  color: #fff;
+  background-color: #97b5f0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.fileInput {
+  display: none;
+}
+
+.imgWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.button {
+  padding: 10px 15px;
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 15px;
+}

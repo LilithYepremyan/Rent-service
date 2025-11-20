@@ -19,6 +19,7 @@
   "deposit": "Deposit",
   "needToPay": "Need to Pay",
   "done": "Done",
+  "name": "Name",
   "firstName": "First Name",
   "lastName": "Last Name",
   "cancel": "Cancel",
@@ -37,6 +38,11 @@
   "save": "Saving...",
   "confirmBooking": "Confirm Booking",
   "deleteItem": "Delete this item?",
-  "successfullyDeleted": "Successfully Deleted"
-
+  "successfullyDeleted": "Successfully Deleted",
+  "adding": "Adding...",
+  "addedSuccessfully": "Added Successfully",
+  "addingError": "Error during adding.",
+  "selectFile": "Select Image",
+  "fileSelected": "Image Selected",
+  "noBookingsForToday": "No bookings for today"
 }

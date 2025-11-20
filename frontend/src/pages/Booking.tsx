@@ -29,9 +29,13 @@ const Booking: React.FC = () => {
         <h2>{t("bookedForToday")}</h2>
         <Badge count={todayRentals.length} />
       </div>
-      <ProductTable products={todayRentals} />
+      {todayRentals.length === 0 ? (
+        <p>{t("noBookingsForToday")}</p>
+      ) : (
+        <ProductTable products={todayRentals} />
+      )}
     </>
-  );  
+  );
 };
 
 export default Booking;

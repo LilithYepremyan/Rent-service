@@ -19,6 +19,7 @@
   "deposit": "Կանխավճար",
   "needToPay": "Պետք է վճարել",
   "done": "Ավարտված է",
+  "name": "Անվանում",
   "firstName": "Անուն",
   "lastName": "Ազգանուն",
   "cancel": "Չեղարկել",
@@ -37,5 +38,11 @@
   "save": "Պահպանվում է․․․",
   "confirmBooking": "Հաստատել ամրագրումը",
   "deleteItem": "Ջնջել այս իրը՞",
-  "successfullyDeleted": "Հաջողությամբ ջնջվեց"
+  "successfullyDeleted": "Հաջողությամբ ջնջվեց",
+  "adding": "Ավելացվում է․․․",
+  "addedSuccessfully": "Հաջողությամբ ավելացվեց",
+  "addingError": "Ավելացման ընթացքում տեղի ունեցավ սխալ։",
+  "selectFile": "Ընտրել նկար",
+  "fileSelected": "Նկարը ընտրված է",
+  "noBookingsForToday": "Այսօր ամրագրումներ չկան"
 }

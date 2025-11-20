@@ -19,6 +19,7 @@
   "deposit": "Депозит",
   "needToPay": "Необходимо оплатить",
   "done": "Готово",
+  "name": "Название",
   "firstName": "Имя",
   "lastName": "Фамилия",
   "cancel": "Отменить",
@@ -37,5 +38,11 @@
   "save": "Сохраняем...",
   "confirmBooking": "Подтвердить бронь",
   "deleteItem": "Удалить этот элемент?",
-  "successfullyDeleted": "Успешно удалено"
+  "successfullyDeleted": "Успешно удалено",
+  "adding": "Добавление...",
+  "addedSuccessfully": "Успешно добавлено",
+  "addingError": "Ошибка при добавлении.",
+  "selectFile": "Выбрать изображение",
+  "fileSelected": "Изображение выбрано",
+  "noBookingsForToday": "Сегодня нет бронирований"
 }
