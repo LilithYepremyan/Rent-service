@@ -3,7 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 import axios from "axios";
 import type { Cloth } from "../clothes/clothesSlice";
-import type { Customer } from "../../components/BookingModal";
+import type { Customer } from "../../components/BookingModal/BookingModal";
 
 export interface Rental {
   id: number;

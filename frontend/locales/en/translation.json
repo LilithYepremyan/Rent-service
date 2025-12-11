@@ -44,5 +44,10 @@
   "addingError": "Error during adding.",
   "selectFile": "Select Image",
   "fileSelected": "Image Selected",
-  "noBookingsForToday": "No bookings for today"
+  "noBookingsForToday": "No bookings for today",
+  "searchPlaceholder": "Search clothes by code",
+  "searchByCode": "Search by code",
+  "searchByDate": "Search by date",
+  "total": "Total",
+  "notFound": "Nothing found"
 }

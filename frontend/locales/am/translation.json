@@ -44,5 +44,10 @@
   "addingError": "Ավելացման ընթացքում տեղի ունեցավ սխալ։",
   "selectFile": "Ընտրել նկար",
   "fileSelected": "Նկարը ընտրված է",
-  "noBookingsForToday": "Այսօր ամրագրումներ չկան"
+  "noBookingsForToday": "Այսօր ամրագրումներ չկան",
+  "searchByCode": "Որոնել հագուստը ըստ կոդի",
+  "searchByDate": "Որոնել ըստ ամսաթվի",
+  "total": "Ընդամենը",
+  "notFound": "Ոչինչ չի գտնվել",
+  
 }

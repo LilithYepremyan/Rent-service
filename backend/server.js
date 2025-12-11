@@ -82,6 +82,36 @@ app.get("/clothes/:code", async (req, res) => {
   }
 });
 
+//Поиск свободной одежды на дату
+app.get("/clothes/free/:date", async (req, res) => {
+  try {
+    const { date } = req.params;
+
+    const d = new Date(date);
+    if (isNaN(d)) {
+      return res.status(400).json({ message: "Неверный формат даты" });
+    }
+
+    const freeClothes = await prisma.cloth.findMany({
+      where: {
+        rentals: {
+          none: {
+            startDate: { lte: d },
+            endDate: { gte: d },
+          },
+        },
+      },
+      include: { photos: true, rentals: true },
+    });
+
+    res.json(freeClothes);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Ошибка при поиске свободной одежды" });
+  }
+});
+
+
 // ✅ Создание брони
 app.post("/rent", async (req, res) => {
   try {

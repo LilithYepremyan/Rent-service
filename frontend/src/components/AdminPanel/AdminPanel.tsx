@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import styles from "./AdminPanel.module.scss";
+import { useNavigate } from "react-router-dom";
 
 interface FormValues {
   code: string;
@@ -22,6 +23,7 @@ const AdminPanel: React.FC = () => {
   const [status, setStatus] = useState<"loading" | "success" | "error" | null>(
     null
   );
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!watchedPhotos || watchedPhotos.length === 0) {
@@ -62,6 +64,7 @@ const AdminPanel: React.FC = () => {
       setStatus("success");
       reset();
       setPreviewUrls([]);
+      navigate("/clothes");
     } catch (error) {
       console.error(error);
       setStatus("error");

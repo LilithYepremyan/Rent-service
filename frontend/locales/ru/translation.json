@@ -44,5 +44,10 @@
   "addingError": "Ошибка при добавлении.",
   "selectFile": "Выбрать изображение",
   "fileSelected": "Изображение выбрано",
-  "noBookingsForToday": "Сегодня нет бронирований"
+  "noBookingsForToday": "Сегодня нет бронирований",
+  "searchPlaceholder": "Поиск одежды по коду",
+  "searchByCode": "Поиск по коду",
+  "searchByDate": "Поиск по дате",
+  "total": "Итого",
+  "notFound": "Ничего не найдено"
 }

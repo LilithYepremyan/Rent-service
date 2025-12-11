@@ -43,6 +43,28 @@ export const deleteCloth = createAsyncThunk(
     return clothId;
   }
 );
+export const getClothByCode = createAsyncThunk(
+  "clothes/getClothByCode",
+  async (clothCode: string) => {
+    const response = await axios.get<Cloth>(
+      `http://localhost:5000/clothes/${clothCode}`
+    );
+    return response.data;
+  }
+);
+
+export const findFreeClothesByDate = createAsyncThunk<Cloth[], string>(
+  "clothes/findFreeClothesByDate",
+  async (date: string) => {
+    const response = await axios.get<Cloth[]>(
+      `http://localhost:5000/clothes/free/${date}`
+    );
+
+    console.log("free clothes :", response.data);
+
+    return response.data;
+  }
+);
 
 const clothesSlice = createSlice({
   name: "clothes",
@@ -68,6 +90,24 @@ const clothesSlice = createSlice({
         state.items = state.items.filter(
           (cloth) => cloth.id !== action.payload
         );
+      }
+    );
+    builder.addCase(
+      getClothByCode.fulfilled,
+      (state, action: PayloadAction<Cloth>) => {
+        state.items = state.items.map((cloth) => {
+          if (cloth.id === action.payload.id) {
+            console.log("Cloth found by code:", action.payload);
+            return action.payload;
+          }
+          return cloth;
+        });
+      }
+    );
+    builder.addCase(
+      findFreeClothesByDate.fulfilled,
+      (state, action: PayloadAction<Cloth[]>) => {
+        state.items = action.payload;
       }
     );
   },
