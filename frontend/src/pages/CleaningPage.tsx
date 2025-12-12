@@ -19,7 +19,6 @@ const CleaningPage: React.FC = () => {
   );
 
   const count = todayCleanings.length;
-  console.log("count", count);
 
   useEffect(() => {
     dispatch(getAllRentals());

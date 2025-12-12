@@ -34,8 +34,6 @@ export const getAllRentals = createAsyncThunk<Rental[], void>(
   "rentals/fetchRentals",
   async () => {
     const response = await axios.get<Rental[]>("http://localhost:5000/rentals");
-
-    console.log("11111 rentals:", response.data);
     return response.data;
   }
 );

@@ -107,8 +107,6 @@ const BookingModal: React.FC<ModalProps> = ({
     [rentals, cloth]
   );
 
-  console.log("clothRentals:", clothRentals);
-
   if (!visible || !cloth) return null;
 
   const getDayStatus = (date: Date) => {
@@ -152,7 +150,6 @@ const BookingModal: React.FC<ModalProps> = ({
       return;
     }
 
-    console.log("selectedDate:", selectedDate);
     if (isBooked(selectedDate)) {
       toast.error(t("dateAlreadyBooked"));
       return;

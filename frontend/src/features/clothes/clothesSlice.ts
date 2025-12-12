@@ -59,9 +59,6 @@ export const findFreeClothesByDate = createAsyncThunk<Cloth[], string>(
     const response = await axios.get<Cloth[]>(
       `http://localhost:5000/clothes/free/${date}`
     );
-
-    console.log("free clothes :", response.data);
-
     return response.data;
   }
 );
@@ -97,7 +94,6 @@ const clothesSlice = createSlice({
       (state, action: PayloadAction<Cloth>) => {
         state.items = state.items.map((cloth) => {
           if (cloth.id === action.payload.id) {
-            console.log("Cloth found by code:", action.payload);
             return action.payload;
           }
           return cloth;
