@@ -49,6 +49,8 @@ export const getClothByCode = createAsyncThunk(
     const response = await axios.get<Cloth>(
       `http://localhost:5000/clothes/${clothCode}`
     );
+
+    console.log("getClothByCode response:", response.data);
     return response.data;
   }
 );
@@ -66,7 +68,11 @@ export const findFreeClothesByDate = createAsyncThunk<Cloth[], string>(
 const clothesSlice = createSlice({
   name: "clothes",
   initialState,
-  reducers: {},
+  reducers: {
+    noResults(state) {
+      state.items = [];
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(getAllClothes.pending, (state) => {
       state.loading = true;
@@ -92,12 +98,7 @@ const clothesSlice = createSlice({
     builder.addCase(
       getClothByCode.fulfilled,
       (state, action: PayloadAction<Cloth>) => {
-        state.items = state.items.map((cloth) => {
-          if (cloth.id === action.payload.id) {
-            return action.payload;
-          }
-          return cloth;
-        });
+        state.items = [action.payload];
       }
     );
     builder.addCase(

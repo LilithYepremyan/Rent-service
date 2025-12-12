@@ -40,28 +40,39 @@ const ClothesPage: React.FC = () => {
     }
 
     if (!filterCode && filterDate) {
-      dispatch(findFreeClothesByDate(filterDate));
+      const response = await dispatch(findFreeClothesByDate(filterDate));
+      if (!response.payload || (response.payload as Cloth[]).length === 0) {
+        dispatch({ type: "clothes/noResults" });
+      }
       return;
     }
 
     if (filterCode && !filterDate) {
-      await dispatch(getClothByCode(filterCode));
+      const response = await dispatch(getClothByCode(filterCode));
+      if (response.meta.requestStatus === "fulfilled" && response.payload) {
+        dispatch({ type: "clothes/setItems", payload: [response.payload] });
+      } else {
+        dispatch({ type: "clothes/noResults" });
+      }
       return;
     }
 
-    const free = await dispatch(findFreeClothesByDate(filterDate));
-    const byCode = await dispatch(getClothByCode(filterCode));
+    const freeResponse = await dispatch(findFreeClothesByDate(filterDate));
+    const codeResponse = await dispatch(getClothByCode(filterCode));
 
-    if (free.payload && byCode.payload) {
-      const cloth = byCode.payload as Cloth;
+    if (freeResponse.payload && codeResponse.payload) {
+      const cloth = codeResponse.payload as Cloth;
+      const isFree = (freeResponse.payload as Cloth[]).some(
+        (c) => c.id === cloth.id
+      );
 
-      const isFree = (free.payload as Cloth[]).some((c) => c.id === cloth.id);
-
-      if (!isFree) {
-        dispatch({ type: "clothes/noResults" });
-      } else {
+      if (isFree) {
         dispatch({ type: "clothes/setItems", payload: [cloth] });
+      } else {
+        dispatch({ type: "clothes/noResults" });
       }
+    } else {
+      dispatch({ type: "clothes/noResults" });
     }
   };
 
@@ -72,10 +83,7 @@ const ClothesPage: React.FC = () => {
 
   return (
     <>
-      <Filters
-        onCodeChange={setFilterCode}
-        onDateChange={setFilterDate}
-      />
+      <Filters onCodeChange={setFilterCode} onDateChange={setFilterDate} />
 
       {clothes.length === 0 && (
         <p style={{ padding: 20, fontSize: 20 }}>{t("notFound")}</p>
