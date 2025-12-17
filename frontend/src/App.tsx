@@ -8,24 +8,26 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import NavBar from "./components/NavBar/NavBar";
 import AdminPanel from "./components/AdminPanel/AdminPanel";
+import TodayRentals from "./pages/TodayRentals";
 
 const App: React.FC = () => {
   return (
     <Router>
       <NavBar />
 
-      <div style={{ padding: "0px 30px" }}>
+      <div style={{ padding: " 5rem  2rem" }}>
         <ToastContainer
           aria-label={"toast"}
           position="top-right"
           autoClose={3000}
         />
         <Routes>
-          <Route path="/clothes" element={<ClothesList />} />
           <Route path="/" element={<Booking />} />
+          <Route path="/clothes" element={<ClothesList />} />
           <Route path="/calendar" element={<CalendarView />} />
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/cleaning" element={<CleaningList />} />
+          <Route path="/todays-rentals" element={<TodayRentals />} />
         </Routes>
       </div>
     </Router>

@@ -22,18 +22,35 @@ export interface Rental {
 
 interface RentalsState {
   rentals: Rental[];
+  totalDeposit: number;
   loading: boolean;
 }
 
 const initialState: RentalsState = {
   rentals: [],
+  totalDeposit: 0,
   loading: false,
 };
+
+interface TodayRentalsResponse {
+  rentals: Rental[];
+  totalDeposit: number;
+}
 
 export const getAllRentals = createAsyncThunk<Rental[], void>(
   "rentals/fetchRentals",
   async () => {
     const response = await axios.get<Rental[]>("http://localhost:5000/rentals");
+    return response.data;
+  }
+);
+
+export const getTodayRentals = createAsyncThunk<TodayRentalsResponse, void>(
+  "rentals/getTodayRentals",
+  async () => {
+    const response = await axios.get<TodayRentalsResponse>(
+      "http://localhost:5000/rentals/today"
+    );
     return response.data;
   }
 );
@@ -56,6 +73,17 @@ const rentalsSlice = createSlice({
     builder.addCase(getAllRentals.rejected, (state) => {
       state.loading = false;
     });
+    builder.addCase(getTodayRentals.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(
+      getTodayRentals.fulfilled,
+      (state, action: PayloadAction<TodayRentalsResponse>) => {
+        state.rentals = action.payload.rentals;
+        state.totalDeposit = action.payload.totalDeposit;
+        state.loading = false;
+      }
+    );
   },
 });
 

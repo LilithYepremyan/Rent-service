@@ -49,5 +49,9 @@
   "searchByCode": "Search by code",
   "searchByDate": "Search by date",
   "total": "Total",
-  "notFound": "Nothing found"
+  "totalDeposit": "Total Deposit",
+  "totalNeedToPay": "Total Need to Pay",
+  "notFound": "Nothing found",
+  "todaysRentals": "Today's Rentals",
+  "bookedToday": "Booked for Today"
 }

@@ -1,11 +1,11 @@
 .wrapper {
-  width: calc(100% - 50px);
+  max-height: 600px;
   overflow-x: auto;
+  overflow-y: auto;
   margin-top: 20px;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  padding: 20px;
 }
 
 .table {
@@ -26,6 +26,9 @@
     font-weight: 600;
     text-transform: capitalize;
     color: #555;
+    position: sticky;
+    top: 0;
+    z-index: 2;
   }
 
   tr:nth-child(even) {

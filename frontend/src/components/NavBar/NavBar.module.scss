@@ -1,17 +1,21 @@
 .navbar {
   display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background: rgba(255, 255, 255, 0.15);
+  background-color: rgb(255, 255, 255);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.25);
   transition: all 0.3s ease;
+  z-index: 2;
 }
 
 .linksContainer {
-    
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -19,7 +23,6 @@
 }
 
 .link {
-    
   position: relative;
   font-size: 1rem;
   font-weight: 600;
@@ -27,10 +30,22 @@
   letter-spacing: 0.05em;
   text-decoration: none;
   transition: all 0.3s ease;
+
+  &:hover {
+    color: #3b82f6;
+    transform: scale(1.05);
+
+    .underline {
+      width: 100%;
+      opacity: 1;
+    }
+  }
 }
 
+.active {
+  color: #1e40af;
+}
 .underline {
-    
   position: absolute;
   left: 0;
   bottom: -4px;
@@ -41,20 +56,38 @@
 }
 
 .langContainer {
-    
   display: flex;
   gap: 0.75rem;
 }
 
 .langButton {
-    
+  background: rgba(255, 255, 255, 0.3);
+  color: #4b5563;
+  box-shadow: "none";
+  transform: scale(1);
+
   padding: 0.4rem 1rem;
-  border-radius: 12px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  transition: all 0.3s ease;
-  cursor: pointer;
   border: none;
+  border-radius: 10px;
+
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+
+
+  transition: all 0.3s ease;
   backdrop-filter: blur(5px);
+
+  &:hover {
+    background: linear-gradient(to right, #dbeafe, #bfdbfe);
+    color: #1e40af;
+  }
+}
+
+.langButtonActive {
+  background: linear-gradient(to right, #3b82f6, #1d4ed8);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
 }

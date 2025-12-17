@@ -49,5 +49,9 @@
   "searchByCode": "Поиск по коду",
   "searchByDate": "Поиск по дате",
   "total": "Итого",
-  "notFound": "Ничего не найдено"
+  "totalDeposit": "Общий депозит",
+  "totalNeedToPay": "Всего к оплате",
+  "notFound": "Ничего не найдено",
+  "todaysRentals": "Аренды на сегодня",
+  "bookedToday": "Забронированные на сегодня"
 }

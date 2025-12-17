@@ -88,32 +88,6 @@
       }
     }
   }
-
-  .react-calendar {
-    border: none;
-    width: 100%;
-    border-radius: 10px;
-    background: #fafafa;
-    padding: 8px;
-    margin-bottom: 14px;
-
-    &__tile--active {
-      background: #7cc59b !important;
-      color: white !important;
-    }
-
-    .booked {
-      background-color: #ffb3b3 !important;
-      color: #fff !important;
-      border-radius: 50%;
-    }
-
-    .before-booked,
-    .after-booked {
-      background-color: #ffe4e1 !important;
-      border-radius: 50%;
-    }
-  }
 }
 
 @keyframes fadeIn {

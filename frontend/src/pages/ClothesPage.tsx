@@ -91,10 +91,11 @@ const ClothesPage: React.FC = () => {
 
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
+          display: "flex",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
           gap: 20,
-          padding: 20,
+          padding: "20px 0",
         }}
       >
         {clothes.map((cloth) => (

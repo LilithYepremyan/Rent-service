@@ -26,7 +26,7 @@ const Booking: React.FC = () => {
   return (
     <>
       <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-        <h2>{t("bookedForToday")}</h2>
+        <h2>{t("bookedToday")}</h2>
         <Badge count={todayRentals.length} />
       </div>
       {todayRentals.length === 0 ? (
