@@ -111,7 +111,6 @@ app.get("/clothes/free/:date", async (req, res) => {
   }
 });
 
-
 // ✅ Создание брони
 app.post("/rent", async (req, res) => {
   try {
@@ -228,7 +227,6 @@ app.delete("/rent/:id", async (req, res) => {
   }
 });
 
-
 // ✅ Удаление одежды
 app.delete("/clothes/:id", async (req, res) => {
   try {
@@ -319,6 +317,36 @@ app.get("/rentals/cleaning", async (req, res) => {
   });
 
   res.json(rentals);
+});
+
+// ✅ Брони, созданные сегодня
+app.get("/rentals/today", async (req, res) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // начало дня
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1); // начало следующего дня
+
+    // Находим брони, которые созданы сегодня
+    // и при этом аренда ещё впереди (rentDate >= сегодня)
+    const rentals = await prisma.rental.findMany({
+      where: {
+        createdAt: { gte: today, lt: tomorrow },
+        rentDate: { gte: today },
+      },
+      include: { cloth: { include: { photos: true } } },
+    });
+
+    const totalDeposit = rentals.reduce(
+      (sum, r) => sum + (r.customer.deposit || 0),
+      0
+    );
+
+    res.json({ rentals, totalDeposit });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Ошибка при получении броней за сегодня" });
+  }
 });
 
 // ✅ Запускаем сервер
