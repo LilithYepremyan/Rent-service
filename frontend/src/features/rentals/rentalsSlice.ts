@@ -22,12 +22,20 @@ export interface Rental {
 
 interface RentalsState {
   rentals: Rental[];
+  todayEndingRentals: Rental[];
+  rentalsByDate: Rental[];
+  cleaningsRentalsByDate: Rental[];
+  endingRentalsByDate: Rental[];
   totalDeposit: number;
   loading: boolean;
 }
 
 const initialState: RentalsState = {
   rentals: [],
+  todayEndingRentals: [],
+  rentalsByDate: [],
+  cleaningsRentalsByDate: [],
+  endingRentalsByDate: [],
   totalDeposit: 0,
   loading: false,
 };
@@ -50,6 +58,48 @@ export const getTodayRentals = createAsyncThunk<TodayRentalsResponse, void>(
   async () => {
     const response = await axios.get<TodayRentalsResponse>(
       "http://localhost:5000/rentals/today"
+    );
+    return response.data;
+  }
+);
+
+export const getTodayEndingRentals = createAsyncThunk<Rental[], void>(
+  "rentals/getTodayEndingRentals",
+  async () => {
+    const response = await axios.get<Rental[]>(
+      "http://localhost:5000/rentals/ends-today"
+    );
+    return response.data;
+  }
+);
+
+export const getRentalsByDate = createAsyncThunk<Rental[], string>(
+  "rentals/byDate",
+  async (date) => {
+    const response = await axios.get(
+      `http://localhost:5000/rentals?date=${date}`
+    );
+    console.log(response.data, "response.data in thunk 2121");
+    return response.data;
+  }
+);
+
+export const getCleaningRentalsByDate = createAsyncThunk<Rental[], string>(
+  "rentals/cleaning",
+  async (date) => {
+    const response = await axios.get(
+      `http://localhost:5000/rentals/cleaning?date=${date}`
+    );
+    console.log(response.data, "response.data in slice cleaning 1111");
+    return response.data;
+  }
+);
+
+export const getEndingRentalsByDate = createAsyncThunk<Rental[], string>(
+  "rentals/ending",
+  async (date) => {
+    const response = await axios.get(
+      `http://localhost:5000/rentals/ends?date=${date}`
     );
     return response.data;
   }
@@ -82,6 +132,44 @@ const rentalsSlice = createSlice({
         state.rentals = action.payload.rentals;
         state.totalDeposit = action.payload.totalDeposit;
         state.loading = false;
+      }
+    );
+    builder.addCase(getTodayRentals.rejected, (state) => {
+      state.loading = false;
+    });
+    builder.addCase(getTodayEndingRentals.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(
+      getTodayEndingRentals.fulfilled,
+      (state, action: PayloadAction<Rental[]>) => {
+        state.todayEndingRentals = action.payload;
+        console.log(action.payload, "action.payload in slice");
+        state.loading = false;
+      }
+    );
+    builder.addCase(getTodayEndingRentals.rejected, (state) => {
+      state.loading = false;
+    });
+    builder.addCase(
+      getRentalsByDate.fulfilled,
+      (state, action: PayloadAction<Rental[]>) => {
+        state.rentalsByDate = action.payload;
+        console.log(action.payload, "BY DATE in slice rentalsByDate 5555");
+      }
+    );
+    builder.addCase(
+      getCleaningRentalsByDate.fulfilled,
+      (state, action: PayloadAction<Rental[]>) => {
+        state.cleaningsRentalsByDate = action.payload;
+        console.log(action.payload, "CLEANING RENTALS in slice 66666");
+      }
+    );
+    builder.addCase(
+      getEndingRentalsByDate.fulfilled,
+      (state, action: PayloadAction<Rental[]>) => {
+        state.endingRentalsByDate = action.payload;
+        console.log(action.payload, "ENDING RENTALS in slice 77777");
       }
     );
   },

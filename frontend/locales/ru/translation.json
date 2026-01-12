@@ -53,5 +53,12 @@
   "totalNeedToPay": "Всего к оплате",
   "notFound": "Ничего не найдено",
   "todaysRentals": "Аренды на сегодня",
-  "bookedToday": "Забронированные на сегодня"
+  "bookedToday": "Забронированные на сегодня",
+  "returnRentals": "Возврат аренд",
+  "noRentalsEndingToday": "Сегодня нет возврашаемых аренд.",
+  "ordersAndReturnsStatus": "Состояние заказов и возвратов на выбранную дату",
+  "youSelectedDate": "Вы выбрали дату",
+  "noBookingsForSelectedDate": "Нет бронирований на выбранную дату",
+  "noCleaningsForSelectedDate": "Нет вещей на химчистку на выбранную дату",
+  "noReturnsForSelectedDate": "Нет возвратов на выбранную дату"
 }

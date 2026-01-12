@@ -1,0 +1,71 @@
+.page {
+  padding: 32px;
+  background: #f6f7fb;
+  max-width: 1500px;
+  min-height: 100vh;
+}
+
+.title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #6b7280;
+  margin-bottom: 32px;
+}
+
+.layout {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  // background-color: #6366f1;
+  gap: 32px;
+}
+
+.sidebar {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.calendarWrapper {
+  margin-bottom: 24px;
+}
+
+/* react-calendar overrides */
+.react-calendar {
+  //   width: 100%;
+  border: none;
+  border-radius: 16px;
+  padding: 12px;
+  font-family: inherit;
+}
+
+.react-calendar__tile--active {
+  background: #6366f1 !important;
+  color: white !important;
+  border-radius: 10px;
+}
+
+.tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.content {
+  max-width: 1000px;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+  min-height: 400px;
+  display: flex;
+  justify-content: center;
+}

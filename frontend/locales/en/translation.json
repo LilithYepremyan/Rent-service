@@ -53,5 +53,12 @@
   "totalNeedToPay": "Total Need to Pay",
   "notFound": "Nothing found",
   "todaysRentals": "Today's Rentals",
-  "bookedToday": "Booked for Today"
+  "bookedToday": "Booked for Today",
+  "returnRentals": "Return Rentals",
+  "noRentalsEndingToday": "No rentals ending today.",
+  "ordersAndReturnsStatus": "Orders and Returns Status",
+  "youSelectedDate": "You selected date",
+  "noBookingsForSelectedDate": "No bookings for the selected date",
+  "noCleaningsForSelectedDate": "No clothes for cleaning on the selected date",
+  "noReturnsForSelectedDate": "No returns for the selected date"
 }

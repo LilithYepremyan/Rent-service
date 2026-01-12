@@ -52,5 +52,12 @@
   "totalNeedToPay": "Ընդհանուր վճարման ենթակա",
   "notFound": "Ոչինչ չի գտնվել",
   "todaysRentals": "Այսօրվա վարձակալություններ",
-  "bookedToday": "Այսօր ամրագրված է"
+  "bookedToday": "Այսօր ամրագրված է",
+  "returnRentals": "Վերադարձվող վարձակալություններ",
+  "noRentalsEndingToday": "Այսօր վերադարձվող վարձակալություններ չկան։",
+  "ordersAndReturnsStatus": "Պատվերների և վերադարձների կարգավիճակը",
+  "youSelectedDate": "Դուք ընտրել եք",
+  "noBookingsForSelectedDate": "Ընտրված ամսաթվով ամրագրումներ չկան",
+  "noCleaningsForSelectedDate": "Ընտրված ամսաթվով քիմմաքրման համար հագուստներ չկան",
+  "noReturnsForSelectedDate": "Ընտրված ամսաթվով վերադարձվող վարձակալություններ չկան"
 }

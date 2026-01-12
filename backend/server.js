@@ -117,7 +117,7 @@ app.post("/rent", async (req, res) => {
     const { clothId, rentDate, customer } = req.body;
     const { firstName, lastName, phone, passport, deposit, description } =
       customer;
-    if (!clothId || !rentDate || !customer) {
+    if (!clothId || !rentDate || !customer?.firstName) {
       return res.status(400).json({
         message: "Нужны clothId, rentDate, customer info",
       });
@@ -306,17 +306,42 @@ app.get("/rentals", async (req, res) => {
 
 // ✅ Вещи для химчистки (за день до аренды)
 app.get("/rentals/cleaning", async (req, res) => {
-  const { date } = req.query;
-  const d = new Date(date);
-  const cleaningDate = new Date(d);
-  cleaningDate.setDate(cleaningDate.getDate() + 1);
+  try {
+    const { date } = req.query;
+    if (!date) {
+      return res.status(400).json({ message: "date обязателен" });
+    }
 
-  const rentals = await prisma.rental.findMany({
-    where: { rentDate: cleaningDate },
-    include: { cloth: true },
-  });
+    // День химчистки
+    const cleaningDay = new Date(date);
+    cleaningDay.setHours(0, 0, 0, 0);
 
-  res.json(rentals);
+    // День аренды = следующий день
+    const rentStart = new Date(cleaningDay);
+    rentStart.setDate(rentStart.getDate() + 1);
+
+    const rentEnd = new Date(rentStart);
+    rentEnd.setDate(rentEnd.getDate() + 1);
+
+    const rentals = await prisma.rental.findMany({
+      where: {
+        rentDate: {
+          gte: rentStart,
+          lt: rentEnd,
+        },
+      },
+      include: {
+        cloth: {
+          include: { photos: true },
+        },
+      },
+    });
+
+    res.json(rentals);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
 });
 
 // ✅ Брони, созданные сегодня
@@ -346,6 +371,65 @@ app.get("/rentals/today", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Ошибка при получении броней за сегодня" });
+  }
+});
+
+// ✅ Вещи, у которых аренда заканчивается сегодня
+app.get("/rentals/ends-today", async (req, res) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const rentals = await prisma.rental.findMany({
+      where: {
+        endDate: {
+          gte: today,
+          lt: tomorrow,
+        },
+      },
+      include: {
+        cloth: {
+          include: { photos: true },
+        },
+      },
+      orderBy: { endDate: "asc" },
+    });
+
+    res.json(rentals);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Ошибка при получении аренд с окончанием сегодня",
+    });
+  }
+});
+
+app.get("/rentals/ends", async (req, res) => {
+  try {
+    const { date } = req.query;
+
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+
+    const next = new Date(d);
+    next.setDate(next.getDate() + 1);
+
+    const rentals = await prisma.rental.findMany({
+      where: {
+        endDate: {
+          gte: d,
+          lt: next,
+        },
+      },
+      include: { cloth: { include: { photos: true } } },
+    });
+
+    res.json(rentals);
+  } catch (e) {
+    res.status(500).json({ message: "Ошибка" });
   }
 });
 

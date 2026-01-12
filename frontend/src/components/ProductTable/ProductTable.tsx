@@ -40,7 +40,7 @@ const ProductTable = ({ products }: { products: Rental[] }) => {
               </td>
               <td>{rental.cloth?.name || "-"}</td>
               <td>{rental.cloth?.color || "-"}</td>
-              <td>${rental.cloth?.price?.toFixed(2) || "-"}</td>
+              <td>{`${rental.cloth?.price || "-"} `}</td>
               <td>
                 {rental.customer
                   ? `${rental.customer.firstName} ${rental.customer.lastName}`
@@ -48,7 +48,7 @@ const ProductTable = ({ products }: { products: Rental[] }) => {
               </td>
               <td>{rental.customer?.phone || "-"}</td>
               <td>{rental.customer?.passport || "-"}</td>
-              <td>{rental.customer?.deposit || "-"}</td>
+              <td>{rental.customer?.deposit || "-"}</td>  
               <td>{rental.customer?.description || "-"}</td>
               <td>{rental.cloth?.price - rental.customer?.deposit}</td>
               <td>
@@ -60,7 +60,7 @@ const ProductTable = ({ products }: { products: Rental[] }) => {
             <td colSpan={8} className={styles.total}>
               {t("totalDeposit")}:{" "}
               {products.reduce(
-                (sum, rental) => sum + rental.customer?.deposit,
+                (sum, rental) => sum + rental.customer?.deposit || 0,
                 0
               )}
             </td>
