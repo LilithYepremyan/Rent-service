@@ -79,7 +79,6 @@ export const getRentalsByDate = createAsyncThunk<Rental[], string>(
     const response = await axios.get(
       `http://localhost:5000/rentals?date=${date}`
     );
-    console.log(response.data, "response.data in thunk 2121");
     return response.data;
   }
 );
@@ -90,7 +89,6 @@ export const getCleaningRentalsByDate = createAsyncThunk<Rental[], string>(
     const response = await axios.get(
       `http://localhost:5000/rentals/cleaning?date=${date}`
     );
-    console.log(response.data, "response.data in slice cleaning 1111");
     return response.data;
   }
 );
@@ -144,7 +142,6 @@ const rentalsSlice = createSlice({
       getTodayEndingRentals.fulfilled,
       (state, action: PayloadAction<Rental[]>) => {
         state.todayEndingRentals = action.payload;
-        console.log(action.payload, "action.payload in slice");
         state.loading = false;
       }
     );
@@ -155,21 +152,18 @@ const rentalsSlice = createSlice({
       getRentalsByDate.fulfilled,
       (state, action: PayloadAction<Rental[]>) => {
         state.rentalsByDate = action.payload;
-        console.log(action.payload, "BY DATE in slice rentalsByDate 5555");
       }
     );
     builder.addCase(
       getCleaningRentalsByDate.fulfilled,
       (state, action: PayloadAction<Rental[]>) => {
         state.cleaningsRentalsByDate = action.payload;
-        console.log(action.payload, "CLEANING RENTALS in slice 66666");
       }
     );
     builder.addCase(
       getEndingRentalsByDate.fulfilled,
       (state, action: PayloadAction<Rental[]>) => {
         state.endingRentalsByDate = action.payload;
-        console.log(action.payload, "ENDING RENTALS in slice 77777");
       }
     );
   },

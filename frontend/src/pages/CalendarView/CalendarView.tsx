@@ -9,9 +9,11 @@ import {
   getCleaningRentalsByDate,
   getEndingRentalsByDate,
   getRentalsByDate,
+  type Rental,
 } from "../../features/rentals/rentalsSlice";
 import TabButton from "../../components/TabButton/TabButton";
 import ProductTable from "../../components/ProductTable/ProductTable";
+import type { RootState } from "../../app/store";
 
 const CalendarView: React.FC = () => {
   const [activeTab, setActiveTab] = React.useState<
@@ -23,13 +25,13 @@ const CalendarView: React.FC = () => {
   const { t } = useTranslation();
 
   const rentalsByDate = useSelector(
-    (state: any) => state.rentals.rentalsByDate
+    (state: RootState) => state.rentals.rentalsByDate
   );
   const cleaningsRentalsByDate = useSelector(
-    (state: any) => state.rentals.cleaningsRentalsByDate
+    (state: RootState) => state.rentals.cleaningsRentalsByDate
   );
   const endingRentalsByDate = useSelector(
-    (state: any) => state.rentals.endingRentalsByDate
+    (state: RootState) => state.rentals.endingRentalsByDate
   );
 
   const handleDayClick = (date: Date) => {
@@ -63,7 +65,7 @@ const CalendarView: React.FC = () => {
               activeTab={activeTab}
               onClick={() => setActiveTab("booking")}
             >
-              Booking ({rentalsByDate.length})
+              {t("booking")} ({rentalsByDate.length})
             </TabButton>
 
             <TabButton
@@ -71,7 +73,7 @@ const CalendarView: React.FC = () => {
               activeTab={activeTab}
               onClick={() => setActiveTab("cleaning")}
             >
-              Cleaning ({cleaningsRentalsByDate.length})
+              {t("cleaning")} ({cleaningsRentalsByDate.length})
             </TabButton>
 
             <TabButton
@@ -79,7 +81,7 @@ const CalendarView: React.FC = () => {
               activeTab={activeTab}
               onClick={() => setActiveTab("return")}
             >
-              Return ({endingRentalsByDate.length})
+              {t("return")} ({endingRentalsByDate.length})
             </TabButton>
           </div>
         </aside>

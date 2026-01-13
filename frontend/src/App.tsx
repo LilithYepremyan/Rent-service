@@ -1,15 +1,15 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Booking from "./pages/Booking";
-import CleaningList from "./pages/CleaningPage";
-import ClothesList from "./pages/ClothesPage";
+import Booking from "./pages/Booking/Booking";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import NavBar from "./components/NavBar/NavBar";
 import AdminPanel from "./components/AdminPanel/AdminPanel";
-import TodayRentals from "./pages/TodayRentals";
-import ReturnRentals from "./pages/ReturnRentals";
 import CalendarView from "./pages/CalendarView/CalendarView";
+import TodayRentals from "./pages/TodayRentals/TodayRentals";
+import ReturnRentals from "./pages/ReturnRentals/ReturnRentals";
+import ClothesPage from "./pages/ClothesPage/ClothesPage";
+import CleaningPage from "./pages/CleaningPage/CleaningPage";
 
 const App: React.FC = () => {
   return (
@@ -24,10 +24,10 @@ const App: React.FC = () => {
         />
         <Routes>
           <Route path="/" element={<Booking />} />
-          <Route path="/clothes" element={<ClothesList />} />
+          <Route path="/clothes" element={<ClothesPage />} />
           <Route path="/calendar" element={<CalendarView />} />
           <Route path="/admin" element={<AdminPanel />} />
-          <Route path="/cleaning" element={<CleaningList />} />
+          <Route path="/cleaning" element={<CleaningPage />} />
           <Route path="/todays-rentals" element={<TodayRentals />} />
           <Route path="/return-rentals" element={<ReturnRentals />} />
         </Routes>

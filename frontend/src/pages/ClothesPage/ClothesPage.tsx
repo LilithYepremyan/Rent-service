@@ -5,14 +5,15 @@ import {
   getClothByCode,
   findFreeClothesByDate,
   type Cloth,
-} from "../features/clothes/clothesSlice";
+} from "../../features/clothes/clothesSlice";
 import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../app/store";
-import BookingModal from "../components/BookingModal/BookingModal";
-import ClothCard from "../components/ClothCard/ClothCard";
-import Filters from "../components/Filters/Filters";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import styles from "./ClothesPage.module.scss";
+import type { AppDispatch } from "../../app/store";
+import Filters from "../../components/Filters/Filters";
+import ClothCard from "../../components/ClothCard/ClothCard";
+import BookingModal from "../../components/BookingModal/BookingModal";
 
 const ClothesPage: React.FC = () => {
   const { t } = useTranslation();
@@ -89,15 +90,7 @@ const ClothesPage: React.FC = () => {
         <p style={{ padding: 20, fontSize: 20 }}>{t("notFound")}</p>
       )}
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 20,
-          padding: "20px 0",
-        }}
-      >
+      <div className={styles.wrapper}>
         {clothes.map((cloth) => (
           <ClothCard
             key={cloth.id}

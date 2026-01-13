@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllClothes } from "../features/clothes/clothesSlice";
+import { getAllClothes } from "../../features/clothes/clothesSlice";
 import { useTranslation } from "react-i18next";
-import type { RootState, AppDispatch } from "../app/store";
-import ProductTable from "../components/ProductTable/ProductTable";
-import Badge from "../components/Badge/Badge";
+import type { RootState, AppDispatch } from "../../app/store";
+import ProductTable from "../../components/ProductTable/ProductTable";
+import Badge from "../../components/Badge/Badge";
+import styles from "./Booking.module.scss";
 
 const Booking: React.FC = () => {
   const { t } = useTranslation();
@@ -25,7 +26,7 @@ const Booking: React.FC = () => {
 
   return (
     <>
-      <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+      <div className={styles.wrapper}>
         <h2>{t("bookedToday")}</h2>
         <Badge count={todayRentals.length} />
       </div>

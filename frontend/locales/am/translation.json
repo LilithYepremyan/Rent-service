@@ -59,5 +59,6 @@
   "youSelectedDate": "Դուք ընտրել եք",
   "noBookingsForSelectedDate": "Ընտրված ամսաթվով ամրագրումներ չկան",
   "noCleaningsForSelectedDate": "Ընտրված ամսաթվով քիմմաքրման համար հագուստներ չկան",
-  "noReturnsForSelectedDate": "Ընտրված ամսաթվով վերադարձվող վարձակալություններ չկան"
+  "noReturnsForSelectedDate": "Ընտրված ամսաթվով վերադարձվող վարձակալություններ չկան",
+  "return": "Վերադարձ"
 }

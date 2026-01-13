@@ -60,5 +60,6 @@
   "youSelectedDate": "You selected date",
   "noBookingsForSelectedDate": "No bookings for the selected date",
   "noCleaningsForSelectedDate": "No clothes for cleaning on the selected date",
-  "noReturnsForSelectedDate": "No returns for the selected date"
+  "noReturnsForSelectedDate": "No returns for the selected date",
+  "return": "Return"
 }

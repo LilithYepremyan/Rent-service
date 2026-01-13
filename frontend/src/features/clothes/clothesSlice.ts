@@ -50,7 +50,6 @@ export const getClothByCode = createAsyncThunk(
       `http://localhost:5000/clothes/${clothCode}`
     );
 
-    console.log("getClothByCode response:", response.data);
     return response.data;
   }
 );

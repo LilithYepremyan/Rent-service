@@ -60,5 +60,6 @@
   "youSelectedDate": "Вы выбрали дату",
   "noBookingsForSelectedDate": "Нет бронирований на выбранную дату",
   "noCleaningsForSelectedDate": "Нет вещей на химчистку на выбранную дату",
-  "noReturnsForSelectedDate": "Нет возвратов на выбранную дату"
+  "noReturnsForSelectedDate": "Нет возвратов на выбранную дату",
+  "return": "Возврат"
 }

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getTodayEndingRentals } from "../features/rentals/rentalsSlice";
-import ProductTable from "../components/ProductTable/ProductTable";
+import { getTodayEndingRentals } from "../../features/rentals/rentalsSlice";
+import ProductTable from "../../components/ProductTable/ProductTable";
 // import { useTranslation } from "react-i18next";
 
 const ReturnRentals = () => {
@@ -12,7 +12,6 @@ const ReturnRentals = () => {
     (state) => state.rentals.todayEndingRentals
   );
 
-  console.log(todayEndingRentals, "todayEndingRentals");
 
   useEffect(() => {
     dispatch(getTodayEndingRentals());

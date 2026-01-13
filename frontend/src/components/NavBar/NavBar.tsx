@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { Tooltip } from "react-tooltip";
 import styles from "./NavBar.module.scss";
 
 const NavBar = () => {
@@ -24,16 +25,20 @@ const NavBar = () => {
       <div className={styles.linksContainer}>
         {links.map((link) => {
           return (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              className={({ isActive }) =>
-                `${styles.link} ${isActive ? styles.active : ""}`
-              }
-            >
-              {link.label}
-              <span className={styles.underline} />
-            </NavLink>
+            <>
+              <Tooltip id={link.to} key={link.to} content={link.label} className={styles.tooltip} />
+              <NavLink
+                data-tooltip-id={link.to}
+                key={link.to}
+                to={link.to}
+                className={({ isActive }) =>
+                  `${styles.link} ${isActive ? styles.active : ""}`
+                }
+              >
+                {link.label}
+                <span className={styles.underline} />
+              </NavLink>
+            </>
           );
         })}
       </div>
