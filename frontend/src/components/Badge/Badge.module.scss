@@ -1,10 +1,12 @@
+@import "../../styles/colors.scss";
+
 .badge {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 3px;
-  height: 20px;
-  width: 20px;
-  border-radius: 50%;
-  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  height: 25px; 
+  width: 25px;
+  border-radius: 50%; 
+  background: $primary-800;
 }

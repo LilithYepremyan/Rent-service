@@ -16,16 +16,18 @@ const TodayRentals = () => {
   }, [dispatch]);
   return (
     <>
-      <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-        <h2>{t("bookedForToday")}</h2>
-        <Badge count={todayRentals.length} />
-      </div>
       {todayRentals.length === 0 ? (
         <>
           <p>{t("noBookingsForToday")}</p>
         </>
       ) : (
-        <ProductTable products={todayRentals} />
+        <>
+          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+            <h2>{t("bookedForToday")}</h2>
+            <Badge count={todayRentals.length} />
+          </div>
+          <ProductTable products={todayRentals} />
+        </>
       )}
     </>
   );

@@ -26,7 +26,12 @@ const NavBar = () => {
         {links.map((link) => {
           return (
             <>
-              <Tooltip id={link.to} key={link.to} content={link.label} className={styles.tooltip} />
+              <Tooltip
+                id={link.to}
+                key={link.label}
+                content={link.label}
+                className={styles.tooltip}
+              />
               <NavLink
                 data-tooltip-id={link.to}
                 key={link.to}

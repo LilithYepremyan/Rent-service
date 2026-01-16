@@ -1,3 +1,5 @@
+@import "../../styles/colors.scss";
+
 .wrapper {
   max-width: 450px;
   margin: 50px auto;
@@ -5,14 +7,14 @@
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(15px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px $box-shadow;
   text-align: center;
   font-family: Arial, sans-serif;
 }
 
 .title {
   margin-bottom: 20px;
-  color: #2563eb;
+  color: $primary-800;
 }
 
 .form {
@@ -28,7 +30,7 @@
 .input {
   padding: 10px 15px;
   border-radius: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid $gray-300;
   outline: none;
   font-size: 0.95rem;
   transition: all 0.3s;
@@ -38,8 +40,8 @@
   margin-top: 20px;
   padding: 10px 15px;
   font-size: 15px;
-  color: #fff;
-  background-color: #97b5f0;
+  color: $white;
+  background-color:$primary-800;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s;
@@ -61,13 +63,13 @@
   height: 80px;
   object-fit: cover;
   border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: $box-shadow;
 }
 
 .button {
   padding: 10px 15px;
-  background: linear-gradient(90deg, #3b82f6, #2563eb);
-  color: #fff;
+  background: $underline-gradient;
+  color: $white;
   border: none;
   border-radius: 10px;
   cursor: pointer;

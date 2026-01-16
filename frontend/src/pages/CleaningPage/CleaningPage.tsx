@@ -27,15 +27,16 @@ const CleaningPage: React.FC = () => {
 
   return (
     <div>
-      <div className={styles.wrapper}>
-        <h2>{t("clothesForCleaning")}</h2>
-        <Badge count={count} />
-      </div>
-
       {count === 0 ? (
         <p>{t("noClothesForCleaning")}</p>
       ) : (
-        <ProductTable products={todayCleanings} />
+        <>
+          <div className={styles.wrapper}>
+            <h2>{t("clothesForCleaning")}</h2>
+            <Badge count={count} />
+          </div>
+          <ProductTable products={todayCleanings} />
+        </>
       )}
     </div>
   );

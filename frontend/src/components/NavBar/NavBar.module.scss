@@ -1,3 +1,5 @@
+@import "../../styles/colors.scss";
+
 .navbar {
   display: flex;
   position: fixed;
@@ -8,7 +10,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: rgb(255, 255, 255);
+  background-color: $white;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.25);
   transition: all 0.3s ease;
@@ -24,45 +26,30 @@
 
 .link {
   position: relative;
-  // width: max-content;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
   max-width: 200px;
   font-size: 1rem;
   font-weight: 600;
-  color: #4b5563;
+  color: $gray-700;
   letter-spacing: 0.05em;
   text-decoration: none;
   transition: all 0.3s ease;
 
   &:hover {
-    color: #3b82f6;
+    color: $primary-800;
     transform: scale(1.05);
-
-    .underline {
-      width: 100%;
-      opacity: 1;
-    }
   }
 }
 
 .active {
-  color: #1e40af;
-}
-.underline {
-  position: absolute;
-  left: 0;
-  bottom: -4px;
-  height: 2px;
-  border-radius: 9999px;
-  background: linear-gradient(to right, #60a5fa, #2563eb);
-  transition: all 0.3s ease-in-out;
+  color: $primary-800;
 }
 
 .tooltip {
-  background-color: #24314b !important;
-  color: #fff !important;
+  background-color: $tooltip-bg !important;
+  color: $white !important;
 
   padding: 6px 10px !important;
   border-radius: 8px !important;
@@ -75,16 +62,16 @@
 
 .langContainer {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .langButton {
   background: rgba(255, 255, 255, 0.3);
-  color: #4b5563;
+  color: $gray-700;
   box-shadow: "none";
   transform: scale(1);
 
-  padding: 0.4rem 1rem;
+  padding: 0.4rem 0.6rem;
   border: none;
   border-radius: 10px;
 
@@ -97,14 +84,14 @@
   backdrop-filter: blur(5px);
 
   &:hover {
-    background: linear-gradient(to right, #dbeafe, #bfdbfe);
-    color: #1e40af;
+    background: linear-gradient(to right, $primary-200, $primary-800);
+    color: $white;
   }
 }
 
 .langButtonActive {
-  background: linear-gradient(to right, #3b82f6, #1d4ed8);
-  color: #fff;
+  background: linear-gradient(to right, $primary-200, $primary-800);
+  color: $white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transform: scale(1.05);
 }

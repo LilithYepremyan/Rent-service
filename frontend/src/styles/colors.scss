@@ -1,0 +1,31 @@
+/* Primary */
+$primary-900: #173f4e;
+$primary-800: #4b9692;
+$primary-700: #4e6362;
+$primary-500: #6e7e82;
+$primary-300: #a0b1b4;
+$primary-200: #a4c3b2;
+$primary-100: #dbeafe;
+$primary-50:rgba(164, 195, 178, 0.14);
+
+/* Neutral / Gray */
+$gray-900: #111827;
+$gray-700: #374151;
+$gray-500: #6b7280;
+$gray-300: #d1d5db;
+$gray-100: #f3f4f6;
+
+/* White */
+$white: #ffffff;
+
+/* Black */
+$black: #000000;
+
+/* Tooltip */
+$tooltip-bg: #24314b;
+
+/* Hover / Gradient */
+$hover-bg: linear-gradient(to right, #dbeafe, #bfdbfe);
+$underline-gradient: linear-gradient(to right, #4b9692, #173f4e);
+
+$box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);

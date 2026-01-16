@@ -26,14 +26,16 @@ const Booking: React.FC = () => {
 
   return (
     <>
-      <div className={styles.wrapper}>
-        <h2>{t("bookedToday")}</h2>
-        <Badge count={todayRentals.length} />
-      </div>
       {todayRentals.length === 0 ? (
         <p>{t("noBookingsForToday")}</p>
       ) : (
-        <ProductTable products={todayRentals} />
+        <>
+          <div className={styles.wrapper}>
+            <h2>{t("bookedToday")}</h2>
+            <Badge count={todayRentals.length} />
+          </div>
+          <ProductTable products={todayRentals} />
+        </>
       )}
     </>
   );

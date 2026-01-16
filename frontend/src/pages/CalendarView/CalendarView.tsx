@@ -9,7 +9,6 @@ import {
   getCleaningRentalsByDate,
   getEndingRentalsByDate,
   getRentalsByDate,
-  type Rental,
 } from "../../features/rentals/rentalsSlice";
 import TabButton from "../../components/TabButton/TabButton";
 import ProductTable from "../../components/ProductTable/ProductTable";
