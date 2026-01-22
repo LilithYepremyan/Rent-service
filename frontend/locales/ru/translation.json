@@ -61,5 +61,12 @@
   "noBookingsForSelectedDate": "Нет бронирований на выбранную дату",
   "noCleaningsForSelectedDate": "Нет вещей на химчистку на выбранную дату",
   "noReturnsForSelectedDate": "Нет возвратов на выбранную дату",
-  "return": "Возврат"
+  "return": "Возврат",
+  "requiredField": "Обязательное поле",
+  "firstNameRequired": "Имя обязательно",
+  "lastNameRequired": "Фамилия обязательна",
+  "phoneRequired": "Номер телефона обязателен",
+  "invalidPhoneArmenia": "Неверный номер телефона для Армении",
+  "invalidPassport": "Неверный номер паспорта",
+  "depositCannotBeNegative": "Депозит не может быть отрицательным"
 }

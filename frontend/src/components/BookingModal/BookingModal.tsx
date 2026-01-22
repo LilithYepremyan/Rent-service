@@ -10,7 +10,10 @@ import {
   type Rental,
 } from "../../features/rentals/rentalsSlice";
 import { useTranslation } from "react-i18next";
-import { t } from "i18next";
+
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
 interface Photo {
   id: number;
@@ -33,7 +36,7 @@ export interface Customer {
   phone: string;
   passport: string;
   deposit: number;
-  description: string;
+  description?: string;
 }
 
 interface ModalProps {
@@ -70,14 +73,24 @@ const bookCloth = async (
       userId,
       customer,
     });
-    toast.success(t("bookingSuccessful"));
     return response.data;
-  } catch (error: any) {
+  } catch (error) {
     console.error("Ошибка при бронировании:", error);
-    toast.error(t("bookingError"));
     return null;
   }
 };
+
+const bookingSchema = yup.object({
+  firstName: yup.string().required("firstNameRequired"),
+  lastName: yup.string().required("lastNameRequired"),
+  phone: yup
+    .string()
+    .matches(/^(\+374|0)([1-9]\d{7})$/, "invalidPhoneArmenia")
+    .required("phoneRequired"),
+  passport: yup.string().required("passportRequired"),
+  deposit: yup.number().min(0, "depositCannotBeNegative").required(),
+  description: yup.string().optional(),
+});
 
 const BookingModal: React.FC<ModalProps> = ({
   visible,
@@ -88,15 +101,22 @@ const BookingModal: React.FC<ModalProps> = ({
   const dispatch = useDispatch<AppDispatch>();
   const rentals = useSelector((state: RootState) => state.rentals.rentals);
   const { t } = useTranslation();
-  const [loading, setLoading] = useState(false);
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [passport, setPassport] = useState("");
-  const [deposit, setDeposit] = useState(5000);
-  const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<Customer>({
+    resolver: yupResolver(bookingSchema),
+    defaultValues: {
+      deposit: 5000,
+      description: "Check",
+    },
+  });
 
   useEffect(() => {
     if (cloth) dispatch(getAllRentals());
@@ -108,6 +128,16 @@ const BookingModal: React.FC<ModalProps> = ({
   );
 
   if (!visible || !cloth) return null;
+
+  const isBooked = (date: Date) =>
+    clothRentals.some((r) => {
+      const rentDate = new Date(r.rentDate);
+      return (
+        rentDate.getUTCFullYear() === date.getFullYear() &&
+        rentDate.getUTCMonth() === date.getMonth() &&
+        rentDate.getUTCDate() === date.getDate()
+      );
+    });
 
   const getDayStatus = (date: Date) => {
     for (const r of clothRentals) {
@@ -124,29 +154,9 @@ const BookingModal: React.FC<ModalProps> = ({
     return "";
   };
 
-  const isBooked = (date: Date) =>
-    clothRentals.some((r) => {
-      const rentDate = new Date(r.rentDate);
-      return (
-        rentDate.getUTCFullYear() === date.getFullYear() &&
-        rentDate.getUTCMonth() === date.getMonth() &&
-        rentDate.getUTCDate() === date.getDate()
-      );
-    });
-
-  const resetForm = () => {
-    setSelectedDate(null);
-    setFirstName("");
-    setLastName("");
-    setPhone("");
-    setPassport("");
-    setDeposit(5000);
-    setDescription("");
-  };
-
-  const handleConfirm = async () => {
-    if (!selectedDate || !firstName || !lastName || !phone || !passport) {
-      toast.warn(t("fillAllFields"));
+  const onSubmit = async (data: Customer) => {
+    if (!selectedDate) {
+      toast.warn(t("selectDate"));
       return;
     }
 
@@ -155,29 +165,20 @@ const BookingModal: React.FC<ModalProps> = ({
       return;
     }
 
-    if (deposit < 0) {
-      toast.warn(t("depositCannotBeNegative"));
-      return;
-    }
-
     setLoading(true);
 
-    const formattedDate = toYMD(selectedDate);
-    const result = await bookCloth(cloth.id, formattedDate, 1, {
-      firstName,
-      lastName,
-      phone,
-      passport,
-      deposit,
-      description,
-    });
+    const result = await bookCloth(cloth.id, toYMD(selectedDate), 1, data);
 
     setLoading(false);
 
     if (result) {
+      toast.success(t("bookingSuccessful"));
       refreshData();
-      resetForm();
+      reset();
+      setSelectedDate(null);
       onClose();
+    } else {
+      toast.error(t("bookingError"));
     }
   };
 
@@ -205,66 +206,72 @@ const BookingModal: React.FC<ModalProps> = ({
             minDate={new Date()}
           />
 
-          <div className={styles.formFields}>
-            <label>{t("firstName")} *</label>
-            <input
-              type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-            />
+          <form onSubmit={handleSubmit(onSubmit)} className={styles.formFields}>
+            <div>
+              <label>{t("firstName")} *</label>
+              <input {...register("firstName")} />
+              {errors.firstName && (
+                <span className={styles.error}>
+                  {t(errors.firstName.message!)}
+                </span>
+              )}
+            </div>
 
-            <label>{t("lastName")} *</label>
-            <input
-              type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              required
-            />
+            <div>
+              <label>{t("lastName")} *</label>
+              <input {...register("lastName")} />
+              {errors.lastName && (
+                <span className={styles.error}>
+                  {t(errors.lastName.message!)}
+                </span>
+              )}
+            </div>
+            <div>
+              <label>{t("phone")} *</label>
+              <input {...register("phone")} placeholder="098 11 11 11" />
+              {errors.phone && (
+                <span className={styles.error}>{t(errors.phone.message!)}</span>
+              )}
+            </div>
 
-            <label>{t("phone")} *</label>
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              pattern="[0-9+ ]{7,15}"
-              required
-            />
+            <div>
+              <label>{t("passport")} *</label>
+              <input {...register("passport")} />
+              {errors.passport && (
+                <span className={styles.error}>
+                  {t(errors.passport.message!)}
+                </span>
+              )}
+            </div>
 
-            <label>{t("passport")} *</label>
-            <input
-              type="text"
-              value={passport}
-              onChange={(e) => setPassport(e.target.value)}
-              required
-            />
+            <div>
+              <label>{t("deposit")}</label>
+              <input type="number" {...register("deposit")} />
+              {errors.deposit && (
+                <span className={styles.error}>
+                  {t(errors.deposit.message!)}
+                </span>
+              )}
+            </div>
 
-            <label>{t("deposit")}</label>
-            <input
-              type="number"
-              value={deposit}
-              min={0}
-              onChange={(e) => setDeposit(Number(e.target.value))}
-            />
-
-            <label>{t("description")}</label>
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
+            <div>
+              <label>{t("description")}</label>
+              <input {...register("description")} />
+            </div>
 
             <button
-              onClick={handleConfirm}
+              type="submit"
               className={`${styles.btn} ${styles.btnConfirm}`}
-              disabled={!selectedDate || isBooked(selectedDate) || loading}
+              disabled={  !selectedDate || loading}
             >
               {loading ? t("save") : t("confirmBooking")}
             </button>
 
             <button
+              type="button"
               onClick={() => {
-                resetForm();
+                reset();
+                setSelectedDate(null);
                 onClose();
               }}
               className={`${styles.btn} ${styles.btnCancel}`}
@@ -272,7 +279,7 @@ const BookingModal: React.FC<ModalProps> = ({
             >
               {t("cancel")}
             </button>
-          </div>
+          </form>
         </div>
       </div>
     </div>

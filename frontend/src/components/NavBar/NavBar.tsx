@@ -28,13 +28,13 @@ const NavBar = () => {
             <>
               <Tooltip
                 id={link.to}
-                key={link.label}
+                key={link.to}
                 content={link.label}
                 className={styles.tooltip}
               />
               <NavLink
                 data-tooltip-id={link.to}
-                key={link.to}
+                key={link.label}
                 to={link.to}
                 className={({ isActive }) =>
                   `${styles.link} ${isActive ? styles.active : ""}`

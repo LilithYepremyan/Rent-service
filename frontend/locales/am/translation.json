@@ -60,5 +60,13 @@
   "noBookingsForSelectedDate": "Ընտրված ամսաթվով ամրագրումներ չկան",
   "noCleaningsForSelectedDate": "Ընտրված ամսաթվով քիմմաքրման համար հագուստներ չկան",
   "noReturnsForSelectedDate": "Ընտրված ամսաթվով վերադարձվող վարձակալություններ չկան",
-  "return": "Վերադարձ"
+  "return": "Վերադարձ",
+  "requiredField": "Պարտադիր դաշտ",
+  "firstNameRequired": "Պարտադիր է նշել անունը",
+  "lastNameRequired": "Պարտադիր է նշել ազգանունը",
+  "phoneRequired": "Պարտադիր է նշել հեռախոսահամարը",
+  "passportRequired": "Պարտադիր է նշել անձնագրի տվյալները",
+  "invalidPhoneArmenia": "Անվավեր հայկական հեռախոսահամար",
+  "invalidPassport": "Անվավեր անձնագրի տվյալներ",
+  "depositCannotBeNegative": "Կանխավճարը չի կարող լինել բացասական"
 }

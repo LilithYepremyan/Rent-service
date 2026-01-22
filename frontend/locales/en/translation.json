@@ -61,5 +61,13 @@
   "noBookingsForSelectedDate": "No bookings for the selected date",
   "noCleaningsForSelectedDate": "No clothes for cleaning on the selected date",
   "noReturnsForSelectedDate": "No returns for the selected date",
-  "return": "Return"
+  "return": "Return",
+  "requiredField": "Required field",
+  "firstNameRequired": "First name is required",
+  "lastNameRequired": "Last name is required",
+  "invalidPhoneArmenia": "Invalid phone number for Armenia",
+  "phoneRequired": "Phone number is required",
+  "passportRequired": "Passport information is required",
+  "invalidPassport": "Invalid passport number",
+  "depositCannotBeNegative": "Deposit cannot be negative"
 }
