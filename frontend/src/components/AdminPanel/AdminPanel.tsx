@@ -115,8 +115,7 @@ const AdminPanel: React.FC = () => {
               name={field.name}
               type={field.type}
               className={styles.input}
-              onFocus={(e) => (e.currentTarget.style.borderColor = "#2563eb")}
-              onBlur={(e) => (e.currentTarget.style.borderColor = "#ddd")}
+           
             />
           </React.Fragment>
         ))}

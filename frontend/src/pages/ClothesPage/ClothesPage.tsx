@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import styles from "./ClothesPage.module.scss";
-import type { AppDispatch } from "../../app/store";
+import type { AppDispatch, RootState } from "../../app/store";
 import Filters from "../../components/Filters/Filters";
 import ClothCard from "../../components/ClothCard/ClothCard";
 import BookingModal from "../../components/BookingModal/BookingModal";
@@ -91,7 +91,7 @@ const ClothesPage: React.FC = () => {
       )}
 
       <div className={styles.wrapper}>
-        {clothes.map((cloth) => (
+        {clothes.map((cloth: Cloth) => (
           <ClothCard
             key={cloth.id}
             cloth={cloth}
