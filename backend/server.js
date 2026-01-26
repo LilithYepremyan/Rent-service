@@ -434,4 +434,5 @@ app.get("/rentals/ends", async (req, res) => {
 });
 
 // ✅ Запускаем сервер
-app.listen(5000, () => console.log("✅ Server running on port 5000"));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
