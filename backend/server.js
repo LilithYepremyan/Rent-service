@@ -26,6 +26,10 @@ const upload = multer({ storage });
 // Статика для изображений
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+app.get("/", (req, res) => {
+  res.send("👋 Welcome to the Rent Service API");
+});
+
 // ✅ Добавление одежды
 app.post("/clothes", upload.array("photos", 5), async (req, res) => {
   try {
