@@ -1,4 +1,4 @@
-@import "../../styles/colors.scss";
+@use "../../styles/colors.scss" as *;
 
 .tabButton {
   padding: 8px 14px;

@@ -1,4 +1,4 @@
-@import "../../styles/colors.scss";
+@use "../../styles/colors.scss" as *;
 .wrapper {
   max-height: 600px;
   overflow-x: auto;
