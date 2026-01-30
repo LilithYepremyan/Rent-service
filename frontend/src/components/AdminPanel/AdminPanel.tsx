@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import styles from "./AdminPanel.module.scss";
 import { useNavigate } from "react-router-dom";
+import api from "../../api/axios";
 
 interface FormValues {
   code: string;
@@ -55,7 +55,7 @@ const AdminPanel: React.FC = () => {
         formData.append("photos", file);
       });
 
-      await axios.post("http://localhost:5000/clothes", formData, {
+      await api.post("/clothes", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

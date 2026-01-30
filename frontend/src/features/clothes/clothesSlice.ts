@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../../api/axios";
 import type { Rental } from "../rentals/rentalsSlice";
 
 export interface Photo {
@@ -31,7 +31,7 @@ const initialState: ClothesState = {
 export const getAllClothes = createAsyncThunk(
   "clothes/getAllClothes",
   async () => {
-    const response = await axios.get<Cloth[]>("http://localhost:5000/clothes");
+    const response = await api.get<Cloth[]>("/clothes");
     return response.data;
   }
 );
@@ -39,16 +39,14 @@ export const getAllClothes = createAsyncThunk(
 export const deleteCloth = createAsyncThunk(
   "clothes/deleteCloth",
   async (clothId: number) => {
-    await axios.delete(`http://localhost:5000/clothes/${clothId}`);
+    await api.delete(`/clothes/${clothId}`);
     return clothId;
   }
 );
 export const getClothByCode = createAsyncThunk(
   "clothes/getClothByCode",
   async (clothCode: string) => {
-    const response = await axios.get<Cloth>(
-      `http://localhost:5000/clothes/${clothCode}`
-    );
+    const response = await api.get<Cloth>(`/clothes/${clothCode}`);
 
     return response.data;
   }
@@ -57,9 +55,7 @@ export const getClothByCode = createAsyncThunk(
 export const findFreeClothesByDate = createAsyncThunk<Cloth[], string>(
   "clothes/findFreeClothesByDate",
   async (date: string) => {
-    const response = await axios.get<Cloth[]>(
-      `http://localhost:5000/clothes/free/${date}`
-    );
+    const response = await api.get<Cloth[]>(`/clothes/free?date=${date}`);
     return response.data;
   }
 );

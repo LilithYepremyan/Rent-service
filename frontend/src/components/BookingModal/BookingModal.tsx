@@ -1,7 +1,6 @@
 import Calendar from "react-calendar";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useMemo, useState } from "react";
-import axios from "axios";
 import styles from "./BookingModal.module.scss";
 import type { AppDispatch, RootState } from "../../app/store";
 import { toast } from "react-toastify";
@@ -14,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import api from "../../api/axios";
 
 interface Photo {
   id: number;
@@ -67,7 +67,7 @@ const bookCloth = async (
   customer: Customer
 ) => {
   try {
-    const response = await axios.post("http://localhost:5000/rent", {
+    const response = await api.post("/rent", {
       clothId,
       rentDate,
       userId,
@@ -262,7 +262,7 @@ const BookingModal: React.FC<ModalProps> = ({
             <button
               type="submit"
               className={`${styles.btn} ${styles.btnConfirm}`}
-              disabled={  !selectedDate || loading}
+              disabled={!selectedDate || loading}
             >
               {loading ? t("save") : t("confirmBooking")}
             </button>
