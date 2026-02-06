@@ -28,6 +28,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.get("/", (req, res) => {
   res.send("👋 Welcome to the Rent Service API");
+  console.log("👋 Welcome to the Rent Service API");
 });
 
 // ✅ Добавление одежды
@@ -307,6 +308,40 @@ app.get("/rentals", async (req, res) => {
     res.status(500).json({ error: "Ошибка при получении броней" });
   }
 });
+
+// ✅ Брони в выбранную дату
+app.get("/rentals/forSelectedDate", async (req, res) => {
+  try {
+    const { date } = req.query;
+    if (!date) {
+      return res.status(400).json({ message: "date обязателен" });
+    }
+
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+
+    const next = new Date(d);
+    next.setDate(next.getDate() + 1);
+
+    const rentals = await prisma.rental.findMany({
+      where: {
+        startDate: { lte: d },
+        endDate: { gte: d },
+      },
+      include: {
+        cloth: { include: { photos: true } },
+      },
+      orderBy: { startDate: "asc" },
+    });
+
+    res.json(rentals);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Ошибка при получении бронирований" });
+  }
+});
+
+
 
 // ✅ Вещи для химчистки (за день до аренды)
 app.get("/rentals/cleaning", async (req, res) => {
