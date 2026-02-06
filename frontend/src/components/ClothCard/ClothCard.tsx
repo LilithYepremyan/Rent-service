@@ -26,7 +26,7 @@ const ClothCard: React.FC<ClothCardProps> = ({ cloth, onBook, onDelete }) => {
     >
       {cloth.photos.length > 0 && (
         <img
-          src={`http://localhost:5000${cloth.photos[0].url}`}
+          src={`${import.meta.env.VITE_API_URL}${cloth.photos[0].url}`}
           alt={cloth.name}
           className={styles.photo}
         />

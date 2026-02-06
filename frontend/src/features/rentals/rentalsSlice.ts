@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-import axios from "axios";
 import type { Cloth } from "../clothes/clothesSlice";
 import type { Customer } from "../../components/BookingModal/BookingModal";
+import api from "../../api/axios";
 
 export interface Rental {
   id: number;
@@ -22,6 +22,7 @@ export interface Rental {
 
 interface RentalsState {
   rentals: Rental[];
+  todayRentals: Rental[];
   todayEndingRentals: Rental[];
   rentalsByDate: Rental[];
   cleaningsRentalsByDate: Rental[];
@@ -32,6 +33,7 @@ interface RentalsState {
 
 const initialState: RentalsState = {
   rentals: [],
+  todayRentals: [],
   todayEndingRentals: [],
   rentalsByDate: [],
   cleaningsRentalsByDate: [],
@@ -48,7 +50,7 @@ interface TodayRentalsResponse {
 export const getAllRentals = createAsyncThunk<Rental[], void>(
   "rentals/fetchRentals",
   async () => {
-    const response = await axios.get<Rental[]>("http://localhost:5000/rentals");
+    const response = await api.get<Rental[]>("/rentals");
     return response.data;
   }
 );
@@ -56,9 +58,7 @@ export const getAllRentals = createAsyncThunk<Rental[], void>(
 export const getTodayRentals = createAsyncThunk<TodayRentalsResponse, void>(
   "rentals/getTodayRentals",
   async () => {
-    const response = await axios.get<TodayRentalsResponse>(
-      "http://localhost:5000/rentals/today"
-    );
+    const response = await api.get<TodayRentalsResponse>("/rentals/today");
     return response.data;
   }
 );
@@ -66,29 +66,26 @@ export const getTodayRentals = createAsyncThunk<TodayRentalsResponse, void>(
 export const getTodayEndingRentals = createAsyncThunk<Rental[], void>(
   "rentals/getTodayEndingRentals",
   async () => {
-    const response = await axios.get<Rental[]>(
-      "http://localhost:5000/rentals/ends-today"
-    );
+    const response = await api.get<Rental[]>("/rentals/ends-today");
     return response.data;
   }
 );
 
 export const getRentalsByDate = createAsyncThunk<Rental[], string>(
-  "rentals/byDate",
+  "rentals/rentalsByDate",
   async (date) => {
-    const response = await axios.get(
-      `http://localhost:5000/rentals?date=${date}`
+    const response = await api.get<Rental[]>(
+      `/rentals/forSelectedDate?date=${date}`
     );
     return response.data;
   }
 );
 
+
 export const getCleaningRentalsByDate = createAsyncThunk<Rental[], string>(
   "rentals/cleaning",
   async (date) => {
-    const response = await axios.get(
-      `http://localhost:5000/rentals/cleaning?date=${date}`
-    );
+    const response = await api.get<Rental[]>(`/rentals/cleaning?date=${date}`);
     return response.data;
   }
 );
@@ -96,9 +93,7 @@ export const getCleaningRentalsByDate = createAsyncThunk<Rental[], string>(
 export const getEndingRentalsByDate = createAsyncThunk<Rental[], string>(
   "rentals/ending",
   async (date) => {
-    const response = await axios.get(
-      `http://localhost:5000/rentals/ends?date=${date}`
-    );
+    const response = await api.get<Rental[]>(`/rentals/ends?date=${date}`);
     return response.data;
   }
 );
@@ -127,7 +122,8 @@ const rentalsSlice = createSlice({
     builder.addCase(
       getTodayRentals.fulfilled,
       (state, action: PayloadAction<TodayRentalsResponse>) => {
-        state.rentals = action.payload.rentals;
+
+        state.todayRentals = action.payload.rentals;
         state.totalDeposit = action.payload.totalDeposit;
         state.loading = false;
       }

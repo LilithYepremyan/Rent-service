@@ -31,7 +31,9 @@ const ProductTable = ({ products }: { products: Rental[] }) => {
                 {rental.cloth?.photos?.[0] ? (
                   <img
                     className={styles.productImg}
-                    src={`http://localhost:5000${rental.cloth.photos[0].url}`}
+                    src={`${import.meta.env.VITE_API_URL}${
+                      rental.cloth.photos[0].url
+                    }`}
                     alt={rental.cloth.name}
                   />
                 ) : (
@@ -48,7 +50,7 @@ const ProductTable = ({ products }: { products: Rental[] }) => {
               </td>
               <td>{rental.customer?.phone || "-"}</td>
               <td>{rental.customer?.passport || "-"}</td>
-              <td>{rental.customer?.deposit || "-"}</td>  
+              <td>{rental.customer?.deposit || "-"}</td>
               <td>{rental.customer?.description || "-"}</td>
               <td>{rental.cloth?.price - rental.customer?.deposit}</td>
               <td>
