@@ -325,13 +325,15 @@ app.get("/rentals/forSelectedDate", async (req, res) => {
 
     const rentals = await prisma.rental.findMany({
       where: {
-        startDate: { lte: d },
-        endDate: { gte: d },
+        rentDate: {
+          gte: d,
+          lt: next,
+        },
       },
       include: {
         cloth: { include: { photos: true } },
       },
-      orderBy: { startDate: "asc" },
+      orderBy: { rentDate: "asc" },
     });
 
     res.json(rentals);
@@ -340,6 +342,7 @@ app.get("/rentals/forSelectedDate", async (req, res) => {
     res.status(500).json({ message: "Ошибка при получении бронирований" });
   }
 });
+
 
 
 
