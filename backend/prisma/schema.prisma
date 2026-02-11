@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"               // указываем SQLite
+  provider = "postgresql"               // указываем postgresql
   url      = env("DATABASE_URL")    // обязательно!
 }
 
