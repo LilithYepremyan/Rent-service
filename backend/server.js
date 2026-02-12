@@ -16,16 +16,6 @@ app.use(express.json());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 📂 Папка для фото
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.join(__dirname, "uploads")),
-  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
-});
-const upload = multer({ storage });
-
-// Статика для изображений
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
 app.get("/", (req, res) => {
   res.send("👋 Welcome to the Rent Service API");
   console.log("👋 Welcome to the Rent Service API");
@@ -35,8 +25,7 @@ app.get("/", (req, res) => {
 app.post("/clothes", upload.array("photos", 5), async (req, res) => {
   try {
     const { code, name, color, price } = req.body;
-    const photoUrls =
-      req.files?.map((file) => `/uploads/${file.filename}`) || [];
+    const photoUrls = req.files?.map((file) => file.path) || [];
 
     const cloth = await prisma.cloth.create({
       data: {
@@ -342,9 +331,6 @@ app.get("/rentals/forSelectedDate", async (req, res) => {
     res.status(500).json({ message: "Ошибка при получении бронирований" });
   }
 });
-
-
-
 
 // ✅ Вещи для химчистки (за день до аренды)
 app.get("/rentals/cleaning", async (req, res) => {
