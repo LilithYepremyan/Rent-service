@@ -10,9 +10,10 @@ const Item = ({ label, value }: { label: string; value: string | number }) => (
 
 const ProductCard = ({ product }: { product: Rental }) => {
   const { cloth, customer } = product;
+  console.log(cloth, "123456789");
 
   const photoUrl = cloth?.photos?.[0]?.url
-    ? `${import.meta.env.VITE_API_URL}${cloth.photos[0].url}`
+    ? `${cloth.photos[0].url}`
     : "/no-image.png";
   const { t } = useTranslation();
   return (

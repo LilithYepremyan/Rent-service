@@ -31,9 +31,7 @@ const ProductTable = ({ products }: { products: Rental[] }) => {
                 {rental.cloth?.photos?.[0] ? (
                   <img
                     className={styles.productImg}
-                    src={`${import.meta.env.VITE_API_URL}${
-                      rental.cloth.photos[0].url
-                    }`}
+                    src={rental.cloth.photos[0].url}
                     alt={rental.cloth.name}
                   />
                 ) : (
