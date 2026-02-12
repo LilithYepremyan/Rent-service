@@ -31,7 +31,7 @@ const ClothesPage: React.FC = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    applyFilters();
+    if (filterCode || filterDate) applyFilters();
   }, [filterCode, filterDate]);
 
   const applyFilters = async () => {
