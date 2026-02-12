@@ -3,7 +3,7 @@ import cors from "cors";
 import { PrismaClient } from "@prisma/client";
 import { fileURLToPath } from "url";
 import path from "path";
-import multer from "multer";
+import upload from "./middleware/upload";
 import fs from "fs";
 
 const app = express();
