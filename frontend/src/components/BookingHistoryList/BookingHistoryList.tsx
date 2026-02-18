@@ -20,7 +20,7 @@ const ProductTable = ({ products }: { products: Rental[] }) => {
             <th>{t("deposit")}</th>
             <th>{t("description")}</th>
             <th>{t("paid")}</th>
-            <th>{t("data")}</th>
+            <th>{t("date")}</th>
           </tr>
         </thead>
 
