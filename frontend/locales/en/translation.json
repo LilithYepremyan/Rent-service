@@ -52,7 +52,7 @@
   "totalDeposit": "Total Deposit",
   "totalNeedToPay": "Total Need to Pay",
   "notFound": "Nothing found",
-  "todaysRentals": "Today's Rentals",
+  "todayRentals": "Today's Rentals",
   "bookedToday": "Booked for Today",
   "returnRentals": "Return Rentals",
   "noRentalsEndingToday": "No rentals ending today.",
@@ -69,5 +69,12 @@
   "phoneRequired": "Phone number is required",
   "passportRequired": "Passport information is required",
   "invalidPassport": "Invalid passport number",
-  "depositCannotBeNegative": "Deposit cannot be negative"
+  "depositCannotBeNegative": "Deposit cannot be negative",
+  "bookingHistory": "Booking History",
+  "monthlyReport": "Monthly Report",
+  "yearlyReport": "Yearly Report",
+  "viewReports": "View Report",
+  "paid": "Paid",
+  "totalPaid": "Total Paid",
+  "foundBookings": "Found Bookings"
 }

@@ -10,6 +10,7 @@ import TodayRentals from "./pages/TodayRentals/TodayRentals";
 import ReturnRentals from "./pages/ReturnRentals/ReturnRentals";
 import ClothesPage from "./pages/ClothesPage/ClothesPage";
 import CleaningPage from "./pages/CleaningPage/CleaningPage";
+import BookingHistoryPage from "./pages/BookingHistory/BookingHistoryPage";
 
 const App: React.FC = () => {
   return (
@@ -28,8 +29,9 @@ const App: React.FC = () => {
           <Route path="/calendar" element={<CalendarView />} />
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/cleaning" element={<CleaningPage />} />
-          <Route path="/todays-rentals" element={<TodayRentals />} />
+          <Route path="/today-rentals" element={<TodayRentals />} />
           <Route path="/return-rentals" element={<ReturnRentals />} />
+          <Route path="/booking-history" element={<BookingHistoryPage />} />
         </Routes>
       </div>
     </Router>

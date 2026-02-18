@@ -51,7 +51,7 @@
   "totalDeposit": "Ընդհանուր կանխավճար",
   "totalNeedToPay": "Ընդհանուր վճարման ենթակա",
   "notFound": "Ոչինչ չի գտնվել",
-  "todaysRentals": "Այսօրվա վարձակալություններ",
+  "todayRentals": "Այսօրվա վարձակալություններ",
   "bookedToday": "Այսօր ամրագրված է",
   "returnRentals": "Վերադարձվող վարձակալություններ",
   "noRentalsEndingToday": "Այսօր վերադարձվող վարձակալություններ չկան։",
@@ -68,5 +68,12 @@
   "passportRequired": "Պարտադիր է նշել անձնագրի տվյալները",
   "invalidPhoneArmenia": "Անվավեր հայկական հեռախոսահամար",
   "invalidPassport": "Անվավեր անձնագրի տվյալներ",
-  "depositCannotBeNegative": "Կանխավճարը չի կարող լինել բացասական"
+  "depositCannotBeNegative": "Կանխավճարը չի կարող լինել բացասական",
+  "bookingHistory": "Ամրագրումների պատմություն",
+  "monthlyReport": "Ըստ ամսաթվի",
+  "yearlyReport": "Ըստ տարեթվի",
+  "viewReports": "Դիտել զեկույցը",
+  "paid": "Վճարված է",
+  "totalPaid": "Ընդհանուր վճարված",
+  "foundBookings": "Գտնված ամրագրումներ"
 }

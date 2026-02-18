@@ -68,5 +68,12 @@
   "phoneRequired": "Номер телефона обязателен",
   "invalidPhoneArmenia": "Неверный номер телефона для Армении",
   "invalidPassport": "Неверный номер паспорта",
-  "depositCannotBeNegative": "Депозит не может быть отрицательным"
+  "depositCannotBeNegative": "Депозит не может быть отрицательным",
+  "bookingHistory": "История бронирований",
+  "monthlyReport": "Месячный отчет",
+  "yearlyReport": "Годовой отчет",
+  "viewReports": "Просмотреть отчет",
+  "paid": "Оплачено",
+  "totalPaid": "Всего оплачено",
+  "foundBookings": "Найдено бронирований"
 }

@@ -12,8 +12,9 @@ const NavBar = () => {
     { to: "/calendar", label: t("calendar") },
     { to: "/admin", label: t("admin") },
     { to: "/cleaning", label: t("cleaning") },
-    { to: "/todays-rentals", label: t("todaysRentals") },
+    { to: "/today-rentals", label: t("todayRentals") },
     { to: "/return-rentals", label: t("returnRentals") },
+    { to: "/booking-history", label: t("bookingHistory") },
   ];
 
   const changeLanguage = (lng: string) => {
