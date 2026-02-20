@@ -58,7 +58,7 @@ const ProductTable = ({ products }: { products: Rental[] }) => {
             <td></td>
             <td className={styles.total} colSpan={11}>
               {t("totalPaid")}:{" "}
-              {products.reduce( 
+              {products.reduce(
                 (sum, rental) =>
                   sum + (rental.cloth?.price - (rental.customer?.deposit || 0)),
                 0,

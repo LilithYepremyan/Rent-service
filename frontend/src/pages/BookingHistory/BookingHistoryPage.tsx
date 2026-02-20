@@ -11,23 +11,25 @@ import BookingHistoryList from "../../components/BookingHistoryList/BookingHisto
 
 const RentalsStatsPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+
   const reportRentals = useSelector(
-    (state: RootState) => state.rentals.reportRentals,
+    (state: RootState) => state.rentals.reportRentals
   );
-  // const rentals = useSelector((state: RootState) => state.rentals.rentalsByMonthOrYear);
 
   const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
 
-  const [year, setYear] = useState(currentYear);
-  const [month, setMonth] = useState(new Date().getMonth() + 1);
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [selectedMonth, setSelectedMonth] = useState(
+    new Date().getMonth() + 1
+  );
+  const [yearForReport, setYearForReport] = useState(currentYear);
 
   return (
     <div className={styles.wrapper}>
       <h2 className={styles.title}>{t("bookingHistory")}</h2>
 
       <div className={styles.filtersContainer}>
-        {/* Фильтр по месяцу */}
         <div className={styles.filterCard}>
           <h3 className={styles.filterTitle}>{t("monthlyReport")}</h3>
 
@@ -35,32 +37,42 @@ const RentalsStatsPage: React.FC = () => {
             <input
               type="month"
               className={styles.input}
-              value={`${year}-${String(month).padStart(2, "0")}`}
+              value={`${selectedYear}-${String(selectedMonth).padStart(
+                2,
+                "0"
+              )}`}
               onChange={(e) => {
-                const [selectedYear, selectedMonth] = e.target.value.split("-");
-                setYear(Number(selectedYear));
-                setMonth(Number(selectedMonth));
+                if (!e.target.value) return;
+                const [year, month] = e.target.value.split("-");
+                setSelectedYear(Number(year));
+                setSelectedMonth(Number(month));
               }}
             />
           </div>
 
           <button
             className={styles.button}
-            onClick={() => dispatch(getRentalsByMonth({ year, month }))}
+            onClick={() =>
+              dispatch(
+                getRentalsByMonth({
+                  year: selectedYear,
+                  month: selectedMonth,
+                })
+              )
+            }
           >
             {t("viewReports")}
           </button>
         </div>
 
-        {/* Фильтр по году */}
         <div className={styles.filterCard}>
           <h3 className={styles.filterTitle}>{t("yearlyReport")}</h3>
 
           <div className={styles.inputGroup}>
             <select
               className={styles.select}
-              value={year}
-              onChange={(e) => setYear(Number(e.target.value))}
+              value={yearForReport}
+              onChange={(e) => setYearForReport(Number(e.target.value))}
             >
               {Array.from({ length: 5 }, (_, i) => {
                 const y = currentYear - 4 + i;
@@ -75,20 +87,18 @@ const RentalsStatsPage: React.FC = () => {
 
           <button
             className={styles.button}
-            onClick={() => dispatch(getRentalsByYear(year))}
+            onClick={() => dispatch(getRentalsByYear(yearForReport))}
           >
             {t("viewReports")}
           </button>
         </div>
       </div>
 
-      {/* Статистика */}
       <div className={styles.statsBlock}>
-        {t("foundBookings")}: {reportRentals?.length || 0}
+        {t("foundBookings")}: {reportRentals?.length ?? 0}
       </div>
 
-      {/* Список */}
-      <BookingHistoryList products={reportRentals} />
+      <BookingHistoryList products={reportRentals ?? []} />
     </div>
   );
 };
