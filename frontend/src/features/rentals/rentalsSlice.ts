@@ -14,9 +14,6 @@ export interface Rental {
   status: string;
   // userId: number;
   customer: Customer;
-  firstName: string;
-  lastName: string;
-  phone: string;
   cloth: Cloth;
 }
 
@@ -29,6 +26,7 @@ interface RentalsState {
   endingRentalsByDate: Rental[];
   totalDeposit: number;
   loading: boolean;
+  reportRentals: Rental[];
 }
 
 const initialState: RentalsState = {
@@ -40,6 +38,7 @@ const initialState: RentalsState = {
   endingRentalsByDate: [],
   totalDeposit: 0,
   loading: false,
+  reportRentals: [],
 };
 
 interface TodayRentalsResponse {
@@ -52,7 +51,7 @@ export const getAllRentals = createAsyncThunk<Rental[], void>(
   async () => {
     const response = await api.get<Rental[]>("/rentals");
     return response.data;
-  }
+  },
 );
 
 export const getTodayRentals = createAsyncThunk<TodayRentalsResponse, void>(
@@ -60,7 +59,7 @@ export const getTodayRentals = createAsyncThunk<TodayRentalsResponse, void>(
   async () => {
     const response = await api.get<TodayRentalsResponse>("/rentals/today");
     return response.data;
-  }
+  },
 );
 
 export const getTodayEndingRentals = createAsyncThunk<Rental[], void>(
@@ -68,26 +67,25 @@ export const getTodayEndingRentals = createAsyncThunk<Rental[], void>(
   async () => {
     const response = await api.get<Rental[]>("/rentals/ends-today");
     return response.data;
-  }
+  },
 );
 
 export const getRentalsByDate = createAsyncThunk<Rental[], string>(
   "rentals/rentalsByDate",
   async (date) => {
     const response = await api.get<Rental[]>(
-      `/rentals/forSelectedDate?date=${date}`
+      `/rentals/forSelectedDate?date=${date}`,
     );
     return response.data;
-  }
+  },
 );
-
 
 export const getCleaningRentalsByDate = createAsyncThunk<Rental[], string>(
   "rentals/cleaning",
   async (date) => {
     const response = await api.get<Rental[]>(`/rentals/cleaning?date=${date}`);
     return response.data;
-  }
+  },
 );
 
 export const getEndingRentalsByDate = createAsyncThunk<Rental[], string>(
@@ -95,7 +93,23 @@ export const getEndingRentalsByDate = createAsyncThunk<Rental[], string>(
   async (date) => {
     const response = await api.get<Rental[]>(`/rentals/ends?date=${date}`);
     return response.data;
-  }
+  },
+);
+
+export const getRentalsByMonth = createAsyncThunk(
+  "rentals/getByMonth",
+  async ({ year, month }: { year: number; month: number }) => {
+    const response = await api.get(`/rentals/month/${year}/${month}`);
+    return response.data;
+  },
+);
+
+export const getRentalsByYear = createAsyncThunk(
+  "rentals/getByYear",
+  async (year: number) => {
+    const response = await api.get(`/rentals/year/${year}`);
+    return response.data;
+  },
 );
 
 const rentalsSlice = createSlice({
@@ -111,7 +125,7 @@ const rentalsSlice = createSlice({
       (state, action: PayloadAction<Rental[]>) => {
         state.rentals = action.payload;
         state.loading = false;
-      }
+      },
     );
     builder.addCase(getAllRentals.rejected, (state) => {
       state.loading = false;
@@ -122,11 +136,10 @@ const rentalsSlice = createSlice({
     builder.addCase(
       getTodayRentals.fulfilled,
       (state, action: PayloadAction<TodayRentalsResponse>) => {
-
         state.todayRentals = action.payload.rentals;
         state.totalDeposit = action.payload.totalDeposit;
         state.loading = false;
-      }
+      },
     );
     builder.addCase(getTodayRentals.rejected, (state) => {
       state.loading = false;
@@ -139,7 +152,7 @@ const rentalsSlice = createSlice({
       (state, action: PayloadAction<Rental[]>) => {
         state.todayEndingRentals = action.payload;
         state.loading = false;
-      }
+      },
     );
     builder.addCase(getTodayEndingRentals.rejected, (state) => {
       state.loading = false;
@@ -148,19 +161,31 @@ const rentalsSlice = createSlice({
       getRentalsByDate.fulfilled,
       (state, action: PayloadAction<Rental[]>) => {
         state.rentalsByDate = action.payload;
-      }
+      },
     );
     builder.addCase(
       getCleaningRentalsByDate.fulfilled,
       (state, action: PayloadAction<Rental[]>) => {
         state.cleaningsRentalsByDate = action.payload;
-      }
+      },
     );
     builder.addCase(
       getEndingRentalsByDate.fulfilled,
       (state, action: PayloadAction<Rental[]>) => {
         state.endingRentalsByDate = action.payload;
-      }
+      },
+    );
+    builder.addCase(
+      getRentalsByMonth.fulfilled,
+      (state, action: PayloadAction<Rental[]>) => {
+        state.reportRentals = action.payload;
+      },
+    );
+    builder.addCase(
+      getRentalsByYear.fulfilled,
+      (state, action: PayloadAction<Rental[]>) => {
+        state.reportRentals = action.payload;
+      },
     );
   },
 });

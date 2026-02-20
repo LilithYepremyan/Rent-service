@@ -392,7 +392,7 @@ app.get("/rentals/today", async (req, res) => {
 
     const totalDeposit = rentals.reduce(
       (sum, r) => sum + (r.customer.deposit || 0),
-      0
+      0,
     );
 
     res.json({ rentals, totalDeposit });
@@ -458,6 +458,69 @@ app.get("/rentals/ends", async (req, res) => {
     res.json(rentals);
   } catch (e) {
     res.status(500).json({ message: "Ошибка" });
+  }
+});
+
+// Получить все брони за конкретный месяц
+// Получить все брони за месяц
+app.get("/rentals/month/:year/:month", async (req, res) => {
+  try {
+    const { year, month } = req.params;
+
+    const yearNum = Number(year);
+    const monthNum = Number(month);
+
+    // Проверка корректности
+    if (isNaN(yearNum) || isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
+      return res.status(400).json({ message: "Неверный год или месяц" });
+    }
+
+    const start = new Date(Date.UTC(yearNum, monthNum - 1, 1));
+    const end = new Date(Date.UTC(yearNum, monthNum, 1)); // первый день следующего месяца
+
+    console.log("Fetching rentals from", start, "to", end);
+
+    const rentals = await prisma.rental.findMany({
+      where: {
+        rentDate: {
+          gte: start,
+          lt: end,
+        },
+      },
+      include: { cloth: { include: { photos: true } } },
+      orderBy: { rentDate: "asc" },
+    });
+
+    res.json(rentals);
+  } catch (error) {
+    console.error("Ошибка в /rentals/month/:year/:month:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Получить все брони за конкретный год
+app.get("/rentals/year/:year", async (req, res) => {
+  try {
+    const { year } = req.params;
+
+    const start = new Date(Number(year), 0, 1); // 1 января
+    const end = new Date(Number(year) + 1, 0, 1); // 1 января следующего года
+
+    const rentals = await prisma.rental.findMany({
+      where: {
+        rentDate: {
+          gte: start,
+          lt: end,
+        },
+      },
+      include: { cloth: { include: { photos: true } } },
+      orderBy: { rentDate: "asc" },
+    });
+
+    res.json(rentals);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Ошибка при получении броней за год" });
   }
 });
 
