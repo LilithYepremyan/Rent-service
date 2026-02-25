@@ -1,32 +1,25 @@
-import React from "react";
+import { memo } from "react";
+import { useTranslation } from "react-i18next";
 import ActionButton from "../ActionButton/ActionButton";
 import type { Cloth } from "../../features/clothes/clothesSlice";
-import { useTranslation } from "react-i18next";
 import styles from "./ClothCard.module.scss";
 
-interface ClothCardProps {
+type ClothCardProps = {
   cloth: Cloth;
   onBook: () => void;
   onDelete: () => void;
-}
+};
 
-const ClothCard: React.FC<ClothCardProps> = ({ cloth, onBook, onDelete }) => {
+const ClothCard = ({ cloth, onBook, onDelete }: ClothCardProps) => {
   const { t } = useTranslation();
+
+  const imageUrl = cloth.photos?.[0]?.url;
+
   return (
-    <div
-      className={styles.container}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = "translateY(-5px)";
-        e.currentTarget.style.boxShadow = "0 12px 30px rgba(0,0,0,0.15)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = "translateY(0)";
-        e.currentTarget.style.boxShadow = "0 6px 20px rgba(0,0,0,0.08)";
-      }}
-    >
-      {cloth.photos.length > 0 && (
+    <div className={styles.container}>
+      {imageUrl && (
         <img
-          src={cloth.photos[0].url}
+          src={imageUrl}
           alt={cloth.name}
           className={styles.photo}
         />
@@ -34,12 +27,15 @@ const ClothCard: React.FC<ClothCardProps> = ({ cloth, onBook, onDelete }) => {
 
       <div>
         <h3 className={styles.info}>{cloth.name}</h3>
+
         <p className={styles.info}>
           {t("code")}: <b>{cloth.code}</b>
         </p>
+
         <p className={styles.info}>
           {t("color")}: {cloth.color}
         </p>
+
         <p className={styles.info}>
           {t("price")} {cloth.price} AMD
         </p>
@@ -50,6 +46,7 @@ const ClothCard: React.FC<ClothCardProps> = ({ cloth, onBook, onDelete }) => {
             variant="primary"
             text={t("booking")}
           />
+
           <ActionButton
             onClick={onDelete}
             variant="secondary"
@@ -61,4 +58,4 @@ const ClothCard: React.FC<ClothCardProps> = ({ cloth, onBook, onDelete }) => {
   );
 };
 
-export default ClothCard;
+export default memo(ClothCard);
