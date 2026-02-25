@@ -1,22 +1,31 @@
 import styles from "./ActionButton.module.scss";
 
-interface ActionButtonProps {
+type ActionButtonProps = {
   onClick: () => void;
-  variant: "primary" | "secondary" 
+  variant?: "primary" | "secondary";
   text: string;
   className?: string;
-}
+};
 
-const ActionButton: React.FC<ActionButtonProps> = ({
+const ActionButton = ({
   onClick,
   text,
   variant = "primary",
-  className,
-}) => {
+  className = "",
+}: ActionButtonProps) => {
+  const buttonClassName = [
+    styles.actionButton,
+    styles[variant],
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <button
+      type="button"
       onClick={onClick}
-      className={`${styles.actionButton} ${styles[variant]} ${className}`}
+      className={buttonClassName}
     >
       {text}
     </button>
