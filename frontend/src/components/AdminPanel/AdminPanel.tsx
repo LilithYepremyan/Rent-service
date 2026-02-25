@@ -1,64 +1,72 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-import styles from "./AdminPanel.module.scss";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
+import styles from "./AdminPanel.module.scss";
 
-interface FormValues {
+type FormValues = {
   code: string;
   name: string;
   color: string;
   price: string;
   photos: FileList;
-}
+};
 
-const AdminPanel: React.FC = () => {
+type Status = "loading" | "success" | "error" | null;
+
+const AdminPanel = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
   const { register, handleSubmit, reset, watch } = useForm<FormValues>();
 
   const watchedPhotos = watch("photos");
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [status, setStatus] = useState<"loading" | "success" | "error" | null>(
-    null
-  );
-  const navigate = useNavigate();
+  const [status, setStatus] = useState<Status>(null);
+
 
   useEffect(() => {
-    if (!watchedPhotos || watchedPhotos.length === 0) {
+    if (!watchedPhotos?.length) {
       setPreviewUrls([]);
       return;
     }
 
-    const filesArray = Array.from(watchedPhotos);
-    const urls = filesArray.map((file) => URL.createObjectURL(file));
+    const urls = Array.from(watchedPhotos).map((file) =>
+      URL.createObjectURL(file)
+    );
+
     setPreviewUrls(urls);
 
     return () => {
-      urls.forEach((url) => {
-        URL.revokeObjectURL(url);
-      });
+      urls.forEach(URL.revokeObjectURL);
     };
   }, [watchedPhotos]);
 
+  const buildFormData = (data: FormValues) => {
+    const formData = new FormData();
+
+    formData.append("code", data.code);
+    formData.append("name", data.name);
+    formData.append("color", data.color);
+    formData.append("price", data.price);
+
+    Array.from(data.photos).forEach((file) => {
+      formData.append("photos", file);
+    });
+
+    return formData;
+  };
+
   const onSubmit = async (data: FormValues) => {
     setStatus("loading");
-    try {
-      const formData = new FormData();
-      formData.append("code", data.code);
-      formData.append("name", data.name);
-      formData.append("color", data.color);
-      formData.append("price", data.price);
 
-      Array.from(data.photos).forEach((file) => {
-        formData.append("photos", file);
-      });
+    try {
+      const formData = buildFormData(data);
 
       await api.post("/clothes", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       setStatus("success");
@@ -72,31 +80,34 @@ const AdminPanel: React.FC = () => {
   };
 
   useEffect(() => {
+    if (!status) return;
+
     if (status === "loading") {
       toast.loading(t("adding"), { toastId: "cloth-status" });
-    } else if (status === "success") {
-      toast.update("cloth-status", {
-        render: t("addedSuccessfully"),
-        type: "success",
-        isLoading: false,
-        autoClose: 1500,
-      });
-    } else if (status === "error") {
-      toast.update("cloth-status", {
-        render: t("addingError"),
-        type: "error",
-        isLoading: false,
-        autoClose: 2000,
-      });
+      return;
     }
+
+    toast.update("cloth-status", {
+      render:
+        status === "success"
+          ? t("addedSuccessfully")
+          : t("addingError"),
+      type: status === "success" ? "success" : "error",
+      isLoading: false,
+      autoClose: status === "success" ? 1500 : 2000,
+    });
   }, [status, t]);
 
-  const fields: { name: keyof FormValues; label: string; type: string }[] = [
-    { name: "code", label: t("code"), type: "text" },
-    { name: "name", label: t("name"), type: "text" },
-    { name: "color", label: t("color"), type: "text" },
-    { name: "price", label: t("price"), type: "number" },
-  ];
+  const fields = useMemo(
+    () =>
+      [
+        { name: "code", label: t("code"), type: "text" },
+        { name: "name", label: t("name"), type: "text" },
+        { name: "color", label: t("color"), type: "text" },
+        { name: "price", label: t("price"), type: "number" },
+      ] as const,
+    [t]
+  );
 
   return (
     <div className={styles.wrapper}>
@@ -108,22 +119,24 @@ const AdminPanel: React.FC = () => {
         className={styles.form}
       >
         {fields.map((field) => (
-          <React.Fragment key={field.name}>
-            <label className={styles.label}>{field.label} *</label>
+          <div key={field.name} className={styles.field}>
+            <label className={styles.label}>
+              {field.label} *
+            </label>
+
             <input
               {...register(field.name, { required: true })}
-              name={field.name}
               type={field.type}
               className={styles.input}
-           
             />
-          </React.Fragment>
+          </div>
         ))}
 
         <label className={styles.fileLabel}>
-          {watchedPhotos && watchedPhotos.length > 0
+          {watchedPhotos?.length
             ? `${watchedPhotos.length} ${t("fileSelected")}`
             : t("selectFile")}
+
           <input
             type="file"
             multiple
@@ -133,11 +146,11 @@ const AdminPanel: React.FC = () => {
         </label>
 
         <div className={styles.imgWrapper}>
-          {previewUrls.map((url, i) => (
+          {previewUrls.map((url, index) => (
             <img
-              key={i}
+              key={url}
               src={url}
-              alt={`preview-${i}`}
+              alt={`preview-${index}`}
               className={styles.img}
             />
           ))}
