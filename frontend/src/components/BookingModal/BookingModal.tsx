@@ -1,18 +1,18 @@
 import Calendar from "react-calendar";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { toast } from "react-toastify";
+
 import styles from "./BookingModal.module.scss";
 import type { AppDispatch, RootState } from "../../app/store";
-import { toast } from "react-toastify";
 import {
   getAllRentals,
   type Rental,
 } from "../../features/rentals/rentalsSlice";
-import { useTranslation } from "react-i18next";
-
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import api from "../../api/axios";
 
 interface Photo {
@@ -60,26 +60,6 @@ const toYMD = (date: Date | string) => {
   return `${year}-${month}-${day}`;
 };
 
-const bookCloth = async (
-  clothId: number,
-  rentDate: string,
-  userId: number,
-  customer: Customer
-) => {
-  try {
-    const response = await api.post("/rent", {
-      clothId,
-      rentDate,
-      userId,
-      customer,
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Ошибка при бронировании:", error);
-    return null;
-  }
-};
-
 const bookingSchema = yup.object({
   firstName: yup.string().required("firstNameRequired"),
   lastName: yup.string().required("lastNameRequired"),
@@ -92,12 +72,7 @@ const bookingSchema = yup.object({
   description: yup.string().optional(),
 });
 
-const BookingModal: React.FC<ModalProps> = ({
-  visible,
-  onClose,
-  cloth,
-  refreshData,
-}) => {
+const BookingModal = ({ visible, onClose, cloth, refreshData }: ModalProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const rentals = useSelector((state: RootState) => state.rentals.rentals);
   const { t } = useTranslation();
@@ -119,40 +94,49 @@ const BookingModal: React.FC<ModalProps> = ({
   });
 
   useEffect(() => {
-    if (cloth) dispatch(getAllRentals());
+    if (cloth) {
+      dispatch(getAllRentals());
+    }
   }, [cloth, dispatch]);
 
   const clothRentals = useMemo(
     () => rentals.filter((r: Rental) => r.clothId === cloth?.id),
-    [rentals, cloth]
+    [rentals, cloth],
   );
 
-  if (!visible || !cloth) return null;
+  const isBooked = useCallback(
+    (date: Date) =>
+      clothRentals.some((r) => {
+        const rentDate = new Date(r.rentDate);
+        return (
+          rentDate.getUTCFullYear() === date.getFullYear() &&
+          rentDate.getUTCMonth() === date.getMonth() &&
+          rentDate.getUTCDate() === date.getDate()
+        );
+      }),
+    [clothRentals],
+  );
 
-  const isBooked = (date: Date) =>
-    clothRentals.some((r) => {
-      const rentDate = new Date(r.rentDate);
-      return (
-        rentDate.getUTCFullYear() === date.getFullYear() &&
-        rentDate.getUTCMonth() === date.getMonth() &&
-        rentDate.getUTCDate() === date.getDate()
-      );
-    });
+  const getDayStatus = useCallback(
+    (date: Date) => {
+      for (const r of clothRentals) {
+        const rentDate = new Date(r.rentDate);
 
-  const getDayStatus = (date: Date) => {
-    for (const r of clothRentals) {
-      const rentDate = new Date(r.rentDate);
-      const prevDay = new Date(rentDate);
-      prevDay.setUTCDate(rentDate.getUTCDate() - 1);
-      const nextDay = new Date(rentDate);
-      nextDay.setUTCDate(rentDate.getUTCDate() + 1);
+        const prevDay = new Date(rentDate);
+        prevDay.setUTCDate(rentDate.getUTCDate() - 1);
 
-      if (isSameDate(rentDate, date)) return "booked";
-      if (isSameDate(prevDay, date)) return "before-booked";
-      if (isSameDate(nextDay, date)) return "after-booked";
-    }
-    return "";
-  };
+        const nextDay = new Date(rentDate);
+        nextDay.setUTCDate(rentDate.getUTCDate() + 1);
+
+        if (isSameDate(rentDate, date)) return "booked";
+        if (isSameDate(prevDay, date)) return "before-booked";
+        if (isSameDate(nextDay, date)) return "after-booked";
+      }
+
+      return "";
+    },
+    [clothRentals],
+  );
 
   const onSubmit = async (data: Customer) => {
     if (!selectedDate) {
@@ -167,20 +151,28 @@ const BookingModal: React.FC<ModalProps> = ({
 
     setLoading(true);
 
-    const result = await bookCloth(cloth.id, toYMD(selectedDate), 1, data);
+    try {
+      await api.post("/rent", {
+        clothId: cloth.id,
+        rentDate: toYMD(selectedDate),
+        userId: 1,
+        customer: data,
+      });
 
-    setLoading(false);
-
-    if (result) {
       toast.success(t("bookingSuccessful"));
       refreshData();
       reset();
       setSelectedDate(null);
       onClose();
-    } else {
+    } catch (error) {
+      console.error(t("bookingError"), error);
       toast.error(t("bookingError"));
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (!visible || !cloth) return null;
 
   return (
     <div className={styles.modalOverlay}>
@@ -191,6 +183,8 @@ const BookingModal: React.FC<ModalProps> = ({
 
         <div className={styles.calendarContainer}>
           <Calendar
+            value={selectedDate}
+            minDate={new Date()}
             onChange={(date) => {
               if (!(date instanceof Date)) return;
               if (isBooked(date)) {
@@ -199,11 +193,9 @@ const BookingModal: React.FC<ModalProps> = ({
               }
               setSelectedDate(date);
             }}
-            value={selectedDate}
             tileClassName={({ date, view }) =>
               view === "month" ? getDayStatus(date) : ""
             }
-            minDate={new Date()}
           />
 
           <form onSubmit={handleSubmit(onSubmit)} className={styles.formFields}>
@@ -226,6 +218,7 @@ const BookingModal: React.FC<ModalProps> = ({
                 </span>
               )}
             </div>
+
             <div>
               <label>{t("phone")} *</label>
               <input {...register("phone")} placeholder="098 11 11 11" />

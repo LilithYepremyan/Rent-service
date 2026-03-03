@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styles from "./Filters.module.scss";
 
-interface Props {
+type Props = {
   onCodeChange: (value: string) => void;
   onDateChange: (value: string) => void;
-}
+};
 
-const Filters: React.FC<Props> = ({ onCodeChange, onDateChange }) => {
+const Filters = ({ onCodeChange, onDateChange }: Props) => {
   const { t } = useTranslation();
 
   const [code, setCode] = useState("");
@@ -19,7 +19,7 @@ const Filters: React.FC<Props> = ({ onCodeChange, onDateChange }) => {
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [code]);
+  }, [code, onCodeChange]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -27,7 +27,7 @@ const Filters: React.FC<Props> = ({ onCodeChange, onDateChange }) => {
     }, 500);
 
     return () => clearTimeout(timeout);
-  }, [date]);
+  }, [date, onDateChange]);
 
   return (
     <div className={styles.filters}>

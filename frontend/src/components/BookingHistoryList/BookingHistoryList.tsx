@@ -1,9 +1,30 @@
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import type { Rental } from "../../features/rentals/rentalsSlice";
 import styles from "./BookingHistoryList.module.scss";
 
-const ProductTable = ({ products }: { products: Rental[] }) => {
+type Props = {
+  products: Rental[];
+};
+
+const ProductTable = ({ products }: Props) => {
   const { t } = useTranslation();
+
+  const totalPaid = useMemo(() => {
+    return products.reduce((sum, rental) => {
+      const price = rental.cloth?.price ?? 0;
+      const deposit = rental.customer?.deposit ?? 0;
+      return sum + (price - deposit);
+    }, 0);
+  }, [products]);
+
+  if (!products.length) {
+    return (
+      <div className={styles.wrapper}>
+        <div className={styles.noImage}>{t("noData")}</div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.wrapper}>
@@ -25,44 +46,53 @@ const ProductTable = ({ products }: { products: Rental[] }) => {
         </thead>
 
         <tbody>
-          {products.map((rental: Rental) => (
-            <tr key={rental.id}>
-              <td>
-                {rental.cloth?.photos?.[0] ? (
-                  <img
-                    className={styles.productImg}
-                    src={rental.cloth.photos[0].url}
-                    alt={rental.cloth.name}
-                  />
-                ) : (
-                  <div className={styles.noImage}>{t("noImg")}</div>
-                )}
-              </td>
-              <td>{rental.cloth?.name || "-"}</td>
-              <td>{rental.cloth?.color || "-"}</td>
-              <td>{`${rental.cloth?.price || "-"} `}</td>
-              <td>
-                {rental.customer
-                  ? `${rental.customer.firstName} ${rental.customer.lastName}`
-                  : "-"}
-              </td>
-              <td>{rental.customer?.phone || "-"}</td>
-              <td>{rental.customer?.passport || "-"}</td>
-              <td>{rental.customer?.deposit || "-"}</td>
-              <td>{rental.customer?.description || "-"}</td>
-              <td>{rental.cloth?.price}</td>
-              <td>{rental.rentDate.split("T")[0]}</td>
-            </tr>
-          ))}
+          {products.map((rental) => {
+            const cloth = rental.cloth;
+            const customer = rental.customer;
+
+            const imageUrl = cloth?.photos?.[0]?.url;
+            const fullName = customer
+              ? `${customer.firstName} ${customer.lastName}`
+              : "-";
+
+            const price = cloth?.price ?? "-";
+            const deposit = customer?.deposit ?? 0;
+            const paid =
+              typeof cloth?.price === "number" ? cloth.price - deposit : "-";
+
+            const rentDate = rental.rentDate?.split("T")[0] ?? "-";
+
+            return (
+              <tr key={rental.id}>
+                <td>
+                  {imageUrl ? (
+                    <img
+                      className={styles.productImg}
+                      src={imageUrl}
+                      alt={cloth?.name ?? "product"}
+                    />
+                  ) : (
+                    <div className={styles.noImage}>{t("noImg")}</div>
+                  )}
+                </td>
+
+                <td>{cloth?.name ?? "-"}</td>
+                <td>{cloth?.color ?? "-"}</td>
+                <td>{price}</td>
+                <td>{fullName}</td>
+                <td>{customer?.phone ?? "-"}</td>
+                <td>{customer?.passport ?? "-"}</td>
+                <td>{customer?.deposit ?? "-"}</td>
+                <td>{customer?.description ?? "-"}</td>
+                <td>{paid}</td>
+                <td>{rentDate}</td>
+              </tr>
+            );
+          })}
+
           <tr>
-            <td></td>
-            <td className={styles.total} colSpan={11}>
-              {t("totalPaid")}:{" "}
-              {products.reduce(
-                (sum, rental) =>
-                  sum + (rental.cloth?.price - (rental.customer?.deposit || 0)),
-                0,
-              )}
+            <td className={styles.total} colSpan={2}>
+              {t("totalPaid")}: {totalPaid}
             </td>
           </tr>
         </tbody>

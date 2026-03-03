@@ -55,7 +55,7 @@ export const getClothByCode = createAsyncThunk(
 export const findFreeClothesByDate = createAsyncThunk<Cloth[], string>(
   "clothes/findFreeClothesByDate",
   async (date: string) => {
-    const response = await api.get<Cloth[]>(`/clothes/free?date=${date}`);
+    const response = await api.get<Cloth[]>(`/clothes/free/${date}`);
     return response.data;
   }
 );

@@ -16,17 +16,11 @@ const ProductCard = ({ product }: { product: Rental }) => {
     : "/no-image.png";
   const { t } = useTranslation();
   return (
-    <div key={product.id} className={styles.container}>
+    <div className={styles.container}>
       <div>
-        {product.cloth?.photos[0] && (
-          <img
-            src={photoUrl}
-            alt={product.cloth.name}
-            className={styles.photo}
-          />
-        )}
+        <img src={photoUrl} alt={product.cloth.name} className={styles.photo} />
         <div>
-          <Item label={t("code")} value={cloth?.name} />
+          <Item label={t("code")} value={cloth?.code} />
           <Item label={t("color")} value={cloth?.color} />
           <Item label={t("price")} value={cloth?.price} />
           <Item
