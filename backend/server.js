@@ -145,6 +145,7 @@ app.post("/rent", async (req, res) => {
     };
 
     // Проверка пересечений
+    // Проверка пересечений
     const overlapping = await prisma.rental.findFirst({
       where: {
         clothId,
