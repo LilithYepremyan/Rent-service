@@ -3,14 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { getTodayEndingRentals } from "../../features/rentals/rentalsSlice";
 import ProductTable from "../../components/ProductTable/ProductTable";
 import { useTranslation } from "react-i18next";
-import type { RootState } from "../../app/store";
+import type { RootState, AppDispatch } from "../../app/store";
 
 const ReturnRentals = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const { t } = useTranslation();
   const todayEndingRentals = useSelector(
-    (state: RootState) => state.rentals.todayEndingRentals
+    (state: RootState) => state.rentals.todayEndingRentals,
   );
 
   useEffect(() => {

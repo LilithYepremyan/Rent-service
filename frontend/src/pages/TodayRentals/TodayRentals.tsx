@@ -5,11 +5,14 @@ import { getTodayRentals } from "../../features/rentals/rentalsSlice";
 import Badge from "../../components/Badge/Badge";
 import ProductTable from "../../components/ProductTable/ProductTable";
 import type { RootState } from "../../app/store";
+import type { AppDispatch } from "../../app/store";
 
 const TodayRentals = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
-  const todayRentals = useSelector((state: RootState) => state.rentals.todayRentals);
+  const todayRentals = useSelector(
+    (state: RootState) => state.rentals.todayRentals,
+  );
 
   useEffect(() => {
     dispatch(getTodayRentals());
