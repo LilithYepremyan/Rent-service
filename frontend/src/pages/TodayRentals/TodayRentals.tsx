@@ -9,7 +9,7 @@ import type { RootState } from "../../app/store";
 const TodayRentals = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const todayRentals = useSelector((state: RootState) => state.rentals.rentals);
+  const todayRentals = useSelector((state: RootState) => state.rentals.todayRentals);
 
   useEffect(() => {
     dispatch(getTodayRentals());
