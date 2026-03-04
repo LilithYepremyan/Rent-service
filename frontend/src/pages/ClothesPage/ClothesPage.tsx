@@ -104,12 +104,14 @@ const ClothesPage: React.FC = () => {
         ))}
       </div>
 
-      <BookingModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        cloth={selectedCloth}
-        refreshData={() => dispatch(getAllClothes())}
-      />
+      {selectedCloth && (
+        <BookingModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          cloth={selectedCloth}
+          refreshData={() => dispatch(getAllClothes())}
+        />
+      )}
     </>
   );
 };
