@@ -48,7 +48,7 @@ const Filters = ({ onCodeChange, onDateChange }: Props) => {
       <DatePicker
         selected={date}
         placeholderText={t("searchByDate")}
-        onChange={(newDate) => setDate(newDate)}
+        onChange={(newDate: Date | null) => setDate(newDate)}
         dateFormat="dd-MM-yyyy"
         className={styles.input}
       />

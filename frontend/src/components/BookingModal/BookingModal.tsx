@@ -36,7 +36,7 @@ export interface Customer {
   phone: string;
   passport: string;
   deposit: number;
-  description?: string;
+  description: string;
 }
 
 interface ModalProps {
