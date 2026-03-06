@@ -46,6 +46,9 @@ interface ModalProps {
   refreshData: () => void;
 }
 
+type FormData = yup.InferType<typeof bookingSchema>;
+
+
 const isSameDate = (d1: Date, d2: Date) =>
   d1.getFullYear() === d2.getFullYear() &&
   d1.getMonth() === d2.getMonth() &&
@@ -69,7 +72,7 @@ const bookingSchema = yup.object({
     .required("phoneRequired"),
   passport: yup.string().required("passportRequired"),
   deposit: yup.number().min(0, "depositCannotBeNegative").required(),
-  description: yup.string().optional(),
+  description: yup.string().required(""),
 });
 
 const BookingModal = ({ visible, onClose, cloth, refreshData }: ModalProps) => {
@@ -85,7 +88,7 @@ const BookingModal = ({ visible, onClose, cloth, refreshData }: ModalProps) => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<Customer>({
+  } = useForm<FormData>({
     resolver: yupResolver(bookingSchema),
     defaultValues: {
       deposit: 5000,
@@ -138,7 +141,7 @@ const BookingModal = ({ visible, onClose, cloth, refreshData }: ModalProps) => {
     [clothRentals],
   );
 
-  const onSubmit = async (data: Customer) => {
+  const onSubmit = async (data: FormData) => {
     if (!selectedDate) {
       toast.warn(t("selectDate"));
       return;
@@ -239,7 +242,7 @@ const BookingModal = ({ visible, onClose, cloth, refreshData }: ModalProps) => {
 
             <div>
               <label>{t("deposit")}</label>
-              <input type="number" {...register("deposit")} />
+              <input type="number" {...register("deposit", { valueAsNumber: true }) } />
               {errors.deposit && (
                 <span className={styles.error}>
                   {t(errors.deposit.message!)}
