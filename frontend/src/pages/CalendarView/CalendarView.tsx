@@ -13,6 +13,7 @@ import {
 import TabButton from "../../components/TabButton/TabButton";
 import ProductTable from "../../components/ProductTable/ProductTable";
 import type { RootState } from "../../app/store";
+import type { AppDispatch } from "../../app/store";
 
 const CalendarView: React.FC = () => {
   const [activeTab, setActiveTab] = React.useState<
@@ -20,7 +21,7 @@ const CalendarView: React.FC = () => {
   >("booking");
   const [selectedDate, setSelectedDate] = React.useState<string>("");
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation();
 
   const rentalsByDate = useSelector(
