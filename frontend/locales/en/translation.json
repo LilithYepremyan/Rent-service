@@ -77,5 +77,8 @@
   "paid": "Paid",
   "totalPaid": "Total Paid",
   "foundBookings": "Found Bookings",
-  "date": "Date"
+  "date": "Date",
+  "filteredByCode": "Filtered by code: {{code}}",
+  "freeClothesForDate": "Free clothes for date: {{date}}",
+  "filteredByCodeAndDate": "Filtered by code: {{code}} and date: {{date}}"
 }

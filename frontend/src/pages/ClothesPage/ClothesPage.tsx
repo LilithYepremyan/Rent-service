@@ -64,7 +64,7 @@ const ClothesPage: React.FC = () => {
     if (freeResponse.payload && codeResponse.payload) {
       const cloth = codeResponse.payload as Cloth;
       const isFree = (freeResponse.payload as Cloth[]).some(
-        (c) => c.id === cloth.id
+        (c) => c.id === cloth.id,
       );
 
       if (isFree) {
@@ -86,8 +86,20 @@ const ClothesPage: React.FC = () => {
     <>
       <Filters onCodeChange={setFilterCode} onDateChange={setFilterDate} />
 
-      {clothes.length === 0 && (
+      {clothes.length === 0 ? (
         <p style={{ padding: 20, fontSize: 20 }}>{t("notFound")}</p>
+      ) : (
+        <p>
+          {filterCode &&
+            !filterDate &&
+            t("filteredByCode", { code: filterCode })}
+          {filterDate &&
+            !filterCode &&
+            t("freeClothesForDate", { date: filterDate })}
+          {filterCode &&
+            filterDate &&
+            t("filteredByCodeAndDate", { code: filterCode, date: filterDate })}
+        </p>
       )}
 
       <div className={styles.wrapper}>
