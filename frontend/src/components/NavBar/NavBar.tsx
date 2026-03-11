@@ -54,6 +54,7 @@
                 <NavLink
                   to={link.to}
                   onClick={() => setIsOpen(false)}
+                  data-tooltip-id={link.to}
                   className={({ isActive }) =>
                     `${styles.link} ${isActive ? styles.active : ""}`
                   }

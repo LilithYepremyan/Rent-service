@@ -60,7 +60,7 @@ const ProductTable = ({ products }: { products: Rental[] }) => {
             <td colSpan={8} className={styles.total}>
               {t("totalDeposit")}:{" "}
               {products.reduce(
-                (sum, rental) => sum + rental.customer?.deposit || 0,
+                (sum, rental) => sum + (rental.customer?.deposit || 0),
                 0
               )}
             </td>

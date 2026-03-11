@@ -72,9 +72,12 @@
   "bookingHistory": "Ամրագրումների պատմություն",
   "monthlyReport": "Ըստ ամսաթվի",
   "yearlyReport": "Ըստ տարեթվի",
-  "viewReports": "Դիտել զեկույցը",
+  "viewReports": "Դիտել ցանկը",
   "paid": "Վճարված է",
   "totalPaid": "Ընդհանուր վճարված",
   "foundBookings": "Գտնված ամրագրումներ",
-  "date": "Ամսաթիվ"
+  "date": "Ամսաթիվ",
+  "filteredByCode": "Ֆիլտրված է {{code}} կոդով",
+  "freeClothesForDate": "Ազատ հագուստներ {{date}}-ի համար",
+  "filteredByCodeAndDate": "Ֆիլտրված է {{code}} կոդով {{date}}-ի համար"
 }

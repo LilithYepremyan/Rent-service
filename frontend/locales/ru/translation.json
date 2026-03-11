@@ -76,5 +76,8 @@
   "paid": "Оплачено",
   "totalPaid": "Всего оплачено",
   "foundBookings": "Найдено бронирований",
-  "date": "Дата"
+  "date": "Дата",
+  "filteredByCode": "Отфильтровано по коду: {{code}}",
+  "freeClothesForDate": "Свободные вещи на дату: {{date}}",
+  "filteredByCodeAndDate": "Отфильтровано по коду: {{code}} и дате: {{date}}"
 }
