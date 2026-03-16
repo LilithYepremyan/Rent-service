@@ -37,7 +37,7 @@ model Rental {
   rentDate   DateTime
   clothId    Int
   customer   Json
-  status     RentalStatus @default(AVAILABLE)
+  status     RentalStatus @default(RETURNED)
   cloth Cloth @relation(fields: [clothId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -55,9 +55,7 @@ enum ClothStatus {
 }
 
 enum RentalStatus {
-  AVAILABLE
-  CONFIRMED
-  IN_USE
+  RESERVED
+  RENTED
   RETURNED
-  CANCELED
 }
