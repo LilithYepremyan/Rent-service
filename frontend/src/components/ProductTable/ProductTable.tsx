@@ -4,9 +4,9 @@ import styles from "./ProductTable.module.scss";
 
 type ProductTableProps = {
   products: Rental[];
-  onCheck: (rental: Rental) => void;
-  isChecked: (rental: Rental) => boolean;
-  checkBoxLabel: string;
+  onCheck?: (rental: Rental) => void;
+  isChecked?: (rental: Rental) => boolean;
+  checkBoxLabel?: string;
 };
 
 const ProductTable = ({

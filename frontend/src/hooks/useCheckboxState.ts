@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export const useCheckboxState = <T extends { id: string | number }>(items: T[]) => {
+export const useCheckboxState = <T extends { id: string | number }>() => {
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
 
   const isChecked = (item: T) => !!checkedItems[item.id];
