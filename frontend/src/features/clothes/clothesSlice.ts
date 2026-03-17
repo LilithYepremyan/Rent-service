@@ -60,6 +60,13 @@ export const findFreeClothesByDate = createAsyncThunk<Cloth[], string>(
   }
 );
 
+export const updateClothStatus = createAsyncThunk(
+  "clothes/updateStatus",
+  async ({ id, status }: { id: number; status: string }) => {
+    const res = await api.patch(`/clothes/${id}/status`, { status });
+    return res.data;
+  }
+);
 const clothesSlice = createSlice({
   name: "clothes",
   initialState,
@@ -100,6 +107,17 @@ const clothesSlice = createSlice({
       findFreeClothesByDate.fulfilled,
       (state, action: PayloadAction<Cloth[]>) => {
         state.items = action.payload;
+      }
+    );
+    builder.addCase(
+      updateClothStatus.fulfilled,
+      (state, action: PayloadAction<Cloth>) => {
+        const index = state.items.findIndex(
+          (cloth) => cloth.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.items[index] = action.payload;
+        }
       }
     );
   },

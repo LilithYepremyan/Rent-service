@@ -4,6 +4,7 @@ import { getTodayEndingRentals } from "../../features/rentals/rentalsSlice";
 import ProductTable from "../../components/ProductTable/ProductTable";
 import { useTranslation } from "react-i18next";
 import type { RootState, AppDispatch } from "../../app/store";
+import { useCheckboxState } from "../../hooks/useCheckboxState";
 
 const ReturnRentals = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -12,6 +13,8 @@ const ReturnRentals = () => {
   const todayEndingRentals = useSelector(
     (state: RootState) => state.rentals.todayEndingRentals,
   );
+
+  const { isChecked, onCheck } = useCheckboxState(todayEndingRentals);
 
   useEffect(() => {
     dispatch(getTodayEndingRentals());
@@ -23,7 +26,12 @@ const ReturnRentals = () => {
           <p>{t("noRentalsEndingToday")}</p>
         </>
       ) : (
-        <ProductTable products={todayEndingRentals} />
+        <ProductTable
+          products={todayEndingRentals}
+          isChecked={isChecked}
+          onCheck={onCheck}
+          checkBoxLabel={t("returned")}
+        />
       )}
     </>
   );

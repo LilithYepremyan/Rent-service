@@ -2,7 +2,19 @@ import { useTranslation } from "react-i18next";
 import type { Rental } from "../../features/rentals/rentalsSlice";
 import styles from "./ProductTable.module.scss";
 
-const ProductTable = ({ products }: { products: Rental[] }) => {
+type ProductTableProps = {
+  products: Rental[];
+  onCheck: (rental: Rental) => void;
+  isChecked: (rental: Rental) => boolean;
+  checkBoxLabel: string;
+};
+
+const ProductTable = ({
+  products,
+  onCheck,
+  isChecked,
+  checkBoxLabel,
+}: ProductTableProps) => {
   const { t } = useTranslation();
 
   return (
@@ -52,7 +64,17 @@ const ProductTable = ({ products }: { products: Rental[] }) => {
               <td>{rental.customer?.description || "-"}</td>
               <td>{rental.cloth?.price - rental.customer?.deposit}</td>
               <td>
-                <input className={styles.done} type="checkbox" />
+                <label className={styles.checkboxLabel}>
+                  <input
+                    className={styles.done}
+                    type="checkbox"
+                    checked={isChecked(rental)}
+                    onChange={() => onCheck(rental)}
+                  />
+                  <span className={styles.checkboxText}>
+                    {isChecked(rental) && checkBoxLabel}
+                  </span>
+                </label>
               </td>
             </tr>
           ))}
@@ -61,7 +83,7 @@ const ProductTable = ({ products }: { products: Rental[] }) => {
               {t("totalDeposit")}:{" "}
               {products.reduce(
                 (sum, rental) => sum + (rental.customer?.deposit || 0),
-                0
+                0,
               )}
             </td>
             <td colSpan={11} className={styles.total}>
@@ -69,7 +91,7 @@ const ProductTable = ({ products }: { products: Rental[] }) => {
               {products.reduce(
                 (sum, rental) =>
                   sum + (rental.cloth?.price - (rental.customer?.deposit || 0)),
-                0
+                0,
               )}
             </td>
           </tr>

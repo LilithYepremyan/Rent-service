@@ -6,6 +6,7 @@ import type { RootState, AppDispatch } from "../../app/store";
 import ProductTable from "../../components/ProductTable/ProductTable";
 import Badge from "../../components/Badge/Badge";
 import styles from "./Booking.module.scss";
+import { useCheckboxState } from "../../hooks/useCheckboxState";
 
 const Booking: React.FC = () => {
   const { t } = useTranslation();
@@ -15,8 +16,10 @@ const Booking: React.FC = () => {
   const today = new Date().toISOString().split("T")[0];
 
   const todayRentals = rentals.filter(
-    (r) => r.rentDate.split("T")[0] === today
+    (r) => r.rentDate.split("T")[0] === today,
   );
+
+  const { isChecked, onCheck } = useCheckboxState(todayRentals);
 
   useEffect(() => {
     dispatch(getAllClothes());
@@ -34,7 +37,12 @@ const Booking: React.FC = () => {
             <h2>{t("bookedToday")}</h2>
             <Badge count={todayRentals.length} />
           </div>
-          <ProductTable products={todayRentals} />
+          <ProductTable
+            products={todayRentals}
+            onCheck={onCheck}
+            isChecked={isChecked}
+            checkBoxLabel={t("pickedUp")}
+          />
         </>
       )}
     </>

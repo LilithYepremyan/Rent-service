@@ -76,6 +76,18 @@
   color: $primary-900;
 }
 
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.checkboxText {
+  color: #333;
+  font-size: 0.9rem;
+}
+
 @media (max-width: 768px) {
   .table {
     font-size: 13px;

@@ -6,6 +6,7 @@ import type { AppDispatch, RootState } from "../../app/store";
 import { getAllRentals } from "../../features/rentals/rentalsSlice";
 import Badge from "../../components/Badge/Badge";
 import ProductTable from "../../components/ProductTable/ProductTable";
+import { useCheckboxState } from "../../hooks/useCheckboxState";
 
 const CleaningPage: React.FC = () => {
   const { t } = useTranslation();
@@ -16,9 +17,10 @@ const CleaningPage: React.FC = () => {
 
   const todayCleanings = useMemo(
     () => rentals.filter((r) => r.startDate.split("T")[0] === today),
-    [rentals, today]
+    [rentals, today],
   );
 
+  const { isChecked, onCheck } = useCheckboxState(todayCleanings);
   const count = todayCleanings.length;
 
   useEffect(() => {
@@ -35,7 +37,12 @@ const CleaningPage: React.FC = () => {
             <h2>{t("clothesForCleaning")}</h2>
             <Badge count={count} />
           </div>
-          <ProductTable products={todayCleanings} />
+          <ProductTable
+            products={todayCleanings}
+            onCheck={onCheck}
+            isChecked={isChecked}
+            checkBoxLabel={t("sentToCleaning")}
+          />
         </>
       )}
     </div>
