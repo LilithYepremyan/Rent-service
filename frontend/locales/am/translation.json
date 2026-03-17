@@ -79,5 +79,9 @@
   "date": "Ամսաթիվ",
   "filteredByCode": "Ֆիլտրված է {{code}} կոդով",
   "freeClothesForDate": "Ազատ հագուստներ {{date}}-ի համար",
-  "filteredByCodeAndDate": "Ֆիլտրված է {{code}} կոդով {{date}}-ի համար"
+  "filteredByCodeAndDate": "Ֆիլտրված է {{code}} կոդով {{date}}-ի համար",
+  "sentToCleaning": "Ուղարկված է քիմմաքրման",
+  "pickedUp": "Վերցված է",
+  "returned": "Վերադարձված է"
+
 }

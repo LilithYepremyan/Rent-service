@@ -79,5 +79,8 @@
   "date": "Дата",
   "filteredByCode": "Отфильтровано по коду: {{code}}",
   "freeClothesForDate": "Свободные вещи на дату: {{date}}",
-  "filteredByCodeAndDate": "Отфильтровано по коду: {{code}} и дате: {{date}}"
+  "filteredByCodeAndDate": "Отфильтровано по коду: {{code}} и дате: {{date}}",
+  "sentToCleaning": "Отправлено в химчистку",
+  "pickedUp": "Забрано",
+  "returned": "Возвращено"
 }
