@@ -19,7 +19,7 @@ const Booking: React.FC = () => {
     (r) => r.rentDate.split("T")[0] === today,
   );
 
-  const { isChecked, onCheck } = useCheckboxState(todayRentals);
+  const { isChecked, onCheck } = useCheckboxState();
 
   useEffect(() => {
     dispatch(getAllClothes());

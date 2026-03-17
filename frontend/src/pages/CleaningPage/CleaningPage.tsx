@@ -20,7 +20,7 @@ const CleaningPage: React.FC = () => {
     [rentals, today],
   );
 
-  const { isChecked, onCheck } = useCheckboxState(todayCleanings);
+  const { isChecked, onCheck } = useCheckboxState();
   const count = todayCleanings.length;
 
   useEffect(() => {
