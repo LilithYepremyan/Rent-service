@@ -14,7 +14,7 @@ const ReturnRentals = () => {
     (state: RootState) => state.rentals.todayEndingRentals,
   );
 
-  const { isChecked, onCheck } = useCheckboxState(todayEndingRentals);
+  const { isChecked, onCheck } = useCheckboxState();
 
   useEffect(() => {
     dispatch(getTodayEndingRentals());

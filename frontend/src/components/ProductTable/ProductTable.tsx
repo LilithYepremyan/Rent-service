@@ -68,11 +68,11 @@ const ProductTable = ({
                   <input
                     className={styles.done}
                     type="checkbox"
-                    checked={isChecked(rental)}
-                    onChange={() => onCheck(rental)}
+                    checked={ isChecked ? isChecked(rental) : false }
+                    onChange={() => onCheck && onCheck(rental)}
                   />
                   <span className={styles.checkboxText}>
-                    {isChecked(rental) && checkBoxLabel}
+                    {isChecked && isChecked(rental) && checkBoxLabel}
                   </span>
                 </label>
               </td>
