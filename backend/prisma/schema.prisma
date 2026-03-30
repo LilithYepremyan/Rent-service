@@ -16,11 +16,28 @@ model Cloth {
   photos      Photo[]
   status      ClothStatus  @default(AVAILABLE)
   rentals     Rental[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   
 
   @@index([code])
   @@index([status])
+}
+
+model Customer {
+  id          Int      @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  phone       String
+  passport    String   @unique
+  deposit     Float
+  description String?
+  rentals     Rental[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([phone])
 }
 
 model Photo {
@@ -36,12 +53,18 @@ model Rental {
   endDate    DateTime
   rentDate   DateTime
   clothId    Int
-  customer   Json
-  status     RentalStatus @default(RETURNED)
-  cloth Cloth @relation(fields: [clothId], references: [id])
+  status     RentalStatus @default(RESERVED)
+  customerId Int 
+  
+  cloth      Cloth    @relation(fields: [clothId], references: [id], onDelete: Restrict)
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+
+  @@index([clothId])
+  @@index([customerId])
+  @@unique([clothId, rentDate])
 
 }
 
@@ -52,6 +75,7 @@ enum ClothStatus {
   CLEANING
   DAMAGED
   UNAVAILABLE
+  ARCHIVED
 }
 
 enum RentalStatus {

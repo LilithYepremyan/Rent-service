@@ -82,5 +82,6 @@
   "filteredByCodeAndDate": "Отфильтровано по коду: {{code}} и дате: {{date}}",
   "sentToCleaning": "Отправлено в химчистку",
   "pickedUp": "Забрано",
-  "returned": "Возвращено"
+  "returned": "Возвращено",
+  "successfullyArchived": "Успешно архивировано"
 }
