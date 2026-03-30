@@ -49,6 +49,12 @@
   }
 }
 
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .fileLabel {
   margin-top: 20px;
   padding: 10px 15px;
