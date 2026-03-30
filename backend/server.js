@@ -49,6 +49,11 @@ app.post("/clothes", upload.array("photos", 5), async (req, res) => {
 app.get("/clothes", async (req, res) => {
   try {
     const clothes = await prisma.cloth.findMany({
+      where: {
+        status: {
+          not: "ARCHIVED",
+        },
+      },
       include: { photos: true, rentals: true },
       orderBy: { id: "desc" },
     });
@@ -63,10 +68,16 @@ app.get("/clothes", async (req, res) => {
 app.get("/clothes/:code", async (req, res) => {
   try {
     const { code } = req.params;
-    const cloth = await prisma.cloth.findUnique({
-      where: { code },
+    const cloth = await prisma.cloth.findFirst({
+      where: { code, status: { not: "ARCHIVED" } },
       include: { photos: true, rentals: true },
     });
+
+    if (cloth?.status === "ARCHIVED") {
+      return res
+        .status(404)
+        .json({ message: "Нельзя забронировать архивную вещь" });
+    }
 
     if (!cloth) return res.status(404).json({ message: "Одежда не найдена" });
     res.json(cloth);
@@ -88,6 +99,9 @@ app.get("/clothes/free/:date", async (req, res) => {
 
     const freeClothes = await prisma.cloth.findMany({
       where: {
+        status: {
+          not: "ARCHIVED",
+        },
         rentals: {
           none: {
             startDate: { lte: d },
@@ -111,11 +125,6 @@ app.post("/rent", async (req, res) => {
     const { clothId, rentDate, customer } = req.body;
     const { firstName, lastName, phone, passport, deposit, description } =
       customer;
-    if (!clothId || !rentDate || !customer?.firstName) {
-      return res.status(400).json({
-        message: "Нужны clothId, rentDate, customer info",
-      });
-    }
 
     // Проверка минимальных данных
     if (!customer) {
@@ -145,13 +154,42 @@ app.post("/rent", async (req, res) => {
     };
 
     // Проверка пересечений
-    // Проверка пересечений
     const overlapping = await prisma.rental.findFirst({
       where: {
         clothId,
         OR: [{ startDate: { lte: endDate }, endDate: { gte: startDate } }],
       },
     });
+
+    // Ищем клиента
+    let existingCustomer = await prisma.customer.findUnique({
+      where: { passport },
+    });
+
+    //  Если нет — создаём , если есть — обновляем данные (кроме паспорта)
+    if (!existingCustomer) {
+      existingCustomer = await prisma.customer.create({
+        data: {
+          firstName,
+          lastName,
+          phone,
+          passport,
+          deposit,
+          description,
+        },
+      });
+    } else {
+      existingCustomer = await prisma.customer.update({
+        where: { id: existingCustomer.id },
+        data: {
+          firstName,
+          lastName,
+          phone,
+          deposit,
+          description,
+        },
+      });
+    }
 
     if (overlapping)
       return res
@@ -165,40 +203,8 @@ app.post("/rent", async (req, res) => {
         rentDate: rent,
         startDate,
         endDate,
-        // userId,
-        customer: {
-          firstName,
-          lastName,
-          phone,
-          passport,
-          deposit,
-          description,
-        },
+        customerId: existingCustomer.id,
       },
-    });
-
-    // Обновление статуса одежды
-    app.patch("/clothes/:id/status", async (req, res) => {
-      try {
-        const { id } = req.params;
-        const { status } = req.body;
-
-        if (!status) {
-          return res.status(400).json({ message: "Статус обязателен" });
-        }
-
-        const cloth = await prisma.cloth.update({
-          where: { id: Number(id) },
-          data: { status },
-        });
-
-        res.json(cloth);
-      } catch (error) {
-        console.error(error);
-        res
-          .status(500)
-          .json({ message: "Ошибка при обновлении статуса одежды" });
-      }
     });
 
     // Отправляем даты как YYYY-MM-DD, без смещений
@@ -212,6 +218,28 @@ app.post("/rent", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Ошибка при бронировании" });
+  }
+});
+
+//Обновление статуса одежды
+app.patch("/clothes/:id/status", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!status) {
+      return res.status(400).json({ message: "Статус обязателен" });
+    }
+
+    const cloth = await prisma.cloth.update({
+      where: { id: Number(id) },
+      data: { status },
+    });
+
+    res.json(cloth);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Ошибка при обновлении статуса одежды" });
   }
 });
 
@@ -241,49 +269,65 @@ app.delete("/rent/:id", async (req, res) => {
 });
 
 // ✅ Удаление одежды
-app.delete("/clothes/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const clothId = parseInt(id);
+// app.delete("/clothes/:id", async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const clothId = parseInt(id);
 
-    // Проверим, существует ли вещь
-    const cloth = await prisma.cloth.findUnique({
-      where: { id: clothId },
-      include: { photos: true },
-    });
+//     // Проверим, существует ли вещь
+//     const cloth = await prisma.cloth.findUnique({
+//       where: { id: clothId },
+//       include: { photos: true },
+//     });
 
-    if (!cloth) {
-      return res.status(404).json({ message: "Одежда не найдена" });
-    }
+//     if (!cloth) {
+//       return res.status(404).json({ message: "Одежда не найдена" });
+//     }
 
-    // Удаляем фото с диска
-    cloth.photos.forEach(async (photo) => {
-      const filePath = path.join(__dirname, photo.url);
-      if (fs.existsSync(filePath)) {
-        await fs.promises.unlink(filePath);
-      }
-    });
+//     // Удаляем фото с диска
+//     cloth.photos.forEach(async (photo) => {
+//       const filePath = path.join(__dirname, photo.url);
+//       if (fs.existsSync(filePath)) {
+//         await fs.promises.unlink(filePath);
+//       }
+//     });
 
-    // Удаляем все брони, связанные с этой одеждой
-    await prisma.rental.deleteMany({
-      where: { clothId },
-    });
+//     // Удаляем все брони, связанные с этой одеждой
+//     // await prisma.rental.deleteMany({
+//     //   where: { clothId },
+//     // });
 
-    // Удаляем одежду (вместе с фото из БД)
-    await prisma.photo.deleteMany({
-      where: { clothId },
-    });
+//     // Удаляем одежду (вместе с фото из БД)
+//     await prisma.photo.deleteMany({
+//       where: { clothId },
+//     });
 
-    await prisma.cloth.delete({
-      where: { id: clothId },
-    });
+//     await prisma.cloth.delete({
+//       where: { id: clothId },
+//     });
 
-    res.json({ message: "Одежда успешно удалена" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Ошибка при удалении одежды" });
-  }
-});
+//     res.json({ message: "Одежда успешно удалена" });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Ошибка при удалении одежды" });
+//   }
+// });
+
+//  Архивирование одежды
+// app.patch("/clothes/:id/archive", async (req, res) => {
+//   try {
+//     const clothId = Number(req.params.id);
+
+//     const cloth = await prisma.cloth.update({
+//       where: { id: clothId },
+//       data: { status: "ARCHIVED" },
+//     });
+
+//     res.json({ message: "Вещь архивирована", cloth });
+//   } catch (e) {
+//     res.status(500).json({ message: "Ошибка" });
+//   }
+// });
 
 // ✅ Получить все брони или брони на конкретную дату
 app.get("/rentals", async (req, res) => {
@@ -406,7 +450,7 @@ app.get("/rentals/today", async (req, res) => {
         createdAt: { gte: today, lt: tomorrow },
         rentDate: { gte: today },
       },
-      include: { cloth: { include: { photos: true } } },
+      include: { cloth: { include: { photos: true } }, customer: true },
     });
 
     const totalDeposit = rentals.reduce(
@@ -438,6 +482,7 @@ app.get("/rentals/ends-today", async (req, res) => {
         },
       },
       include: {
+        customer: true,
         cloth: {
           include: { photos: true },
         },
@@ -471,7 +516,7 @@ app.get("/rentals/ends", async (req, res) => {
           lt: next,
         },
       },
-      include: { cloth: { include: { photos: true } } },
+      include: { cloth: { include: { photos: true } }, customer: true },
     });
 
     res.json(rentals);
@@ -506,7 +551,7 @@ app.get("/rentals/month/:year/:month", async (req, res) => {
           lt: end,
         },
       },
-      include: { cloth: { include: { photos: true } } },
+      include: { cloth: { include: { photos: true } }, customer: true },
       orderBy: { rentDate: "asc" },
     });
 
