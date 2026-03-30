@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import {
-  deleteCloth,
   getAllClothes,
   getClothByCode,
   findFreeClothesByDate,
   type Cloth,
+  archiveCloth,
 } from "../../features/clothes/clothesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -34,52 +34,82 @@ const ClothesPage: React.FC = () => {
     applyFilters();
   }, [filterCode, filterDate]);
 
-  const applyFilters = async () => {
+ const applyFilters = async () => {
+  try {
+    // 1. Нет фильтров → все вещи
     if (!filterCode && !filterDate) {
-      dispatch(getAllClothes());
+      const response = await dispatch(getAllClothes());
+      dispatch({
+        type: "clothes/setItems",
+        payload: response.payload || [],
+      });
       return;
     }
 
+    // 2. Только дата
     if (!filterCode && filterDate) {
       const response = await dispatch(findFreeClothesByDate(filterDate));
-      if (!response.payload || (response.payload as Cloth[]).length === 0) {
-        dispatch({ type: "clothes/noResults" });
-      }
+      dispatch({
+        type: "clothes/setItems",
+        payload: response.payload || [],
+      });
       return;
     }
 
+    // 3. Только код
     if (filterCode && !filterDate) {
       const response = await dispatch(getClothByCode(filterCode));
+
       if (response.meta.requestStatus === "fulfilled" && response.payload) {
-        dispatch({ type: "clothes/setItems", payload: [response.payload] });
+        dispatch({
+          type: "clothes/setItems",
+          payload: [response.payload],
+        });
       } else {
         dispatch({ type: "clothes/noResults" });
       }
       return;
     }
 
-    const freeResponse = await dispatch(findFreeClothesByDate(filterDate));
-    const codeResponse = await dispatch(getClothByCode(filterCode));
+    // 4. Код + дата
+    if (filterCode && filterDate) {
+      const [freeRes, codeRes] = await Promise.all([
+        dispatch(findFreeClothesByDate(filterDate)),
+        dispatch(getClothByCode(filterCode)),
+      ]);
 
-    if (freeResponse.payload && codeResponse.payload) {
-      const cloth = codeResponse.payload as Cloth;
-      const isFree = (freeResponse.payload as Cloth[]).some(
-        (c) => c.id === cloth.id,
-      );
+      if (
+        freeRes.payload &&
+        codeRes.meta.requestStatus === "fulfilled" &&
+        codeRes.payload
+      ) {
+        const cloth = codeRes.payload as Cloth;
 
-      if (isFree) {
-        dispatch({ type: "clothes/setItems", payload: [cloth] });
+        const isFree = (freeRes.payload as Cloth[]).some(
+          (c) => c.id === cloth.id,
+        );
+
+        if (isFree) {
+          dispatch({
+            type: "clothes/setItems",
+            payload: [cloth],
+          });
+        } else {
+          dispatch({ type: "clothes/noResults" });
+        }
       } else {
         dispatch({ type: "clothes/noResults" });
       }
-    } else {
-      dispatch({ type: "clothes/noResults" });
     }
-  };
+  } catch (e) {
+    dispatch({ type: "clothes/noResults" });
+  }
+};
 
-  const handleDelete = async (id: number) => {
-    await dispatch(deleteCloth(id));
-    toast.success(t("successfullyDeleted"));
+  const handleArchive = async (id: number) => {
+    await dispatch(archiveCloth(id));
+    await dispatch(getAllClothes());
+    toast.success(t("successfullyArchived"));
   };
 
   return (
@@ -111,7 +141,7 @@ const ClothesPage: React.FC = () => {
               setSelectedCloth(cloth);
               setModalVisible(true);
             }}
-            onDelete={() => handleDelete(cloth.id)}
+            onDelete={() => handleArchive(cloth.id)}
           />
         ))}
       </div>

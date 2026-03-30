@@ -83,5 +83,6 @@
   "filteredByCodeAndDate": "Filtered by code: {{code}} and date: {{date}}",
   "sentToCleaning": "Sent to cleaning",
   "pickedUp": "Picked up",
-  "returned": "Returned"
+  "returned": "Returned",
+  "successfullyArchived": "Successfully archived"
 }

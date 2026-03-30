@@ -21,6 +21,7 @@ export interface Cloth {
 interface ClothesState {
   items: Cloth[];
   loading: boolean;
+  error?: string;
 }
 
 const initialState: ClothesState = {
@@ -33,23 +34,24 @@ export const getAllClothes = createAsyncThunk(
   async () => {
     const response = await api.get<Cloth[]>("/clothes");
     return response.data;
-  }
+  },
 );
 
-export const deleteCloth = createAsyncThunk(
-  "clothes/deleteCloth",
+export const archiveCloth = createAsyncThunk(
+  "clothes/archiveCloth",
   async (clothId: number) => {
-    await api.delete(`/clothes/${clothId}`);
+    await api.patch(`/clothes/${clothId}/status`, { status: "ARCHIVED" });
     return clothId;
-  }
+  },
 );
+
 export const getClothByCode = createAsyncThunk(
   "clothes/getClothByCode",
   async (clothCode: string) => {
     const response = await api.get<Cloth>(`/clothes/${clothCode}`);
 
     return response.data;
-  }
+  },
 );
 
 export const findFreeClothesByDate = createAsyncThunk<Cloth[], string>(
@@ -57,15 +59,15 @@ export const findFreeClothesByDate = createAsyncThunk<Cloth[], string>(
   async (date: string) => {
     const response = await api.get<Cloth[]>(`/clothes/free/${date}`);
     return response.data;
-  }
+  },
 );
 
 export const updateClothStatus = createAsyncThunk(
   "clothes/updateStatus",
   async ({ id, status }: { id: number; status: string }) => {
-    const res = await api.patch(`/clothes/${id}/status`, { status });
-    return res.data;
-  }
+    const response = await api.patch(`/clothes/${id}/status`, { status });
+    return response.data;
+  },
 );
 const clothesSlice = createSlice({
   name: "clothes",
@@ -73,6 +75,9 @@ const clothesSlice = createSlice({
   reducers: {
     noResults(state) {
       state.items = [];
+    },
+    setItems(state, action: PayloadAction<Cloth[]>) {
+      state.items = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -84,41 +89,46 @@ const clothesSlice = createSlice({
       (state, action: PayloadAction<Cloth[]>) => {
         state.items = action.payload;
         state.loading = false;
-      }
+      },
     );
-    builder.addCase(getAllClothes.rejected, (state) => {
+    builder.addCase(getAllClothes.rejected, (state, action) => {
       state.loading = false;
+      state.error = action.error.message;
     });
-    builder.addCase(
-      deleteCloth.fulfilled,
-      (state, action: PayloadAction<number>) => {
-        state.items = state.items.filter(
-          (cloth) => cloth.id !== action.payload
-        );
-      }
-    );
+
     builder.addCase(
       getClothByCode.fulfilled,
       (state, action: PayloadAction<Cloth>) => {
         state.items = [action.payload];
-      }
+      },
     );
     builder.addCase(
       findFreeClothesByDate.fulfilled,
       (state, action: PayloadAction<Cloth[]>) => {
         state.items = action.payload;
-      }
+      },
+    );
+    builder.addCase(
+      archiveCloth.fulfilled,
+      (state, action: PayloadAction<number>) => {
+        const index = state.items.findIndex(
+          (cloth) => cloth.id === action.payload,
+        );
+        if (index !== -1) {
+          state.items[index].status = "ARCHIVED";
+        }
+      },
     );
     builder.addCase(
       updateClothStatus.fulfilled,
       (state, action: PayloadAction<Cloth>) => {
         const index = state.items.findIndex(
-          (cloth) => cloth.id === action.payload.id
+          (cloth) => cloth.id === action.payload.id,
         );
         if (index !== -1) {
           state.items[index] = action.payload;
         }
-      }
+      },
     );
   },
 });
