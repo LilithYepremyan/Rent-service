@@ -1,12 +1,14 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllClothes } from "../../features/clothes/clothesSlice";
+import {
+  getAllClothes,
+  updateClothStatus,
+} from "../../features/clothes/clothesSlice";
 import { useTranslation } from "react-i18next";
 import type { RootState, AppDispatch } from "../../app/store";
 import ProductTable from "../../components/ProductTable/ProductTable";
 import Badge from "../../components/Badge/Badge";
 import styles from "./Booking.module.scss";
-import { useCheckboxState } from "../../hooks/useCheckboxState";
 
 const Booking: React.FC = () => {
   const { t } = useTranslation();
@@ -18,8 +20,6 @@ const Booking: React.FC = () => {
   const todayRentals = rentals.filter(
     (r) => r.rentDate.split("T")[0] === today,
   );
-
-  const { isChecked, onCheck } = useCheckboxState();
 
   useEffect(() => {
     dispatch(getAllClothes());
@@ -34,13 +34,20 @@ const Booking: React.FC = () => {
       ) : (
         <>
           <div className={styles.wrapper}>
-            <h2>{t("bookedToday")}</h2>
+            <h2>{t("bookedToday")}000000</h2>
             <Badge count={todayRentals.length} />
           </div>
           <ProductTable
             products={todayRentals}
-            onCheck={onCheck}
-            isChecked={isChecked}
+            isChecked={(r) => r.status === "RENTED"}
+            onCheck={(r) =>
+              dispatch(
+                updateClothStatus({
+                  id: r.id,
+                  status: "RENTED",
+                }),
+              )
+            }
             checkBoxLabel={t("pickedUp")}
           />
         </>

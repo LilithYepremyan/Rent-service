@@ -6,7 +6,7 @@ import type { AppDispatch, RootState } from "../../app/store";
 import { getAllRentals } from "../../features/rentals/rentalsSlice";
 import Badge from "../../components/Badge/Badge";
 import ProductTable from "../../components/ProductTable/ProductTable";
-import { useCheckboxState } from "../../hooks/useCheckboxState";
+import { updateClothStatus } from "../../features/clothes/clothesSlice";
 
 const CleaningPage: React.FC = () => {
   const { t } = useTranslation();
@@ -20,7 +20,6 @@ const CleaningPage: React.FC = () => {
     [rentals, today],
   );
 
-  const { isChecked, onCheck } = useCheckboxState();
   const count = todayCleanings.length;
 
   useEffect(() => {
@@ -39,8 +38,10 @@ const CleaningPage: React.FC = () => {
           </div>
           <ProductTable
             products={todayCleanings}
-            onCheck={onCheck}
-            isChecked={isChecked}
+            isChecked={(r) => r.status === "CLEANING"}
+            onCheck={(r) =>
+              dispatch(updateClothStatus({ id: r.id, status: "CLEANING" }))
+            }
             checkBoxLabel={t("sentToCleaning")}
           />
         </>
