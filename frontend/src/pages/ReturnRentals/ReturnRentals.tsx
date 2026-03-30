@@ -4,7 +4,7 @@ import { getTodayEndingRentals } from "../../features/rentals/rentalsSlice";
 import ProductTable from "../../components/ProductTable/ProductTable";
 import { useTranslation } from "react-i18next";
 import type { RootState, AppDispatch } from "../../app/store";
-import { useCheckboxState } from "../../hooks/useCheckboxState";
+import { updateClothStatus } from "../../features/clothes/clothesSlice";
 
 const ReturnRentals = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -13,8 +13,6 @@ const ReturnRentals = () => {
   const todayEndingRentals = useSelector(
     (state: RootState) => state.rentals.todayEndingRentals,
   );
-
-  const { isChecked, onCheck } = useCheckboxState();
 
   useEffect(() => {
     dispatch(getTodayEndingRentals());
@@ -28,8 +26,10 @@ const ReturnRentals = () => {
       ) : (
         <ProductTable
           products={todayEndingRentals}
-          isChecked={isChecked}
-          onCheck={onCheck}
+          onCheck={(r) =>
+            dispatch(updateClothStatus({ id: r.id, status: "RETURNED" }))
+          }
+          isChecked={(r) => r.status === "RETURNED"}
           checkBoxLabel={t("returned")}
         />
       )}
