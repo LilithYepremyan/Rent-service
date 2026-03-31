@@ -350,7 +350,7 @@ app.get("/rentals", async (req, res) => {
 
     const rentals = await prisma.rental.findMany({
       where,
-      include: { cloth: { include: { photos: true } } },
+      include: { cloth: { include: { photos: true } }, customer: true },
       orderBy: { id: "desc" },
     });
 
@@ -425,6 +425,7 @@ app.get("/rentals/cleaning", async (req, res) => {
         cloth: {
           include: { photos: true },
         },
+        customer: true,
       },
     });
 
@@ -526,7 +527,6 @@ app.get("/rentals/ends", async (req, res) => {
 });
 
 // Получить все брони за конкретный месяц
-// Получить все брони за месяц
 app.get("/rentals/month/:year/:month", async (req, res) => {
   try {
     const { year, month } = req.params;
