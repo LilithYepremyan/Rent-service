@@ -1,14 +1,12 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getAllClothes,
-  updateClothStatus,
-} from "../../features/clothes/clothesSlice";
+
 import { useTranslation } from "react-i18next";
 import type { RootState, AppDispatch } from "../../app/store";
 import ProductTable from "../../components/ProductTable/ProductTable";
 import Badge from "../../components/Badge/Badge";
 import styles from "./Booking.module.scss";
+import { getAllRentals, updateRentalStatus } from "../../features/rentals/rentalsSlice";
 
 const Booking: React.FC = () => {
   const { t } = useTranslation();
@@ -22,7 +20,8 @@ const Booking: React.FC = () => {
   );
 
   useEffect(() => {
-    dispatch(getAllClothes());
+    // dispatch(getAllClothes());
+    dispatch(getAllRentals());
   }, [dispatch]);
 
   // if (loading) return <p>{t("loading")}</p>;
@@ -42,7 +41,7 @@ const Booking: React.FC = () => {
             isChecked={(r) => r.status === "RENTED"}
             onCheck={(r) =>
               dispatch(
-                updateClothStatus({
+                updateRentalStatus({
                   id: r.id,
                   status: "RENTED",
                 }),
