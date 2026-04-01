@@ -596,6 +596,7 @@ app.patch("/rentals/:id/status", async (req, res) => {
   const rental = await prisma.rental.update({
     where: { id: Number(id) },
     data: { status },
+    include: { cloth: { include: { photos: true } }, customer: true },
   });
 
   res.json(rental);
