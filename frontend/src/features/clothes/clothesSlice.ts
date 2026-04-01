@@ -62,13 +62,13 @@ export const findFreeClothesByDate = createAsyncThunk<Cloth[], string>(
   },
 );
 
-export const updateClothStatus = createAsyncThunk(
-  "clothes/updateStatus",
-  async ({ id, status }: { id: number; status: string }) => {
-    const response = await api.patch(`/clothes/${id}/status`, { status });
-    return response.data;
-  },
-);
+// export const updateRentalStatus = createAsyncThunk(
+//   "clothes/updateRentalStatus",
+//   async ({ id, status }: { id: number; status: string }) => {
+//     const response = await api.patch(`/rentals/${id}/status`, { status });
+//     return response.data;
+//   },
+// );
 const clothesSlice = createSlice({
   name: "clothes",
   initialState,
@@ -119,17 +119,18 @@ const clothesSlice = createSlice({
         }
       },
     );
-    builder.addCase(
-      updateClothStatus.fulfilled,
-      (state, action: PayloadAction<Cloth>) => {
-        const index = state.items.findIndex(
-          (cloth) => cloth.id === action.payload.id,
-        );
-        if (index !== -1) {
-          state.items[index] = action.payload;
-        }
-      },
-    );
+    // builder.addCase(
+    //   updateRentalStatus.fulfilled,
+    //   (state, action: PayloadAction<Cloth>) => {
+    //     const index = state.items.findIndex(
+    //       (cloth) => cloth.id === action.payload.id,
+    //     );
+    //     if (index !== -1) {
+    //       state.items[index] = action.payload;
+    //     }
+    //   },
+    // );
+    
   },
 });
 

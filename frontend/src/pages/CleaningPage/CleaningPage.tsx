@@ -3,10 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import styles from "./CleaningPage.module.scss";
 import type { AppDispatch, RootState } from "../../app/store";
-import { getAllRentals } from "../../features/rentals/rentalsSlice";
+import { getAllRentals, updateRentalStatus } from "../../features/rentals/rentalsSlice";
 import Badge from "../../components/Badge/Badge";
 import ProductTable from "../../components/ProductTable/ProductTable";
-import { updateClothStatus } from "../../features/clothes/clothesSlice";
 
 const CleaningPage: React.FC = () => {
   const { t } = useTranslation();
@@ -40,7 +39,7 @@ const CleaningPage: React.FC = () => {
             products={todayCleanings}
             isChecked={(r) => r.status === "CLEANING"}
             onCheck={(r) =>
-              dispatch(updateClothStatus({ id: r.id, status: "CLEANING" }))
+              dispatch(updateRentalStatus({ id: r.id, status: "CLEANING" }))
             }
             checkBoxLabel={t("sentToCleaning")}
           />

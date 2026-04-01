@@ -104,6 +104,14 @@ export const getRentalsByMonth = createAsyncThunk(
   },
 );
 
+export const updateRentalStatus = createAsyncThunk(
+  "rentals/updateStatus",
+  async ({ id, status }: { id: number; status: string }) => {
+    const response = await api.patch(`/rentals/${id}/status`, { status });
+    return response.data;
+  },
+);
+
 export const getRentalsByYear = createAsyncThunk(
   "rentals/getByYear",
   async (year: number) => {
@@ -185,6 +193,15 @@ const rentalsSlice = createSlice({
       getRentalsByYear.fulfilled,
       (state, action: PayloadAction<Rental[]>) => {
         state.reportRentals = action.payload;
+      },
+    );
+    builder.addCase(
+      updateRentalStatus.fulfilled,
+      (state, action: PayloadAction<Rental>) => {
+        const index = state.rentals.findIndex(
+          (rental) => rental.id === action.payload.id,
+        );
+        state.rentals[index] = action.payload;
       },
     );
   },
