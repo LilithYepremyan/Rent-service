@@ -588,6 +588,19 @@ app.get("/rentals/year/:year", async (req, res) => {
   }
 });
 
+// Обновление статуса брони
+app.patch("/rentals/:id/status", async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  const rental = await prisma.rental.update({
+    where: { id: Number(id) },
+    data: { status },
+  });
+
+  res.json(rental);
+});
+
 // ✅ Запускаем сервер
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
