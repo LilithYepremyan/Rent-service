@@ -6,7 +6,11 @@ import type { RootState, AppDispatch } from "../../app/store";
 import ProductTable from "../../components/ProductTable/ProductTable";
 import Badge from "../../components/Badge/Badge";
 import styles from "./Booking.module.scss";
-import { getAllRentals, updateRentalStatus } from "../../features/rentals/rentalsSlice";
+import {
+  getAllRentals,
+  updateRentalStatus,
+} from "../../features/rentals/rentalsSlice";
+import { ClothStatus } from "../ReturnRentals/ReturnRentals";
 
 const Booking: React.FC = () => {
   const { t } = useTranslation();
@@ -33,17 +37,21 @@ const Booking: React.FC = () => {
       ) : (
         <>
           <div className={styles.wrapper}>
-            <h2>{t("bookedToday")}000000</h2>
+            <h2>{t("bookedToday")}</h2>
             <Badge count={todayRentals.length} />
           </div>
           <ProductTable
             products={todayRentals}
-            isChecked={(r) => r.status === "RENTED"}
+            isChecked={(r) => r.status === ClothStatus.RENTED}
             onCheck={(r) =>
               dispatch(
                 updateRentalStatus({
                   id: r.id,
-                  status: "RENTED",
+                  // status: "RENTED",
+                  status:
+                    r.status === ClothStatus.RETURNED
+                      ? ClothStatus.RENTED
+                      : ClothStatus.RENTED,
                 }),
               )
             }

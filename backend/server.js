@@ -222,26 +222,26 @@ app.post("/rent", async (req, res) => {
 });
 
 //Обновление статуса одежды
-app.patch("/clothes/:id/status", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { status } = req.body;
+// app.patch("/clothes/:id/status", async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const { status } = req.body;
 
-    if (!status) {
-      return res.status(400).json({ message: "Статус обязателен" });
-    }
+//     if (!status) {
+//       return res.status(400).json({ message: "Статус обязателен" });
+//     }
 
-    const cloth = await prisma.cloth.update({
-      where: { id: Number(id) },
-      data: { status },
-    });
+//     const cloth = await prisma.cloth.update({
+//       where: { id: Number(id) },
+//       data: { status },
+//     });
 
-    res.json(cloth);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Ошибка при обновлении статуса одежды" });
-  }
-});
+//     res.json(cloth);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Ошибка при обновлении статуса одежды" });
+//   }
+// });
 
 // ✅ Отмена брони
 app.delete("/rent/:id", async (req, res) => {

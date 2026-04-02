@@ -80,6 +80,8 @@ enum ClothStatus {
 
 enum RentalStatus {
   RESERVED
+  CLEANING
   RENTED
   RETURNED
+  CANCELLED
 }
