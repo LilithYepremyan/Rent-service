@@ -195,6 +195,20 @@ const rentalsSlice = createSlice({
         state.reportRentals = action.payload;
       },
     );
+    builder.addCase(updateRentalStatus.pending, (state, action) => {
+      const { id, status } = action.meta.arg;
+
+      const updateList = (list: Rental[]) => {
+        const item = list.find((r) => r.id === id);
+        if (item) {
+          item.status = status;
+        }
+      };
+
+      updateList(state.rentals);
+      updateList(state.todayEndingRentals);
+      updateList(state.todayRentals);
+    });
     builder.addCase(
       updateRentalStatus.fulfilled,
       (state, action: PayloadAction<Rental>) => {
