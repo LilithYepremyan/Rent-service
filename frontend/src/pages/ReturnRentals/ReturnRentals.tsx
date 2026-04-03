@@ -35,8 +35,8 @@ const ReturnRentals = () => {
                 id: r.id,
                 status:
                   r.status !== RentalStatus.RETURNED
-                    ? RentalStatus.RENTED
-                    : RentalStatus.RETURNED,
+                    ? RentalStatus.RETURNED
+                    : RentalStatus.RENTED,
               }),
             )
           }
