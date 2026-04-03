@@ -32,7 +32,7 @@ const ProductTable = ({
             <th>{t("deposit")}</th>
             <th>{t("description")}</th>
             <th>{t("needToPay")}</th>
-            <th> {t("done")}</th>
+            {checkBoxLabel && <th>{t("done")}</th>}
           </tr>
         </thead>
 
@@ -63,19 +63,22 @@ const ProductTable = ({
               <td>{rental.customer?.deposit || "-"}</td>
               <td>{rental.customer?.description || "-"}</td>
               <td>{rental.cloth?.price - rental.customer?.deposit}</td>
-              <td>
-                <label className={styles.checkboxLabel}>
-                  <input
-                    className={styles.done}
-                    type="checkbox"
-                    checked={isChecked?.(rental) ?? false}
-                    onChange={() => onCheck?.(rental)}
-                  />
-                  <span className={styles.checkboxText}>
-                    {isChecked?.(rental) && checkBoxLabel}
-                  </span>
-                </label>
-              </td>
+              {checkBoxLabel && (
+                <td>
+                  <label className={styles.checkboxLabel}>
+                    <input
+                      className={styles.done}
+                      type="checkbox"
+                      checked={isChecked?.(rental) ?? false}
+                      onChange={() => onCheck?.(rental)}
+                    />
+
+                    <span className={styles.checkboxText}>
+                      {isChecked?.(rental) && checkBoxLabel}
+                    </span>
+                  </label>
+                </td>
+              )}
             </tr>
           ))}
           <tr>
