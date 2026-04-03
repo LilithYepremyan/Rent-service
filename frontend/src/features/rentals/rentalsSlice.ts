@@ -198,10 +198,21 @@ const rentalsSlice = createSlice({
     builder.addCase(
       updateRentalStatus.fulfilled,
       (state, action: PayloadAction<Rental>) => {
-        const index = state.rentals.findIndex(
-          (rental) => rental.id === action.payload.id,
-        );
-        state.rentals[index] = action.payload;
+        const updated = action.payload;
+
+        const updateList = (list: Rental[]) => {
+          const index = list.findIndex((r) => r.id === updated.id);
+          if (index !== -1) {
+            list[index] = updated;
+          }
+        };
+
+        updateList(state.rentals);
+        updateList(state.todayRentals);
+        updateList(state.todayEndingRentals);
+        updateList(state.rentalsByDate);
+        updateList(state.cleaningsRentalsByDate);
+        updateList(state.endingRentalsByDate);
       },
     );
   },
