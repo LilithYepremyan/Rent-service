@@ -7,16 +7,7 @@ import {
 import ProductTable from "../../components/ProductTable/ProductTable";
 import { useTranslation } from "react-i18next";
 import type { RootState, AppDispatch } from "../../app/store";
-
-export const ClothStatus = {
-  RESERVED: "RESERVED",
-  RENTED: "RENTED",
-  CLEANING: "CLEANING",
-  RETURNED: "RETURNED",
-  CANCELED: "CANCELED",
-} as const;
-
-export type ClothStatusType = (typeof ClothStatus)[keyof typeof ClothStatus];
+import { RentalStatus } from "../Booking/Booking";
 
 const ReturnRentals = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -43,13 +34,13 @@ const ReturnRentals = () => {
               updateRentalStatus({
                 id: r.id,
                 status:
-                  r.status === ClothStatus.RENTED
-                    ? ClothStatus.RETURNED
-                    : ClothStatus.RENTED,
+                  r.status !== RentalStatus.RETURNED
+                    ? RentalStatus.RENTED
+                    : RentalStatus.RETURNED,
               }),
             )
           }
-          isChecked={(r) => r.status === ClothStatus.RETURNED}
+          isChecked={(r) => r.status === RentalStatus.RETURNED}
           checkBoxLabel={t("returned")}
         />
       )}

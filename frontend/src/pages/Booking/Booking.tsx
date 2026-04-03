@@ -10,7 +10,16 @@ import {
   getAllRentals,
   updateRentalStatus,
 } from "../../features/rentals/rentalsSlice";
-import { ClothStatus } from "../ReturnRentals/ReturnRentals";
+
+export const RentalStatus = {
+  RESERVED: "RESERVED",
+  CLEANING: "CLEANING",
+  RENTED: "RENTED",
+  RETURNED: "RETURNED",
+  CANCELLED: "CANCELLED",
+} as const;
+
+export type RentalStatus = (typeof RentalStatus)[keyof typeof RentalStatus];
 
 const Booking: React.FC = () => {
   const { t } = useTranslation();
@@ -42,16 +51,16 @@ const Booking: React.FC = () => {
           </div>
           <ProductTable
             products={todayRentals}
-            isChecked={(r) => r.status === ClothStatus.RENTED}
+            isChecked={(r) => r.status === RentalStatus.RENTED}
             onCheck={(r) =>
               dispatch(
                 updateRentalStatus({
                   id: r.id,
                   // status: "RENTED",
                   status:
-                    r.status === ClothStatus.RETURNED
-                      ? ClothStatus.RENTED
-                      : ClothStatus.RENTED,
+                    r.status !== RentalStatus.RENTED
+                      ? RentalStatus.RENTED
+                      : RentalStatus.RESERVED,
                 }),
               )
             }
