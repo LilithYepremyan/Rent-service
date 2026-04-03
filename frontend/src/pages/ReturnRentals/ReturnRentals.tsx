@@ -29,6 +29,7 @@ const ReturnRentals = () => {
       ) : (
         <ProductTable
           products={todayEndingRentals}
+          isChecked={(r) => r.status === RentalStatus.RETURNED}
           onCheck={(r) =>
             dispatch(
               updateRentalStatus({
@@ -40,7 +41,6 @@ const ReturnRentals = () => {
               }),
             )
           }
-          isChecked={(r) => r.status === RentalStatus.RETURNED}
           checkBoxLabel={t("returned")}
         />
       )}
