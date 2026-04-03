@@ -590,16 +590,21 @@ app.get("/rentals/year/:year", async (req, res) => {
 
 // Обновление статуса брони
 app.patch("/rentals/:id/status", async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
 
-  const rental = await prisma.rental.update({
-    where: { id: Number(id) },
-    data: { status },
-    include: { cloth: { include: { photos: true } }, customer: true },
-  });
+    const rental = await prisma.rental.update({
+      where: { id: Number(id) },
+      data: { status },
+      include: { cloth: { include: { photos: true } }, customer: true },
+    });
 
-  res.json(rental);
+    res.json(rental);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Ошибка при обновлении статуса брони" });
+  }
 });
 
 // ✅ Запускаем сервер
