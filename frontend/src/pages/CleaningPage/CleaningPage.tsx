@@ -3,10 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import styles from "./CleaningPage.module.scss";
 import type { AppDispatch, RootState } from "../../app/store";
-import { getAllRentals, updateRentalStatus } from "../../features/rentals/rentalsSlice";
+import {
+  getAllRentals,
+  updateRentalStatus,
+} from "../../features/rentals/rentalsSlice";
 import Badge from "../../components/Badge/Badge";
 import ProductTable from "../../components/ProductTable/ProductTable";
-import { ClothStatus } from "../ReturnRentals/ReturnRentals";
+import { RentalStatus } from "../Booking/Booking";
 
 const CleaningPage: React.FC = () => {
   const { t } = useTranslation();
@@ -38,12 +41,18 @@ const CleaningPage: React.FC = () => {
           </div>
           <ProductTable
             products={todayCleanings}
-            isChecked={(r) => r.status === ClothStatus.CLEANING}
+            isChecked={(r) => r.status === RentalStatus.CLEANING}
             onCheck={(r) =>
-              dispatch(updateRentalStatus({ id: r.id, 
-                // status: "CLEANING"
-                status: r.status === ClothStatus.RENTED ? ClothStatus.CLEANING : ClothStatus.RENTED,
-               }))
+              dispatch(
+                updateRentalStatus({
+                  id: r.id,
+                  // status: "CLEANING"
+                  status:
+                    r.status !== RentalStatus.CLEANING
+                      ? RentalStatus.CLEANING
+                      : RentalStatus.RENTED,
+                }),
+              )
             }
             checkBoxLabel={t("sentToCleaning")}
           />
