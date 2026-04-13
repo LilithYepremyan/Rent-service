@@ -18,6 +18,7 @@
       { to: "/today-rentals", label: t("todayRentals") },
       { to: "/return-rentals", label: t("returnRentals") },
       { to: "/booking-history", label: t("bookingHistory") },
+      { to: "/archived-clothes", label: t("archivedClothes") },
     ];
 
     const changeLanguage = (lng: string) => {
