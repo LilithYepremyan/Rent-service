@@ -4,7 +4,6 @@ import { PrismaClient } from "@prisma/client";
 import { fileURLToPath } from "url";
 import path from "path";
 import upload from "./middleware/upload.js";
-import fs from "fs";
 
 const app = express();
 const prisma = new PrismaClient();
@@ -42,6 +41,24 @@ app.post("/clothes", upload.array("photos", 5), async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Ошибка при добавлении одежды" });
+  }
+});
+
+//  Получение архива
+app.get("/clothes/archived", async (req, res) => {
+  try {
+    const clothes = await prisma.cloth.findMany({
+      where: {
+        status: "ARCHIVED",
+      },
+      include: { photos: true, rentals: true },
+      orderBy: { id: "desc" },
+    });
+
+    res.json(clothes);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Ошибка при получении архива" });
   }
 });
 
@@ -243,23 +260,6 @@ app.patch("/clothes/:id/status", async (req, res) => {
   }
 });
 
-//  Получение архива
-app.get("/clothes/archived", async (req, res) => {
-  try {
-    const clothes = await prisma.cloth.findMany({
-      where: {
-        status: "ARCHIVED",
-      },
-      include: { photos: true, rentals: true },
-      orderBy: { id: "desc" },
-    });
-
-    res.json(clothes);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Ошибка при получении архива" });
-  }
-});
 
 // ✅ Отмена брони
 app.delete("/rent/:id", async (req, res) => {
