@@ -221,27 +221,45 @@ app.post("/rent", async (req, res) => {
   }
 });
 
-//Обновление статуса одежды
-// app.patch("/clothes/:id/status", async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { status } = req.body;
+// Обновление статуса одежды
+app.patch("/clothes/:id/status", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
 
-//     if (!status) {
-//       return res.status(400).json({ message: "Статус обязателен" });
-//     }
+    if (!status) {
+      return res.status(400).json({ message: "Статус обязателен" });
+    }
 
-//     const cloth = await prisma.cloth.update({
-//       where: { id: Number(id) },
-//       data: { status },
-//     });
+    const cloth = await prisma.cloth.update({
+      where: { id: Number(id) },
+      data: { status },
+    });
 
-//     res.json(cloth);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Ошибка при обновлении статуса одежды" });
-//   }
-// });
+    res.json(cloth);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Ошибка при обновлении статуса одежды" });
+  }
+});
+
+//  Получение архива
+app.get("/clothes/archived", async (req, res) => {
+  try {
+    const clothes = await prisma.cloth.findMany({
+      where: {
+        status: "ARCHIVED",
+      },
+      include: { photos: true, rentals: true },
+      orderBy: { id: "desc" },
+    });
+
+    res.json(clothes);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Ошибка при получении архива" });
+  }
+});
 
 // ✅ Отмена брони
 app.delete("/rent/:id", async (req, res) => {
@@ -268,66 +286,6 @@ app.delete("/rent/:id", async (req, res) => {
   }
 });
 
-// ✅ Удаление одежды
-// app.delete("/clothes/:id", async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const clothId = parseInt(id);
-
-//     // Проверим, существует ли вещь
-//     const cloth = await prisma.cloth.findUnique({
-//       where: { id: clothId },
-//       include: { photos: true },
-//     });
-
-//     if (!cloth) {
-//       return res.status(404).json({ message: "Одежда не найдена" });
-//     }
-
-//     // Удаляем фото с диска
-//     cloth.photos.forEach(async (photo) => {
-//       const filePath = path.join(__dirname, photo.url);
-//       if (fs.existsSync(filePath)) {
-//         await fs.promises.unlink(filePath);
-//       }
-//     });
-
-//     // Удаляем все брони, связанные с этой одеждой
-//     // await prisma.rental.deleteMany({
-//     //   where: { clothId },
-//     // });
-
-//     // Удаляем одежду (вместе с фото из БД)
-//     await prisma.photo.deleteMany({
-//       where: { clothId },
-//     });
-
-//     await prisma.cloth.delete({
-//       where: { id: clothId },
-//     });
-
-//     res.json({ message: "Одежда успешно удалена" });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Ошибка при удалении одежды" });
-//   }
-// });
-
-//  Архивирование одежды
-// app.patch("/clothes/:id/archive", async (req, res) => {
-//   try {
-//     const clothId = Number(req.params.id);
-
-//     const cloth = await prisma.cloth.update({
-//       where: { id: clothId },
-//       data: { status: "ARCHIVED" },
-//     });
-
-//     res.json({ message: "Вещь архивирована", cloth });
-//   } catch (e) {
-//     res.status(500).json({ message: "Ошибка" });
-//   }
-// });
 
 // ✅ Получить все брони или брони на конкретную дату
 app.get("/rentals", async (req, res) => {
