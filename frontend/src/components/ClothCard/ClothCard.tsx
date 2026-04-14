@@ -6,11 +6,17 @@ import styles from "./ClothCard.module.scss";
 
 type ClothCardProps = {
   cloth: Cloth;
-  onBook: () => void;
-  onDelete: () => void;
+  onBook?: () => void;
+  onArchive?: () => void;
+  onUnarchive?: () => void;
 };
 
-const ClothCard = ({ cloth, onBook, onDelete }: ClothCardProps) => {
+const ClothCard = ({
+  cloth,
+  onBook,
+  onArchive,
+  onUnarchive,
+}: ClothCardProps) => {
   const { t } = useTranslation();
 
   const imageUrl = cloth.photos?.[0]?.url;
@@ -18,11 +24,7 @@ const ClothCard = ({ cloth, onBook, onDelete }: ClothCardProps) => {
   return (
     <div className={styles.container}>
       {imageUrl && (
-        <img
-          src={imageUrl}
-          alt={cloth.name}
-          className={styles.photo}
-        />
+        <img src={imageUrl} alt={cloth.name} className={styles.photo} />
       )}
 
       <div>
@@ -41,17 +43,29 @@ const ClothCard = ({ cloth, onBook, onDelete }: ClothCardProps) => {
         </p>
 
         <div className={styles.actions}>
-          <ActionButton
-            onClick={onBook}
-            variant="primary"
-            text={t("booking")}
-          />
+          {onBook && (
+            <ActionButton
+              onClick={onBook}
+              variant="primary"
+              text={t("booking")}
+            />
+          )}
 
-          <ActionButton
-            onClick={onDelete}
-            variant="secondary"
-            text={t("delete")}
-          />
+          {onArchive && (
+            <ActionButton
+              onClick={onArchive}
+              variant="secondary"
+              text={t("archive")}
+            />
+          )}
+
+          {onUnarchive && (
+            <ActionButton
+              onClick={onUnarchive}
+              variant="secondary"
+              text={t("unarchive")}
+            />
+          )}
         </div>
       </div>
     </div>

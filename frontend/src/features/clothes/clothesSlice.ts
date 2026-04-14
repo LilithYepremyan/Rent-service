@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
 import api from "../../api/axios";
 import type { Rental } from "../rentals/rentalsSlice";
+import type { RootState } from "../../app/store";
 
 export interface Photo {
   id: number;
   url: string;
 }
+
 export interface Cloth {
   id: number;
   code: string;
@@ -20,13 +21,16 @@ export interface Cloth {
 
 interface ClothesState {
   items: Cloth[];
+  archivedItems: Cloth[];
   loading: boolean;
   error?: string;
 }
 
 const initialState: ClothesState = {
   items: [],
+  archivedItems: [],
   loading: false,
+  error: undefined,
 };
 
 export const getAllClothes = createAsyncThunk(
@@ -37,11 +41,12 @@ export const getAllClothes = createAsyncThunk(
   },
 );
 
-export const archiveCloth = createAsyncThunk(
-  "clothes/archiveCloth",
-  async (clothId: number) => {
-    await api.patch(`/clothes/${clothId}/status`, { status: "ARCHIVED" });
-    return clothId;
+export const getArchivedClothes = createAsyncThunk(
+  "clothes/getArchivedClothes",
+  async () => {
+    const response = await api.get<Cloth[]>("/clothes/archived");
+    console.log(response.data, "archived clothes");
+    return response.data;
   },
 );
 
@@ -49,12 +54,11 @@ export const getClothByCode = createAsyncThunk(
   "clothes/getClothByCode",
   async (clothCode: string) => {
     const response = await api.get<Cloth>(`/clothes/${clothCode}`);
-
     return response.data;
   },
 );
 
-export const findFreeClothesByDate = createAsyncThunk<Cloth[], string>(
+export const findFreeClothesByDate = createAsyncThunk(
   "clothes/findFreeClothesByDate",
   async (date: string) => {
     const response = await api.get<Cloth[]>(`/clothes/free/${date}`);
@@ -62,75 +66,125 @@ export const findFreeClothesByDate = createAsyncThunk<Cloth[], string>(
   },
 );
 
-// export const updateRentalStatus = createAsyncThunk(
-//   "clothes/updateRentalStatus",
-//   async ({ id, status }: { id: number; status: string }) => {
-//     const response = await api.patch(`/rentals/${id}/status`, { status });
-//     return response.data;
-//   },
-// );
+export const archiveCloth = createAsyncThunk(
+  "clothes/archiveCloth",
+  async (clothId: number) => {
+    await api.patch(`/clothes/${clothId}/status`, {
+      status: "ARCHIVED",
+    });
+    return clothId;
+  },
+);
+
+export const unarchiveCloth = createAsyncThunk(
+  "clothes/unarchiveCloth",
+  async (clothId: number) => {
+    await api.patch(`/clothes/${clothId}/status`, {
+      status: "AVAILABLE",
+    });
+    return clothId;
+  },
+);
+
+export const selectActiveClothes = (state: RootState) => state.clothes.items;
+
+export const selectArchivedClothes = (state: RootState) =>
+  state.clothes.archivedItems;
+
+export const selectClothesLoading = (state: RootState) =>
+  state.clothes.loading;
+
 const clothesSlice = createSlice({
   name: "clothes",
   initialState,
-  reducers: {
-    noResults(state) {
-      state.items = [];
-    },
-    setItems(state, action: PayloadAction<Cloth[]>) {
-      state.items = action.payload;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getAllClothes.pending, (state) => {
-      state.loading = true;
-    });
-    builder.addCase(
-      getAllClothes.fulfilled,
-      (state, action: PayloadAction<Cloth[]>) => {
+    builder
+      .addCase(getAllClothes.pending, (state) => {
+        state.loading = true;
+        state.error = undefined;
+      })
+      .addCase(getAllClothes.fulfilled, (state, action) => {
         state.items = action.payload;
         state.loading = false;
-      },
-    );
-    builder.addCase(getAllClothes.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.error.message;
+      })
+      .addCase(getAllClothes.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+
+    builder
+      .addCase(getArchivedClothes.pending, (state) => {
+        state.loading = true;
+        state.error = undefined;
+      })
+      .addCase(getArchivedClothes.fulfilled, (state, action) => {
+        state.archivedItems = action.payload;
+        state.loading = false;
+      })
+      .addCase(getArchivedClothes.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+
+    builder
+      .addCase(getClothByCode.pending, (state) => {
+        state.loading = true;
+        state.error = undefined;
+      })
+      .addCase(getClothByCode.fulfilled, (state, action) => {
+        const index = state.items.findIndex((c) => c.id === action.payload.id);
+
+        if (index !== -1) {
+          state.items[index] = action.payload;
+        } else {
+          state.items.push(action.payload);
+        }
+
+        state.loading = false;
+      })
+      .addCase(getClothByCode.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+
+    builder
+      .addCase(findFreeClothesByDate.pending, (state) => {
+        state.loading = true;
+        state.error = undefined;
+      })
+      .addCase(findFreeClothesByDate.fulfilled, (state, action) => {
+        state.items = action.payload;
+        state.loading = false;
+      })
+      .addCase(findFreeClothesByDate.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+
+    builder.addCase(archiveCloth.fulfilled, (state, action) => {
+      const cloth = state.items.find((c) => c.id === action.payload);
+
+      if (cloth) {
+        cloth.status = "ARCHIVED";
+        state.archivedItems.unshift(cloth);
+      }
+
+      state.items = state.items.filter((c) => c.id !== action.payload);
     });
 
-    builder.addCase(
-      getClothByCode.fulfilled,
-      (state, action: PayloadAction<Cloth>) => {
-        state.items = [action.payload];
-      },
-    );
-    builder.addCase(
-      findFreeClothesByDate.fulfilled,
-      (state, action: PayloadAction<Cloth[]>) => {
-        state.items = action.payload;
-      },
-    );
-    builder.addCase(
-      archiveCloth.fulfilled,
-      (state, action: PayloadAction<number>) => {
-        const index = state.items.findIndex(
-          (cloth) => cloth.id === action.payload,
-        );
-        if (index !== -1) {
-          state.items[index].status = "ARCHIVED";
-        }
-      },
-    );
-    // builder.addCase(
-    //   updateRentalStatus.fulfilled,
-    //   (state, action: PayloadAction<Cloth>) => {
-    //     const index = state.items.findIndex(
-    //       (cloth) => cloth.id === action.payload.id,
-    //     );
-    //     if (index !== -1) {
-    //       state.items[index] = action.payload;
-    //     }
-    //   },
-    // );
-    
+    builder.addCase(unarchiveCloth.fulfilled, (state, action) => {
+      const cloth = state.archivedItems.find((c) => c.id === action.payload);
+
+      if (cloth) {
+        cloth.status = "AVAILABLE";
+        state.items.unshift(cloth);
+      }
+
+      state.archivedItems = state.archivedItems.filter(
+        (c) => c.id !== action.payload,
+      );
+    });
   },
 });
 

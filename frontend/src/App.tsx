@@ -11,6 +11,7 @@ import ReturnRentals from "./pages/ReturnRentals/ReturnRentals";
 import ClothesPage from "./pages/ClothesPage/ClothesPage";
 import CleaningPage from "./pages/CleaningPage/CleaningPage";
 import BookingHistoryPage from "./pages/BookingHistory/BookingHistoryPage";
+import ArchivedClothesPage from "./pages/ArchivedClothesPage/ArchivedClothesPage";
 
 const App: React.FC = () => {
   return (
@@ -32,6 +33,7 @@ const App: React.FC = () => {
           <Route path="/today-rentals" element={<TodayRentals />} />
           <Route path="/return-rentals" element={<ReturnRentals />} />
           <Route path="/booking-history" element={<BookingHistoryPage />} />
+          <Route path="/archived-clothes" element={<ArchivedClothesPage />} />
         </Routes>
       </div>
     </Router>
