@@ -12,7 +12,7 @@
   align-items: center;
   padding: 1rem 2rem;
   background-color: $white;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 40px $box-shadow-hover;
   border: 1px solid rgba(255, 255, 255, 0.25);
   transition: all 0.3s ease;
   z-index: 3;
@@ -49,13 +49,13 @@
 }
 
 .tooltip {
-  background-color: $tooltip-bg !important;
-  color: $white !important;
+  background-color: $tooltip-bg;
+  color: $white;
   padding: 6px 10px !important;
   border-radius: 8px !important;
   font-size: 12px !important;
   font-weight: 500;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 6px 20px $box-shadow-dark;
 }
 
 .langContainer {
@@ -87,7 +87,7 @@
 .langButtonActive {
   background: linear-gradient(to right, $primary-200, $primary-800);
   color: $white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px $box-shadow-hover;
   transform: scale(1.05);
 }
 .burger {

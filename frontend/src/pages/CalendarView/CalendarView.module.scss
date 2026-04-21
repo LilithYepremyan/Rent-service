@@ -31,7 +31,7 @@
   backdrop-filter: blur(12px);
   border-radius: 20px;
   padding: 24px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 30px $box-shadow;
 }
 
 .calendarWrapper {
@@ -46,10 +46,10 @@
 
 .content {
   max-width: 1000px;
-  background: #ffffff;
+  background: $white;
   border-radius: 24px;
   padding: 24px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 12px 40px $box-shadow;
   min-height: 400px;
   display: flex;
   justify-content: center;

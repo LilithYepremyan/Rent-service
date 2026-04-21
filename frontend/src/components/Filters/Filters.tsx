@@ -16,9 +16,6 @@ const Filters = ({ onCodeChange, onDateChange }: Props) => {
   const [date, setDate] = useState<Date | null>(null);
 
   const toYMD = (date: Date | null) => {
-
-    console.log("toYMD called with:", date);
-
     if (!date) return "";
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");

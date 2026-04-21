@@ -5,13 +5,13 @@
   width: 300px;
   overflow: hidden;
   text-align: center;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 20px $box-shadow;
   transition: transform 0.3s, box-shadow 0.3s;
   cursor: pointer;
 
    &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 12px 30px $box-shadow-hover;
   }
 }
 

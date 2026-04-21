@@ -1,22 +1,14 @@
-import { memo } from "react";
+import { memo, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import ActionButton from "../ActionButton/ActionButton";
 import type { Cloth } from "../../features/clothes/clothesSlice";
 import styles from "./ClothCard.module.scss";
 
 type ClothCardProps = {
   cloth: Cloth;
-  onBook?: () => void;
-  onArchive?: () => void;
-  onUnarchive?: () => void;
+  children?: ReactNode;
 };
 
-const ClothCard = ({
-  cloth,
-  onBook,
-  onArchive,
-  onUnarchive,
-}: ClothCardProps) => {
+const ClothCard = ({ cloth, children }: ClothCardProps) => {
   const { t } = useTranslation();
 
   const imageUrl = cloth.photos?.[0]?.url;
@@ -42,31 +34,7 @@ const ClothCard = ({
           {t("price")} {cloth.price} AMD
         </p>
 
-        <div className={styles.actions}>
-          {onBook && (
-            <ActionButton
-              onClick={onBook}
-              variant="primary"
-              text={t("booking")}
-            />
-          )}
-
-          {onArchive && (
-            <ActionButton
-              onClick={onArchive}
-              variant="secondary"
-              text={t("archive")}
-            />
-          )}
-
-          {onUnarchive && (
-            <ActionButton
-              onClick={onUnarchive}
-              variant="secondary"
-              text={t("unarchive")}
-            />
-          )}
-        </div>
+        <div className={styles.actions}>{children}</div>
       </div>
     </div>
   );
