@@ -15,6 +15,7 @@ import type { AppDispatch, RootState } from "../../app/store";
 import Filters from "../../components/Filters/Filters";
 import ClothCard from "../../components/ClothCard/ClothCard";
 import BookingModal from "../../components/BookingModal/BookingModal";
+import ActionButton from "../../components/ActionButton/ActionButton";
 
 const ClothesPage: React.FC = () => {
   const { t } = useTranslation();
@@ -48,7 +49,9 @@ const ClothesPage: React.FC = () => {
           return true;
         }
 
-        return !cloth.rentals.some((rental) => rental.rentDate === filterDate);
+        return !cloth.rentals.some(
+          (rental) => rental.rentDate.split("T")[0] === filterDate,
+        );
       });
     }
 
@@ -94,20 +97,30 @@ const ClothesPage: React.FC = () => {
 
       <div className={styles.wrapper}>
         {filteredClothes.map((cloth: Cloth) => (
-          <ClothCard
-            key={cloth.id}
-            cloth={cloth}
-            onBook={() => {
-              setSelectedCloth(cloth);
-              setModalVisible(true);
-            }}
-            onArchive={() => handleArchive(cloth.id)}
-          />
+          <ClothCard key={cloth.id} cloth={cloth}>
+            <ActionButton
+              onClick={() => {
+                setSelectedCloth(cloth);
+                setModalVisible(true);
+              }}
+              variant="primary"
+              text={t("booking")}
+            />
+
+            <ActionButton
+              onClick={() => {
+                handleArchive(cloth.id);
+              }}
+              variant="secondary"
+              text={t("archive")}
+            />
+          </ClothCard>
         ))}
       </div>
 
       {selectedCloth && (
         <BookingModal
+          mode="booking"
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           cloth={selectedCloth}

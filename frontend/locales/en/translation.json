@@ -39,7 +39,6 @@
   "bookingError": "Error during booking. Please try again.",
   "fillAllFields": "Please fill all  fields and select a date",
   "dateAlreadyBooked": "This date is already booked!",
-  "depositCantBeNegative": "Deposit cannot be negative!",
   "save": "Saving...",
   "confirmBooking": "Confirm Booking",
   "deleteItem": "Delete this item?",
@@ -90,5 +89,17 @@
   "sentToCleaning": "Sent to cleaning",
   "pickedUp": "Picked up",
   "returned": "Returned",
-  "successfullyArchived": "Successfully archived"
+  "successfullyArchived": "Successfully archived",
+  "viewHistory": "View History",
+  "historyOfArchivedProduct": "History of the archived product",
+  "nearestRentals": "Nearest Rentals",
+  "thereAreNoRentals": "There are no rentals in the nearest future",
+  "doYouWantToArchive": "Do you want to archive this item?",
+  "doYouWantToUnarchive": "Do you want to unarchive this item?",
+  "nextBooking": "Next Booking",
+  "totalUpcomingBookingsCount": "Total Upcoming Bookings",
+  "upcomingBookings": "Upcoming Bookings",
+  "depositRequired": "Deposit Required",
+  "descriptionRequired": "Description Required",
+  "selectDate": "Select Date"
 }
