@@ -341,7 +341,8 @@ app.get("/rentals/forSelectedDate", async (req, res) => {
         },
       },
       include: {
-        cloth: { include: { photos: true },customer: true },
+        cloth: { include: { photos: true }},
+        customer: true,
       },
       orderBy: { rentDate: "asc" },
     });
