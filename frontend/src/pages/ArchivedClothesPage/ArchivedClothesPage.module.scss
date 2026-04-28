@@ -1,6 +1,16 @@
+@use "../../styles/colors.scss" as *;
+
 .wrapper {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: 700;
+    padding: 20px 0;
+    color: $primary-800;
 }

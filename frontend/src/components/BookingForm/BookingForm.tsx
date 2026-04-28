@@ -78,6 +78,7 @@ const BookingForm = ({
     }
 
     setLoading(true);
+    // <Loader />;
 
     try {
       await api.post("/rent", {

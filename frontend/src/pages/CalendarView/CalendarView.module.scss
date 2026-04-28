@@ -7,14 +7,13 @@
 }
 
 .title {
-  text-align: center;
+  color: $primary-800;
   font-size: 28px;
-  font-weight: 600;
-  margin-bottom: 8px;
+  font-weight: 700;
+  margin-bottom: 20px;
 }
 
 .subtitle {
-  text-align: center;
   color: $gray-500;
   margin-bottom: 32px;
 }

@@ -1,13 +1,12 @@
 @use "../../styles/colors.scss" as *;
 .wrapper {
-  padding: 40px;
   min-height: 100vh;
 }
 
 .title {
   font-size: 28px;
   font-weight: 700;
-  margin-bottom: 35px;
+  padding: 20px 0;
   color: $primary-800;
 }
 

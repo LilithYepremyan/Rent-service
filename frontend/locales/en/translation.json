@@ -101,5 +101,7 @@
   "upcomingBookings": "Upcoming Bookings",
   "depositRequired": "Deposit Required",
   "descriptionRequired": "Description Required",
-  "selectDate": "Select Date"
+  "selectDate": "Select Date",
+  "cleaningToday": "Clothes for cleaning today",
+  "noData": "No data"
 }

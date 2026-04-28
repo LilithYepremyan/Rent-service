@@ -14,6 +14,7 @@ import { t } from "i18next";
 import styles from "./ArchivedClothesPage.module.scss";
 import ActionButton from "../../components/ActionButton/ActionButton";
 import BookingModal from "../../components/BookingModal/BookingModal";
+import Loader from "../../components/Loader/Loader";
 
 const ArchivedClothesPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -39,7 +40,7 @@ const ArchivedClothesPage: React.FC = () => {
   };
 
   if (loading) {
-    return <p>{t("loading")}</p>;
+    return <Loader />;
   }
 
   if (clothes.length === 0) {
@@ -47,35 +48,38 @@ const ArchivedClothesPage: React.FC = () => {
   }
 
   return (
-    <div className={styles.wrapper}>
-      {clothes.map((cloth: Cloth) => (
-        <ClothCard key={cloth.id} cloth={cloth}>
-          <ActionButton
-            onClick={() => {
-              console.log("view history");
-              setSelectedCloth(cloth);
-              setModalVisible(true);
-            }}
-            variant="primary"
-            text={t("viewHistory")}
-          ></ActionButton>
-          <ActionButton
-            onClick={() => handleUnarchive(cloth.id)}
-            variant="secondary"
-            text={t("unarchive")}
-          ></ActionButton>
-        </ClothCard>
-      ))}
-      {selectedCloth && (
-        <BookingModal
-          mode="history"
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          cloth={selectedCloth}
-          refreshData={() => dispatch(getAllClothes())}
-        />
-      )}
-    </div>
+    <>
+      <h1 className={styles.title}>{t("archivedClothes")}</h1>
+      <div className={styles.wrapper}>
+        {clothes.map((cloth: Cloth) => (
+          <ClothCard key={cloth.id} cloth={cloth}>
+            <ActionButton
+              onClick={() => {
+                console.log("view history");
+                setSelectedCloth(cloth);
+                setModalVisible(true);
+              }}
+              variant="primary"
+              text={t("viewHistory")}
+            ></ActionButton>
+            <ActionButton
+              onClick={() => handleUnarchive(cloth.id)}
+              variant="secondary"
+              text={t("unarchive")}
+            ></ActionButton>
+          </ClothCard>
+        ))}
+        {selectedCloth && (
+          <BookingModal
+            mode="history"
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            cloth={selectedCloth}
+            refreshData={() => dispatch(getAllClothes())}
+          />
+        )}
+      </div>
+    </>
   );
 };
 

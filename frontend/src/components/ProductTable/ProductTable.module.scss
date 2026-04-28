@@ -1,10 +1,8 @@
 @use "../../styles/colors.scss" as *;
 .wrapper {
-  max-height: 600px;
   overflow-x: auto;
   overflow-y: auto;
   scroll-behavior: smooth;
-  margin-top: 20px;
   background: $white;
   border-radius: 12px;
   box-shadow: 0 4px 12px $box-shadow;

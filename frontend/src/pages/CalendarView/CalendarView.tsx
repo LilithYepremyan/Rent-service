@@ -25,17 +25,24 @@ const CalendarView: React.FC = () => {
   const { t } = useTranslation();
 
   const rentalsByDate = useSelector(
-    (state: RootState) => state.rentals.rentalsByDate
+    (state: RootState) => state.rentals.rentalsByDate,
   );
   const cleaningsRentalsByDate = useSelector(
-    (state: RootState) => state.rentals.cleaningsRentalsByDate
+    (state: RootState) => state.rentals.cleaningsRentalsByDate,
   );
   const endingRentalsByDate = useSelector(
-    (state: RootState) => state.rentals.endingRentalsByDate
+    (state: RootState) => state.rentals.endingRentalsByDate,
   );
 
+  const formatLocalDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   const handleDayClick = (date: Date) => {
-    const dateString = date.toISOString().split("T")[0];
+    const dateString = formatLocalDate(date);
 
     dispatch(getRentalsByDate(dateString));
     dispatch(getCleaningRentalsByDate(dateString));
