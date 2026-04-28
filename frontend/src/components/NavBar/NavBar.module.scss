@@ -1,27 +1,35 @@
 @use "../../styles/colors.scss" as *;
 
 .navbar {
-  display: flex;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  gap: 5px;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  height: 65px;
+  display: flex;
   align-items: center;
-  padding: 1rem 2rem;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
   background-color: $white;
   box-shadow: 0 10px 40px $box-shadow-hover;
   border: 1px solid rgba(255, 255, 255, 0.25);
-  transition: all 0.3s ease;
-  z-index: 3;
+  z-index: 1000;
+}
+
+.menuSection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  width: 100%;
 }
 
 .linksContainer {
   display: flex;
-  justify-content: center;
-  gap: 2rem;
+  align-items: center;
+  gap: 1.2rem;
+  flex-wrap: wrap;
 }
 
 .link {
@@ -30,17 +38,18 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  max-width: 150px;
+  max-width: 170px;
   font-size: 1rem;
   font-weight: 600;
   color: $gray-700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.03em;
   text-decoration: none;
   transition: all 0.3s ease;
+  padding: 0.3rem 0;
 
   &:hover {
     color: $primary-800;
-    transform: scale(1.05);
+    transform: scale(1.03);
   }
 }
 
@@ -58,22 +67,23 @@
   box-shadow: 0 6px 20px $box-shadow-dark;
 }
 
-.langContainer {
-  display: flex;
-  gap: 0.5rem;
+.langWrapper {
+  position: relative;
+  flex-shrink: 0;
 }
 
-.langButton {
+.langToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
   background: rgba(255, 255, 255, 0.3);
   color: $gray-700;
-  box-shadow: "none";
-  transform: scale(1);
-  padding: 0.4rem 0.6rem;
+  padding: 0.45rem 0.75rem;
   border: none;
   border-radius: 10px;
   cursor: pointer;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
   transition: all 0.3s ease;
   backdrop-filter: blur(5px);
@@ -84,27 +94,75 @@
   }
 }
 
-.langButtonActive {
+.currentLang {
+  line-height: 1;
+}
+
+.chevron {
+  transition: transform 0.3s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.langDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  background: $white;
+  border-radius: 12px;
+  padding: 0.5rem;
+  box-shadow: 0 8px 24px $box-shadow-hover;
+}
+
+.langOption {
+  background: transparent;
+  color: $gray-700;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: linear-gradient(to right, $primary-200, $primary-800);
+    color: $white;
+  }
+}
+
+.langOptionActive {
   background: linear-gradient(to right, $primary-200, $primary-800);
   color: $white;
-  box-shadow: 0 4px 12px $box-shadow-hover;
-  transform: scale(1.05);
 }
+
 .burger {
   display: none;
   position: relative;
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: transparent;
   cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
 }
 
 .burger svg {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
   transition:
-    transform 0.6s ease,
-    opacity 0.6s ease;
+    transform 0.4s ease,
+    opacity 0.4s ease;
+  translate: -50% -50%;
 }
 
 .iconMenu {
@@ -127,22 +185,65 @@
   transform: rotate(0deg);
 }
 
-@media (max-width: 768px) {
+.mobileOpen {
+  display: flex;
+}
+
+@media (max-width: 1450px) {
+  .linksContainer {
+    gap: 0.8rem;
+  }
+
+  .link {
+    max-width: 140px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 1300px) {
+  .navbar {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 0.9rem 1rem;
+  }
+
   .burger {
     display: block;
   }
 
-  .linksContainer {
+  .menuSection {
     display: none;
     flex-direction: column;
+    align-items: stretch;
     width: 100%;
-    gap: 15px;
+    margin-top: 0.8rem;
+    gap: 1rem;
+    padding: 1rem;
+    background: $white;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px $box-shadow-hover;
   }
 
-  .linksContainer.mobileOpen {
-    display: flex !important;
+  .mobileOpen {
+    display: flex;
+  }
+
+  .linksContainer {
     flex-direction: column;
+    align-items: stretch;
     width: 100%;
-    gap: 15px;
+    gap: 0.8rem;
+  }
+
+  .link {
+    max-width: 100%;
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.65rem 0.2rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .langWrapper {
+    align-self: flex-end;
   }
 }

@@ -19,11 +19,7 @@ const ProductTable = ({ products }: Props) => {
   }, [products]);
 
   if (!products.length) {
-    return (
-      <div className={styles.wrapper}>
-        <div className={styles.noImage}>{t("noData")}</div>
-      </div>
-    );
+    return <p>{t("noData")}</p>;
   }
 
   return (

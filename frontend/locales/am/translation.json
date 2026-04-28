@@ -101,5 +101,7 @@
   "upcomingBookings": "Առաջիկա ամրագրումներ",
   "depositRequired": "Կանխավճարը պարտադիր է",
   "descriptionRequired": "Նկարագրությունը պարտադիր է",
-  "selectDate": "Ընտրեք ամսաթիվը"
+  "selectDate": "Ընտրեք ամսաթիվը",
+  "cleaningToday": "Այսօրվա քիմմաքրման համար հագուստներ",
+  "noData": "Տվյալներ չկան"
 }

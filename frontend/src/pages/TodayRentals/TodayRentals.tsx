@@ -6,6 +6,7 @@ import Badge from "../../components/Badge/Badge";
 import ProductTable from "../../components/ProductTable/ProductTable";
 import type { RootState } from "../../app/store";
 import type { AppDispatch } from "../../app/store";
+import styles from "./TodayRentals.module.scss";
 
 const TodayRentals = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -25,14 +26,11 @@ const TodayRentals = () => {
         </>
       ) : (
         <>
-          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            <h2>{t("bookedForToday")}</h2>
+          <div className={styles.wrapper}>
+            <h2 className={styles.title}>{t("bookedForToday")}</h2>
             <Badge count={todayRentals.length} />
           </div>
-          <ProductTable
-            products={todayRentals}
-            
-          />
+          <ProductTable products={todayRentals} />
         </>
       )}
     </>

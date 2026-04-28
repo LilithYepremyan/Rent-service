@@ -101,5 +101,7 @@
   "depositRequired": "Депозит обязателен",
   "passportRequired": "Паспортные данные обязательны",
   "descriptionRequired": "Описание обязательно",
-  "selectDate": "Выберите дату"
+  "selectDate": "Выберите дату",
+  "cleaningToday": "Вещи на химчистку сегодня",
+  "noData": "Нет данных"
 }

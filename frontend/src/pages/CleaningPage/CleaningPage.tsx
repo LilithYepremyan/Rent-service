@@ -30,35 +30,37 @@ const CleaningPage: React.FC = () => {
   }, [dispatch]);
 
   return (
-    <div>
-      {count === 0 ? (
-        <p>{t("noClothesForCleaning")}</p>
-      ) : (
-        <>
-          <div className={styles.wrapper}>
-            <h2>{t("clothesForCleaning")}</h2>
-            <Badge count={count} />
-          </div>
-          <ProductTable
-            products={todayCleanings}
-            isChecked={(r) => r.status === RentalStatus.CLEANING}
-            onCheck={(r) =>
-              dispatch(
-                updateRentalStatus({
-                  id: r.id,
-                  // status: "CLEANING"
-                  status:
-                    r.status !== RentalStatus.CLEANING
-                      ? RentalStatus.CLEANING
-                      : RentalStatus.RENTED,
-                }),
-              )
-            }
-            checkBoxLabel={t("sentToCleaning")}
-          />
-        </>
-      )}
-    </div>
+    <>
+      <div>
+        {count === 0 ? (
+          <p>{t("noClothesForCleaning")}</p>
+        ) : (
+          <>
+            <div className={styles.wrapper}>
+              <h1 className={styles.title} >{t("cleaningToday")}</h1>
+              <Badge count={count} />
+            </div>
+            <ProductTable
+              products={todayCleanings}
+              isChecked={(r) => r.status === RentalStatus.CLEANING}
+              onCheck={(r) =>
+                dispatch(
+                  updateRentalStatus({
+                    id: r.id,
+                    // status: "CLEANING"
+                    status:
+                      r.status !== RentalStatus.CLEANING
+                        ? RentalStatus.CLEANING
+                        : RentalStatus.RENTED,
+                  }),
+                )
+              }
+              checkBoxLabel={t("sentToCleaning")}
+            />
+          </>
+        )}
+      </div>
+    </>
   );
 };
 

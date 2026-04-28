@@ -16,6 +16,7 @@ import Filters from "../../components/Filters/Filters";
 import ClothCard from "../../components/ClothCard/ClothCard";
 import BookingModal from "../../components/BookingModal/BookingModal";
 import ActionButton from "../../components/ActionButton/ActionButton";
+import Loader from "../../components/Loader/Loader";
 
 const ClothesPage: React.FC = () => {
   const { t } = useTranslation();
@@ -68,55 +69,67 @@ const ClothesPage: React.FC = () => {
     }
   };
 
+  const renderMessage = () => {
+    if (filterCode && !filterDate) {
+      return t("filteredByCode", { code: filterCode });
+    }
+
+    if (filterDate && !filterCode) {
+      return t("freeClothesForDate", { date: filterDate });
+    }
+
+    if (filterCode && filterDate) {
+      return t("filteredByCodeAndDate", {
+        code: filterCode,
+        date: filterDate,
+      });
+    }
+
+    return null;
+  };
+
   return (
     <>
       <Filters onCodeChange={setFilterCode} onDateChange={setFilterDate} />
 
       {loading ? (
-        <p style={{ padding: 20, fontSize: 20 }}>{t("loading")}</p>
-      ) : filteredClothes.length === 0 ? (
-        <p style={{ padding: 20, fontSize: 20 }}>{t("notFound")}</p>
+        <Loader />
       ) : (
-        <p>
-          {filterCode &&
-            !filterDate &&
-            t("filteredByCode", { code: filterCode })}
+        <>
+          {filteredClothes.length === 0 ? (
+            <p style={{ padding: 20, fontSize: 20 }}>{t("notFound")}</p>
+          ) : (
+            <>
+              {renderMessage() && (
+                <p style={{ padding: 20, fontSize: 20 }}>{renderMessage()}</p>
+              )}
 
-          {filterDate &&
-            !filterCode &&
-            t("freeClothesForDate", { date: filterDate })}
+              <div className={styles.wrapper}>
+                {filteredClothes.map((cloth: Cloth) => (
+                  <ClothCard key={cloth.id} cloth={cloth}>
+                    <ActionButton
+                      onClick={() => {
+                        setSelectedCloth(cloth);
+                        setModalVisible(true);
+                      }}
+                      variant="primary"
+                      text={t("booking")}
+                    />
 
-          {filterCode &&
-            filterDate &&
-            t("filteredByCodeAndDate", {
-              code: filterCode,
-              date: filterDate,
-            })}
-        </p>
+                    <ActionButton
+                      onClick={() => {
+                        handleArchive(cloth.id);
+                      }}
+                      variant="secondary"
+                      text={t("archive")}
+                    />
+                  </ClothCard>
+                ))}
+              </div>
+            </>
+          )}
+        </>
       )}
-
-      <div className={styles.wrapper}>
-        {filteredClothes.map((cloth: Cloth) => (
-          <ClothCard key={cloth.id} cloth={cloth}>
-            <ActionButton
-              onClick={() => {
-                setSelectedCloth(cloth);
-                setModalVisible(true);
-              }}
-              variant="primary"
-              text={t("booking")}
-            />
-
-            <ActionButton
-              onClick={() => {
-                handleArchive(cloth.id);
-              }}
-              variant="secondary"
-              text={t("archive")}
-            />
-          </ClothCard>
-        ))}
-      </div>
 
       {selectedCloth && (
         <BookingModal
