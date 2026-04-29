@@ -81,6 +81,52 @@ app.get("/clothes", async (req, res) => {
   }
 });
 
+app.get("/clothes/search", async (req, res) => {
+  try {
+    const { code, date, color } = req.query;
+
+    const where = {
+      status: {
+        not: "ARCHIVED",
+      },
+    };
+
+    if (code) {
+      where.code = String(code);
+    }
+
+    if (color) {
+      where.color = String(color);
+    }
+
+    if (date) {
+      const d = new Date(String(date));
+
+      if (isNaN(d)) {
+        return res.status(400).json({ message: "Неверный формат даты" });
+      }
+
+      where.rentals = {
+        none: {
+          startDate: { lte: d },
+          endDate: { gte: d },
+        },
+      };
+    }
+
+    const clothes = await prisma.cloth.findMany({
+      where,
+      include: { photos: true, rentals: true },
+      orderBy: { id: "desc" },
+    });
+
+    res.json(clothes);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Ошибка при фильтрации одежды" });
+  }
+});
+
 // ✅ Поиск одежды по коду
 app.get("/clothes/:code", async (req, res) => {
   try {
@@ -101,6 +147,24 @@ app.get("/clothes/:code", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Ошибка при поиске одежды" });
+  }
+});
+
+app.get("/clothes/color/:color", async (req, res) => {
+  try {
+    const { color } = req.params; // Получаем параметр color из запроса
+    const clothes = await prisma.cloth.findMany({
+      where: {
+        color,
+        status: { not: "ARCHIVED" },
+      },
+      include: { photos: true, rentals: true },
+      orderBy: { id: "desc" },
+    });
+    res.json(clothes); // Отправляем массив одежды в ответ
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Ошибка при поиске одежды по цвету" });
   }
 });
 
@@ -260,7 +324,6 @@ app.patch("/clothes/:id/status", async (req, res) => {
   }
 });
 
-
 // ✅ Отмена брони
 app.delete("/rent/:id", async (req, res) => {
   try {
@@ -285,7 +348,6 @@ app.delete("/rent/:id", async (req, res) => {
     res.status(500).json({ message: "Ошибка при отмене брони" });
   }
 });
-
 
 // ✅ Получить все брони или брони на конкретную дату
 app.get("/rentals", async (req, res) => {
@@ -341,7 +403,7 @@ app.get("/rentals/forSelectedDate", async (req, res) => {
         },
       },
       include: {
-        cloth: { include: { photos: true }},
+        cloth: { include: { photos: true } },
         customer: true,
       },
       orderBy: { rentDate: "asc" },
