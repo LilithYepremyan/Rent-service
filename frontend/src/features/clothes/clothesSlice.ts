@@ -58,6 +58,25 @@ export const getClothByCode = createAsyncThunk(
   },
 );
 
+export const getClothByColor = createAsyncThunk(
+  "clothes/getClothByColor",
+  async (color: string) => {
+    const response = await api.get<Cloth[]>(`/clothes/color/${color}`);
+    return response.data;
+  },
+);
+
+export const filterClothes = createAsyncThunk(
+  "clothes/filterClothes",
+  async (params: { code?: string; date?: string; color?: string }) => {
+    const response = await api.get<Cloth[]>("/clothes/search", {
+      params,
+    });
+
+    return response.data;
+  },
+);
+
 export const findFreeClothesByDate = createAsyncThunk(
   "clothes/findFreeClothesByDate",
   async (date: string) => {
@@ -91,8 +110,7 @@ export const selectActiveClothes = (state: RootState) => state.clothes.items;
 export const selectArchivedClothes = (state: RootState) =>
   state.clothes.archivedItems;
 
-export const selectClothesLoading = (state: RootState) =>
-  state.clothes.loading;
+export const selectClothesLoading = (state: RootState) => state.clothes.loading;
 
 const clothesSlice = createSlice({
   name: "clothes",
@@ -185,6 +203,19 @@ const clothesSlice = createSlice({
         (c) => c.id !== action.payload,
       );
     });
+    builder
+      .addCase(filterClothes.pending, (state) => {
+        state.loading = true;
+        state.error = undefined;
+      })
+      .addCase(filterClothes.fulfilled, (state, action) => {
+        state.items = action.payload;
+        state.loading = false;
+      })
+      .addCase(filterClothes.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
   },
 });
 

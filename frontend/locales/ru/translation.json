@@ -103,5 +103,25 @@
   "descriptionRequired": "Описание обязательно",
   "selectDate": "Выберите дату",
   "cleaningToday": "Вещи на химчистку сегодня",
-  "noData": "Нет данных"
+  "noData": "Нет данных",
+  "allColors": "Все цвета",
+  "selectColor": "Выберите цвет",
+  "colors": {
+    "red": "Красный",
+    "blue": "Синий",
+    "green": "Зеленый",
+    "black": "Черный",
+    "white": "Белый",
+    "yellow": "Желтый",
+    "purple": "Фиолетовый",
+    "orange": "Оранжевый",
+    "pink": "Розовый",
+    "gray": "Серый",
+    "brown": "Коричневый",
+    "beige": "Бежевый"
+  },
+  "filteredByColor": "Отфильтровано по цвету: {{color}}",
+  "filteredByCodeAndColor": "Отфильтровано по коду: {{code}} и цвету: {{color}}",
+  "filteredByDateAndColor": "Отфильтровано по дате: {{date}} и цвету: {{color}}",
+  "filteredByCodeAndDateAndColor": "Отфильтровано по коду: {{code}}, дате: {{date}} и цвету: {{color}}"
 }

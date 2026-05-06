@@ -103,5 +103,25 @@
   "descriptionRequired": "Description Required",
   "selectDate": "Select Date",
   "cleaningToday": "Clothes for cleaning today",
-  "noData": "No data"
+  "noData": "No data",
+  "allColors": "All Colors",
+  "selectColor": "Select Color",
+  "colors": {
+    "red": "Red",
+    "blue": "Blue",
+    "green": "Green",
+    "yellow": "Yellow",
+    "black": "Black",
+    "white": "White",
+    "purple": "Purple",
+    "orange": "Orange",
+    "pink": "Pink",
+    "gray": "Gray",
+    "beige": "Beige",
+    "brown": "Brown"
+  },
+  "filteredByColor": "Filtered by color: {{color}}",
+  "filteredByCodeAndColor": "Filtered by code: {{code}} and color: {{color}}",
+  "filteredByDateAndColor": "Filtered by date: {{date}} and color: {{color}}",
+  "filteredByCodeAndDateAndColor": "Filtered by code: {{code}}, date: {{date}} and color: {{color}}"
 }
