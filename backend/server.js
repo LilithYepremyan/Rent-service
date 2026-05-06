@@ -81,7 +81,7 @@ app.get("/clothes", async (req, res) => {
   }
 });
 
-app.get("/clothes/search", async (req, res) => {
+app.get("/clothes/search/", async (req, res) => {
   try {
     const { code, date, color } = req.query;
 
