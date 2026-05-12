@@ -42,9 +42,7 @@ const ReturnRentals = () => {
               updateRentalStatus({
                 id: r.id,
                 status:
-                  r.status !== RentalStatus.RETURNED
-                    ? RentalStatus.RETURNED
-                    : RentalStatus.RENTED,
+                  r.status !== RentalStatus.RETURNED ? "RETURNED" : "RENTED",
               }),
             )
           }

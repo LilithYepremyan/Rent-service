@@ -103,5 +103,30 @@
   "descriptionRequired": "Նկարագրությունը պարտադիր է",
   "selectDate": "Ընտրեք ամսաթիվը",
   "cleaningToday": "Այսօրվա քիմմաքրման համար հագուստներ",
-  "noData": "Տվյալներ չկան"
+  "noData": "Տվյալներ չկան",
+  "allColors": "Բոլոր գույները",
+  "selectColor": "Ընտրեք գույնը",
+  "colors": {
+    "red": "Կարմիր",
+    "blue": "Կապույտ",
+    "green": "Կանաչ",
+    "yellow": "Դեղին",
+    "black": "Սև",
+    "white": "Սպիտակ",
+    "purple": "Մանուշակագույն",
+    "orange": "Նարնջագույն",
+    "pink": "Վարդագույն",
+    "gray": "Մոխրագույն",
+    "brown": "Շագանակագույն",
+    "beige": "Բեժ"
+  },
+  "filteredByColor": "Ֆիլտրված է {{color}} գույնով",
+  "filteredByDate": "Ֆիլտրված է {{date}} ամսաթվով",
+  "filteredByCodeAndColor": "Ֆիլտրված է {{code}} կոդով և {{color}} գույնով",
+  "filteredByDateAndColor": "Ֆիլտրված է {{date}} ամսաթվով և {{color}} գույնով",
+  "filteredByCodeAndDateAndColor": "Ֆիլտրված է {{code}} կոդով, {{date}} ամսաթվով և {{color}} գույնով",
+  "penalty": "Տուգանք",
+  "payPenalty": "Վճարել տուգանքը",
+  "penaltyAmount": "Տուգանքի գումարը",
+  "penaltyReason": "Տուգանքի պատճառը"
 }

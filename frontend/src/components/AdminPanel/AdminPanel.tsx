@@ -26,6 +26,24 @@ const AdminPanel = () => {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [status, setStatus] = useState<Status>(null);
 
+  const colorOptions = useMemo(
+    () =>
+      [
+        { value: "red", label: t("colors.red") },
+        { value: "white", label: t("colors.white") },
+        { value: "black", label: t("colors.black") },
+        { value: "blue", label: t("colors.blue") },
+        { value: "green", label: t("colors.green") },
+        { value: "beige", label: t("colors.beige") },
+        { value: "brown", label: t("colors.brown") },
+        { value: "yellow", label: t("colors.yellow") },
+        { value: "gray", label: t("colors.gray") },
+        { value: "pink", label: t("colors.pink") },
+        { value: "purple", label: t("colors.purple") },
+        { value: "orange", label: t("colors.orange") },
+      ] as const,
+    [t],
+  );
 
   useEffect(() => {
     if (!watchedPhotos?.length) {
@@ -34,7 +52,7 @@ const AdminPanel = () => {
     }
 
     const urls = Array.from(watchedPhotos).map((file) =>
-      URL.createObjectURL(file)
+      URL.createObjectURL(file),
     );
 
     setPreviewUrls(urls);
@@ -49,7 +67,7 @@ const AdminPanel = () => {
 
     formData.append("code", data.code);
     formData.append("name", data.name);
-    formData.append("color", data.color);
+    formData.append("color", data.color.trim().toLowerCase());
     formData.append("price", data.price);
 
     Array.from(data.photos).forEach((file) => {
@@ -88,10 +106,7 @@ const AdminPanel = () => {
     }
 
     toast.update("cloth-status", {
-      render:
-        status === "success"
-          ? t("addedSuccessfully")
-          : t("addingError"),
+      render: status === "success" ? t("addedSuccessfully") : t("addingError"),
       type: status === "success" ? "success" : "error",
       isLoading: false,
       autoClose: status === "success" ? 1500 : 2000,
@@ -103,10 +118,9 @@ const AdminPanel = () => {
       [
         { name: "code", label: t("code"), type: "text" },
         { name: "name", label: t("name"), type: "text" },
-        { name: "color", label: t("color"), type: "text" },
         { name: "price", label: t("price"), type: "number" },
       ] as const,
-    [t]
+    [t],
   );
 
   return (
@@ -120,9 +134,7 @@ const AdminPanel = () => {
       >
         {fields.map((field) => (
           <div key={field.name} className={styles.field}>
-            <label className={styles.label}>
-              {field.label} *
-            </label>
+            <label className={styles.label}>{field.label} *</label>
 
             <input
               {...register(field.name, { required: true })}
@@ -131,6 +143,24 @@ const AdminPanel = () => {
             />
           </div>
         ))}
+        <>
+          <label className={styles.label}>{t("color")} *</label>
+          <select
+            {...register("color", { required: true })}
+            className={styles.input}
+            defaultValue=""
+          >
+            <option value="" disabled>
+              {t("selectColor")}
+            </option>
+
+            {colorOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </>
 
         <label className={styles.fileLabel}>
           {watchedPhotos?.length

@@ -37,7 +37,7 @@ const CleaningPage: React.FC = () => {
         ) : (
           <>
             <div className={styles.wrapper}>
-              <h1 className={styles.title} >{t("cleaningToday")}</h1>
+              <h1 className={styles.title}>{t("cleaningToday")}</h1>
               <Badge count={count} />
             </div>
             <ProductTable
@@ -47,11 +47,10 @@ const CleaningPage: React.FC = () => {
                 dispatch(
                   updateRentalStatus({
                     id: r.id,
-                    // status: "CLEANING"
                     status:
                       r.status !== RentalStatus.CLEANING
-                        ? RentalStatus.CLEANING
-                        : RentalStatus.RENTED,
+                        ? "CLEANING"
+                        : "RENTED",
                   }),
                 )
               }

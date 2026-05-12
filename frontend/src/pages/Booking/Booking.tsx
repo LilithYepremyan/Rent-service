@@ -56,11 +56,7 @@ const Booking: React.FC = () => {
               dispatch(
                 updateRentalStatus({
                   id: r.id,
-                  // status: "RENTED",
-                  status:
-                    r.status !== RentalStatus.RENTED
-                      ? RentalStatus.RENTED
-                      : RentalStatus.RESERVED,
+                  status: r.status !== RentalStatus.RENTED ? "RENTED" : "RESERVED",
                 }),
               )
             }

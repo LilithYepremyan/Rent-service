@@ -15,6 +15,28 @@ app.use(express.json());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const getClothStatusByRentalStatus = (rentalStatus) => {
+  switch (rentalStatus) {
+    case "RESERVED":
+      return "RESERVED";
+
+    case "CLEANING":
+      return "CLEANING";
+
+    case "RENTED":
+      return "RENTED";
+
+    case "RETURNED":
+      return "AVAILABLE";
+
+    case "CANCELLED":
+      return "AVAILABLE";
+
+    default:
+      return null;
+  }
+};
+
 app.get("/", (req, res) => {
   res.send("👋 Welcome to the Rent Service API");
   console.log("👋 Welcome to the Rent Service API");
@@ -71,7 +93,11 @@ app.get("/clothes", async (req, res) => {
           not: "ARCHIVED",
         },
       },
-      include: { photos: true, rentals: true },
+
+      include: {
+        photos: true,
+        rentals: { where: { status: { not: "CANCELLED" } } },
+      },
       orderBy: { id: "desc" },
     });
     res.json(clothes);
@@ -81,7 +107,7 @@ app.get("/clothes", async (req, res) => {
   }
 });
 
-app.get("/clothes/search", async (req, res) => {
+app.get("/clothes/search/", async (req, res) => {
   try {
     const { code, date, color } = req.query;
 
@@ -108,6 +134,9 @@ app.get("/clothes/search", async (req, res) => {
 
       where.rentals = {
         none: {
+          status: {
+            not: "CANCELLED",
+          },
           startDate: { lte: d },
           endDate: { gte: d },
         },
@@ -133,7 +162,10 @@ app.get("/clothes/:code", async (req, res) => {
     const { code } = req.params;
     const cloth = await prisma.cloth.findFirst({
       where: { code, status: { not: "ARCHIVED" } },
-      include: { photos: true, rentals: true },
+      include: {
+        photos: true,
+        rentals: { where: { status: { not: "CANCELLED" } } },
+      },
     });
 
     if (cloth?.status === "ARCHIVED") {
@@ -185,6 +217,9 @@ app.get("/clothes/free/:date", async (req, res) => {
         },
         rentals: {
           none: {
+            status: {
+              not: "CANCELLED",
+            },
             startDate: { lte: d },
             endDate: { gte: d },
           },
@@ -238,6 +273,9 @@ app.post("/rent", async (req, res) => {
     const overlapping = await prisma.rental.findFirst({
       where: {
         clothId,
+        status: {
+          not: "CANCELLED",
+        },
         OR: [{ startDate: { lte: endDate }, endDate: { gte: startDate } }],
       },
     });
@@ -278,14 +316,38 @@ app.post("/rent", async (req, res) => {
         .json({ message: "Вещь уже забронирована на эти даты" });
 
     // Создание брони
-    const rental = await prisma.rental.create({
-      data: {
-        clothId,
-        rentDate: rent,
-        startDate,
-        endDate,
-        customerId: existingCustomer.id,
-      },
+    // const rental = await prisma.rental.create({
+    //   data: {
+    //     clothId,
+    //     rentDate: rent,
+    //     startDate,
+    //     endDate,
+    //     customerId: existingCustomer.id,
+    //   },
+    // });
+
+    const rental = await prisma.$transaction(async (tx) => {
+      const createdRental = await tx.rental.create({
+        data: {
+          clothId,
+          rentDate: rent,
+          startDate,
+          endDate,
+          customerId: existingCustomer.id,
+          status: "RESERVED",
+        },
+      });
+
+      await tx.cloth.update({
+        where: {
+          id: clothId,
+        },
+        data: {
+          status: "RESERVED",
+        },
+      });
+
+      return createdRental;
     });
 
     // Отправляем даты как YYYY-MM-DD, без смещений
@@ -324,37 +386,40 @@ app.patch("/clothes/:id/status", async (req, res) => {
   }
 });
 
-// ✅ Отмена брони
-app.delete("/rent/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
+// app.delete("/rent/:id", async (req, res) => {
+//   try {
+//     const { id } = req.params;
 
-    const rental = await prisma.rental.delete({ where: { id: parseInt(id) } });
+//     const rental = await prisma.rental.delete({ where: { id: parseInt(id) } });
 
-    const activeRental = await prisma.rental.findFirst({
-      where: { clothId: rental.clothId },
-    });
+//     const activeRental = await prisma.rental.findFirst({
+//       where: { clothId: rental.clothId },
+//     });
 
-    if (!activeRental) {
-      await prisma.cloth.update({
-        where: { id: rental.clothId },
-        data: { status: "AVAILABLE" },
-      });
-    }
+//     if (!activeRental) {
+//       await prisma.cloth.update({
+//         where: { id: rental.clothId },
+//         data: { status: "AVAILABLE" },
+//       });
+//     }
 
-    res.json({ message: "Бронь отменена", rental });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Ошибка при отмене брони" });
-  }
-});
+//     res.json({ message: "Бронь отменена", rental });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Ошибка при отмене брони" });
+//   }
+// });
 
 // ✅ Получить все брони или брони на конкретную дату
 app.get("/rentals", async (req, res) => {
   try {
     const { date } = req.query;
 
-    let where = {}; // по умолчанию — без фильтра
+    let where = {
+      status: {
+        not: "CANCELLED",
+      },
+    };
 
     if (date) {
       const d = new Date(date);
@@ -364,6 +429,9 @@ app.get("/rentals", async (req, res) => {
 
       // фильтр только по указанной дате
       where = {
+        status: {
+          not: "CANCELLED",
+        },
         OR: [{ startDate: { lte: d }, endDate: { gte: d } }],
       };
     }
@@ -397,6 +465,7 @@ app.get("/rentals/forSelectedDate", async (req, res) => {
 
     const rentals = await prisma.rental.findMany({
       where: {
+        status: "RESERVED", //?????
         rentDate: {
           gte: d,
           lt: next,
@@ -437,6 +506,9 @@ app.get("/rentals/cleaning", async (req, res) => {
 
     const rentals = await prisma.rental.findMany({
       where: {
+        status: {
+          not: "CANCELLED",
+        },
         rentDate: {
           gte: rentStart,
           lt: rentEnd,
@@ -498,6 +570,9 @@ app.get("/rentals/ends-today", async (req, res) => {
 
     const rentals = await prisma.rental.findMany({
       where: {
+        status: {
+          not: "CANCELLED",
+        },
         endDate: {
           gte: today,
           lt: tomorrow,
@@ -533,6 +608,9 @@ app.get("/rentals/ends", async (req, res) => {
 
     const rentals = await prisma.rental.findMany({
       where: {
+        status: {
+          not: "CANCELLED",
+        },
         endDate: {
           gte: d,
           lt: next,
@@ -609,16 +687,151 @@ app.get("/rentals/year/:year", async (req, res) => {
   }
 });
 
-// Обновление статуса брони
+
+// ✅ Отмена брони без удаления
+app.patch("/rentals/:id/cancel", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    console.log("Cancel rental id:", id);
+
+    const existingRental = await prisma.rental.findUnique({
+      where: { id: Number(id) },
+      include: {
+        cloth: true,
+        customer: true,
+      },
+    });
+
+    if (!existingRental) {
+      return res.status(404).json({ message: "Бронь не найдена" });
+    }
+
+    if (existingRental.status === "CANCELLED") {
+      return res.status(400).json({ message: "Бронь уже отменена" });
+    }
+
+    if (existingRental.status === "RETURNED") {
+      return res.status(400).json({
+        message: "Нельзя отменить уже возвращенную аренду",
+      });
+    }
+
+    const rental = await prisma.rental.update({
+      where: { id: Number(id) },
+      data: {
+        status: "CANCELLED",
+        cloth: {
+          update: {
+            status: "AVAILABLE",
+          },
+        },
+      },
+      include: {
+        cloth: {
+          include: {
+            photos: true,
+          },
+        },
+        customer: true,
+      },
+    });
+
+    console.log("Rental cancelled:", rental.id, rental.status);
+
+    res.json({
+      message: "Бронь отменена. Депозит не возвращается.",
+      rental,
+    });
+  } catch (error) {
+    console.error("Cancel rental error:", error);
+    res.status(500).json({ message: "Ошибка при отмене брони" });
+  }
+});
+
+// ✅ Отмененные брони за выбранную дату
+app.get("/rentals/cancelled", async (req, res) => {
+  try {
+    const { date } = req.query;
+
+    if (!date) {
+      return res.status(400).json({ message: "date обязателен" });
+    }
+
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+
+    const next = new Date(d);
+    next.setDate(next.getDate() + 1);
+
+    const rentals = await prisma.rental.findMany({
+      where: {
+        status: "CANCELLED",
+        rentDate: {
+          gte: d,
+          lt: next,
+        },
+      },
+      include: {
+        cloth: {
+          include: {
+            photos: true,
+          },
+        },
+        customer: true,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
+
+    res.json(rentals);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Ошибка при получении отмененных броней",
+    });
+  }
+});
+
+// Обновление статуса брони + автоматическое обновление статуса одежды
 app.patch("/rentals/:id/status", async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
 
+    const allowedStatuses = [
+      "RESERVED",
+      "CLEANING",
+      "RENTED",
+      "RETURNED",
+      "CANCELLED",
+    ];
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({ message: "Неверный статус аренды" });
+    }
+
+    const clothStatus = getClothStatusByRentalStatus(status);
+
     const rental = await prisma.rental.update({
       where: { id: Number(id) },
-      data: { status },
-      include: { cloth: { include: { photos: true } }, customer: true },
+      data: {
+        status,
+        cloth: {
+          update: {
+            status: clothStatus,
+          },
+        },
+      },
+      include: {
+        cloth: {
+          include: {
+            photos: true,
+          },
+        },
+        customer: true,
+      },
     });
 
     res.json(rental);

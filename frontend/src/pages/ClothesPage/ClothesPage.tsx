@@ -3,6 +3,7 @@ import {
   getAllClothes,
   archiveCloth,
   selectActiveClothes,
+  filterClothes,
   type Cloth,
 } from "../../features/clothes/clothesSlice";
 
@@ -30,52 +31,82 @@ const ClothesPage: React.FC = () => {
 
   const [filterCode, setFilterCode] = useState("");
   const [filterDate, setFilterDate] = useState("");
+  const [filterColor, setFilterColor] = useState("");
+
+  const [debouncedCode, setDebouncedCode] = useState("");
+
+  const [colors, setColors] = useState<string[]>([]);
+
+  const currentColors = useMemo(() => {
+    return Array.from(new Set(clothes.map((cloth) => cloth.color)));
+  }, [clothes]);
 
   useEffect(() => {
-    dispatch(getAllClothes());
-  }, [dispatch]);
+    const hasFilters = debouncedCode || filterDate || filterColor;
 
-  const filteredClothes = useMemo(() => {
-    let result = [...clothes];
+    if (!hasFilters) {
+      setColors(currentColors);
+    }
+  }, [currentColors, debouncedCode, filterDate, filterColor]);
 
-    if (filterCode.trim()) {
-      result = result.filter((cloth) =>
-        cloth.code.toLowerCase().includes(filterCode.trim().toLowerCase()),
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedCode(filterCode.trim());
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [filterCode]);
+
+  useEffect(() => {
+    const hasFilters = debouncedCode || filterDate || filterColor;
+
+    if (hasFilters) {
+      dispatch(
+        filterClothes({
+          code: debouncedCode || undefined,
+          date: filterDate || undefined,
+          color: filterColor || undefined,
+        }),
       );
+
+      return;
     }
 
-    if (filterDate) {
-      result = result.filter((cloth) => {
-        if (!cloth.rentals || cloth.rentals.length === 0) {
-          return true;
-        }
-
-        return !cloth.rentals.some(
-          (rental) => rental.rentDate.split("T")[0] === filterDate,
-        );
-      });
-    }
-
-    return result;
-  }, [clothes, filterCode, filterDate]);
+    dispatch(getAllClothes());
+  }, [dispatch, debouncedCode, filterDate, filterColor]);
 
   const handleArchive = async (id: number) => {
     try {
       await dispatch(archiveCloth(id)).unwrap();
       toast.success(t("successfullyArchived"));
-      dispatch(getAllClothes());
+
+      const hasFilters = debouncedCode || filterDate || filterColor;
+
+      if (hasFilters) {
+        dispatch(
+          filterClothes({
+            code: debouncedCode || undefined,
+            date: filterDate || undefined,
+            color: filterColor || undefined,
+          }),
+        );
+      } else {
+        dispatch(getAllClothes());
+      }
     } catch {
       toast.error(t("somethingWentWrong"));
     }
   };
 
   const renderMessage = () => {
-    if (filterCode && !filterDate) {
-      return t("filteredByCode", { code: filterCode });
-    }
+    const translatedColor = filterColor ? t(`colors.${filterColor}`) : "";
 
-    if (filterDate && !filterCode) {
-      return t("freeClothesForDate", { date: filterDate });
+    if (filterCode && filterDate && filterColor) {
+      return t("filteredByCodeAndDateAndColor", {
+        code: filterCode,
+        date: filterDate,
+        color: translatedColor,
+      });
     }
 
     if (filterCode && filterDate) {
@@ -85,18 +116,51 @@ const ClothesPage: React.FC = () => {
       });
     }
 
+    if (filterCode && filterColor) {
+      return t("filteredByCodeAndColor", {
+        code: filterCode,
+        color: translatedColor,
+      });
+    }
+
+    if (filterDate && filterColor) {
+      return t("filteredByDateAndColor", {
+        date: filterDate,
+        color: translatedColor,
+      });
+    }
+
+    if (filterCode) {
+      return t("filteredByCode", { code: filterCode });
+    }
+
+    if (filterDate) {
+      return t("freeClothesForDate", { date: filterDate });
+    }
+
+    if (filterColor) {
+      return t("filteredByColor", {
+        color: translatedColor,
+      });
+    }
+
     return null;
   };
 
   return (
     <>
-      <Filters onCodeChange={setFilterCode} onDateChange={setFilterDate} />
+      <Filters
+        onCodeChange={setFilterCode}
+        onDateChange={setFilterDate}
+        onColorChange={setFilterColor}
+        colors={colors}
+      />
 
       {loading ? (
         <Loader />
       ) : (
         <>
-          {filteredClothes.length === 0 ? (
+          {clothes.length === 0 ? (
             <p style={{ padding: 20, fontSize: 20 }}>{t("notFound")}</p>
           ) : (
             <>
@@ -105,7 +169,7 @@ const ClothesPage: React.FC = () => {
               )}
 
               <div className={styles.wrapper}>
-                {filteredClothes.map((cloth: Cloth) => (
+                {clothes.map((cloth: Cloth) => (
                   <ClothCard key={cloth.id} cloth={cloth}>
                     <ActionButton
                       onClick={() => {
@@ -117,9 +181,7 @@ const ClothesPage: React.FC = () => {
                     />
 
                     <ActionButton
-                      onClick={() => {
-                        handleArchive(cloth.id);
-                      }}
+                      onClick={() => handleArchive(cloth.id)}
                       variant="secondary"
                       text={t("archive")}
                     />
