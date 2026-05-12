@@ -7,6 +7,10 @@ type ProductTableProps = {
   onCheck?: (rental: Rental) => void;
   isChecked?: (rental: Rental) => boolean;
   checkBoxLabel?: string;
+  showCancelButton?: boolean;
+  onCancel?: (rental: Rental) => void;
+  showPenaltyButton?: boolean;
+  onPenalty?: (rental: Rental) => void;
 };
 
 const ProductTable = ({
@@ -14,6 +18,10 @@ const ProductTable = ({
   onCheck,
   isChecked,
   checkBoxLabel,
+  showCancelButton,
+  onCancel,
+  showPenaltyButton,
+  onPenalty,
 }: ProductTableProps) => {
   const { t } = useTranslation();
 
@@ -33,6 +41,8 @@ const ProductTable = ({
             <th>{t("description")}</th>
             <th>{t("needToPay")}</th>
             {checkBoxLabel && <th>{t("done")}</th>}
+            {showCancelButton && <th>{t("cancel")}</th>}
+            {showPenaltyButton && <th>{t("penalty")}</th>}
           </tr>
         </thead>
 
@@ -77,6 +87,28 @@ const ProductTable = ({
                       {isChecked?.(rental) && checkBoxLabel}
                     </span>
                   </label>
+                </td>
+              )}
+              {showCancelButton && (
+                <td>
+                  <button
+                    type="button"
+                    onClick={() => onCancel?.(rental)}
+                    className={styles.cancelBtn}
+                  >
+                    {t("cancel")}
+                  </button>
+                </td>
+              )}
+              {showPenaltyButton && (
+                <td>
+                  <button
+                    type="button"
+                    onClick={() => onPenalty?.(rental)}
+                    className={styles.penaltyBtn}
+                  >
+                    {t("penalty")}
+                  </button>
                 </td>
               )}
             </tr>

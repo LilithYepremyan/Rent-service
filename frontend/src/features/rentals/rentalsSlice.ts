@@ -27,6 +27,7 @@ interface RentalsState {
   totalDeposit: number;
   loading: boolean;
   reportRentals: Rental[];
+  // cancelledRentalsByDate: Rental[];
 }
 
 const initialState: RentalsState = {
@@ -39,6 +40,7 @@ const initialState: RentalsState = {
   totalDeposit: 0,
   loading: false,
   reportRentals: [],
+  // cancelledRentalsByDate: [],
 };
 
 interface TodayRentalsResponse {
@@ -118,6 +120,38 @@ export const getRentalsByYear = createAsyncThunk(
     const response = await api.get(`/rentals/year/${year}`);
     return response.data;
   },
+);
+
+// export const cancelRentalRequest = async (rentalId: number) => {
+//   const response = await api.patch(`/rentals/${rentalId}/cancel`);
+//   console.log("Cancel response:", response.data.rental );
+
+//   return response.data.rental;
+// };
+
+// export const getCancelledRentalsByDateRequest = async (date: string) => {
+//   const response = await api.get(`/rentals/cancelled?date=${date}`);
+
+//   return response.data;
+// };
+
+export const cancelRentalRequest  = createAsyncThunk<Rental, number>(
+  "rentals/cancel",
+  async (rentalId: number) => {
+    const response = await api.patch(`/rentals/${rentalId}/cancel`);
+    console.log("Cancel response:", response.data.rental );
+
+    return response.data.rental;
+  }
+);
+
+export const getCancelledRentalsByDateRequest = createAsyncThunk(
+  "rentals/cancelledByDate",
+  async (date: string) => {
+    const response = await api.get(`/rentals/cancelled?date=${date}`);
+
+    return response.data;
+  }
 );
 
 const rentalsSlice = createSlice({

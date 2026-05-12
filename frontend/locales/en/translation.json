@@ -123,5 +123,9 @@
   "filteredByColor": "Filtered by color: {{color}}",
   "filteredByCodeAndColor": "Filtered by code: {{code}} and color: {{color}}",
   "filteredByDateAndColor": "Filtered by date: {{date}} and color: {{color}}",
-  "filteredByCodeAndDateAndColor": "Filtered by code: {{code}}, date: {{date}} and color: {{color}}"
+  "filteredByCodeAndDateAndColor": "Filtered by code: {{code}}, date: {{date}} and color: {{color}}",
+  "penalty": "Penalty", 
+  "payPenalty": "Pay Penalty",
+  "penaltyAmount": "Penalty Amount",
+  "penaltyReason": "Penalty Reason" 
 }

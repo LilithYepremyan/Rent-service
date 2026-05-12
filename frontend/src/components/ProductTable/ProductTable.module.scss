@@ -88,6 +88,21 @@
   font-size: 0.9rem;
 }
 
+.cancelBtn {
+  padding: 8px 14px;
+  border: 1px solid $error;
+  border-radius: 8px;
+  background-color: $white;
+  color: $error;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:hover {
+    background-color: #fff1f0;
+  }
+}
+
 @media (max-width: 768px) {
   .table {
     font-size: 13px;

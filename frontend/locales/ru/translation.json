@@ -123,5 +123,9 @@
   "filteredByColor": "Отфильтровано по цвету: {{color}}",
   "filteredByCodeAndColor": "Отфильтровано по коду: {{code}} и цвету: {{color}}",
   "filteredByDateAndColor": "Отфильтровано по дате: {{date}} и цвету: {{color}}",
-  "filteredByCodeAndDateAndColor": "Отфильтровано по коду: {{code}}, дате: {{date}} и цвету: {{color}}"
+  "filteredByCodeAndDateAndColor": "Отфильтровано по коду: {{code}}, дате: {{date}} и цвету: {{color}}",
+  "penalty": "Штраф",
+  "payPenalty": "Оплатить штраф",
+  "penaltyAmount": "Сумма штрафа",
+  "penaltyReason": "Причина штрафа"
 }

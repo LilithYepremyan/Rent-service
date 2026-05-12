@@ -6,9 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 
 import styles from "./CalendarView.module.scss";
 import {
+  cancelRentalRequest,
   getCleaningRentalsByDate,
   getEndingRentalsByDate,
   getRentalsByDate,
+  type Rental,
 } from "../../features/rentals/rentalsSlice";
 import TabButton from "../../components/TabButton/TabButton";
 import ProductTable from "../../components/ProductTable/ProductTable";
@@ -34,6 +36,12 @@ const CalendarView: React.FC = () => {
     (state: RootState) => state.rentals.endingRentalsByDate,
   );
 
+  const loadRentalsByDate = (dateString: string) => {
+    dispatch(getRentalsByDate(dateString));
+    dispatch(getCleaningRentalsByDate(dateString));
+    dispatch(getEndingRentalsByDate(dateString));
+  };
+
   const formatLocalDate = (date: Date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -49,6 +57,25 @@ const CalendarView: React.FC = () => {
     dispatch(getEndingRentalsByDate(dateString));
 
     setSelectedDate(dateString);
+  };
+
+  const handleCancelRequest = async (rental: Rental) => {
+    const confirmed = window.confirm(
+      "Вы уверены, что хотите отменить бронь? Депозит не возвращается.",
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await dispatch(cancelRentalRequest(rental.id)).unwrap();
+
+      if (selectedDate) {
+        loadRentalsByDate(selectedDate);
+      }
+    } catch (error) {
+      console.error("Cancel rental error:", error);
+      alert("Не удалось отменить бронь");
+    }
   };
 
   return (
@@ -96,7 +123,11 @@ const CalendarView: React.FC = () => {
         <section className={styles.content}>
           {activeTab === "booking" &&
             (rentalsByDate.length ? (
-              <ProductTable products={rentalsByDate} />
+              <ProductTable
+                products={rentalsByDate}
+                showCancelButton={true}
+                onCancel={handleCancelRequest}
+              />
             ) : (
               t("noBookingsForSelectedDate")
             ))}

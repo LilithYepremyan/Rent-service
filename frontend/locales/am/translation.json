@@ -124,5 +124,9 @@
   "filteredByDate": "Ֆիլտրված է {{date}} ամսաթվով",
   "filteredByCodeAndColor": "Ֆիլտրված է {{code}} կոդով և {{color}} գույնով",
   "filteredByDateAndColor": "Ֆիլտրված է {{date}} ամսաթվով և {{color}} գույնով",
-  "filteredByCodeAndDateAndColor": "Ֆիլտրված է {{code}} կոդով, {{date}} ամսաթվով և {{color}} գույնով"
+  "filteredByCodeAndDateAndColor": "Ֆիլտրված է {{code}} կոդով, {{date}} ամսաթվով և {{color}} գույնով",
+  "penalty": "Տուգանք",
+  "payPenalty": "Վճարել տուգանքը",
+  "penaltyAmount": "Տուգանքի գումարը",
+  "penaltyReason": "Տուգանքի պատճառը"
 }
