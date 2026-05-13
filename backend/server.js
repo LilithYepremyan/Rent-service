@@ -829,6 +829,7 @@ app.patch("/rentals/:id/status", async (req, res) => {
         },
       },
       include: {
+        penalty: true,
         cloth: {
           include: {
             photos: true,
