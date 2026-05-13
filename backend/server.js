@@ -438,7 +438,10 @@ app.get("/rentals", async (req, res) => {
 
     const rentals = await prisma.rental.findMany({
       where,
-      include: { cloth: { include: { photos: true } }, customer: true },
+      include: {
+        cloth: { include: { photos: true } },
+        customer: true,
+      },
       orderBy: { id: "desc" },
     });
 
@@ -579,6 +582,7 @@ app.get("/rentals/ends-today", async (req, res) => {
         },
       },
       include: {
+        penalty: true,
         customer: true,
         cloth: {
           include: { photos: true },
@@ -596,6 +600,7 @@ app.get("/rentals/ends-today", async (req, res) => {
   }
 });
 
+// ✅ Вещи, у которых аренда заканчивается на выбранную дату
 app.get("/rentals/ends", async (req, res) => {
   try {
     const { date } = req.query;
@@ -686,7 +691,6 @@ app.get("/rentals/year/:year", async (req, res) => {
     res.status(500).json({ message: "Ошибка при получении броней за год" });
   }
 });
-
 
 // ✅ Отмена брони без удаления
 app.patch("/rentals/:id/cancel", async (req, res) => {
@@ -838,6 +842,135 @@ app.patch("/rentals/:id/status", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Ошибка при обновлении статуса брони" });
+  }
+});
+
+// ✅ Добавить / обновить штраф для аренды
+app.patch("/rentals/:id/penalty", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { amount, reason, description } = req.body;
+
+    const penaltyAmount = Number(amount);
+
+    if (!penaltyAmount || penaltyAmount <= 0) {
+      return res.status(400).json({
+        message: "Сумма штрафа должна быть больше 0",
+      });
+    }
+
+    const allowedReasons = [
+      "DAMAGE",
+      "DIRTY",
+      "LOST_ITEM",
+      "LATE_RETURN",
+      "OTHER",
+    ];
+
+    if (!allowedReasons.includes(reason)) {
+      return res.status(400).json({
+        message: "Неверная причина штрафа",
+      });
+    }
+
+    const existingRental = await prisma.rental.findUnique({
+      where: { id: Number(id) },
+    });
+
+    if (!existingRental) {
+      return res.status(404).json({
+        message: "Аренда не найдена",
+      });
+    }
+
+    const rental = await prisma.rental.update({
+      where: { id: Number(id) },
+      data: {
+        penalty: {
+          upsert: {
+            create: {
+              amount: penaltyAmount,
+              reason,
+              description: description || "",
+            },
+            update: {
+              amount: penaltyAmount,
+              reason,
+              description: description || "",
+            },
+          },
+        },
+      },
+      include: {
+        penalty: true,
+        customer: true,
+        cloth: {
+          include: {
+            photos: true,
+          },
+        },
+      },
+    });
+
+    res.json(rental);
+  } catch (error) {
+    console.error("Penalty error:", error);
+    res.status(500).json({
+      message: "Ошибка при сохранении штрафа",
+    });
+  }
+});
+
+
+// ✅ Удалить штраф
+app.delete("/rentals/:id/penalty", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const existingRental = await prisma.rental.findUnique({
+      where: { id: Number(id) },
+      include: {
+        penalty: true,
+      },
+    });
+
+    if (!existingRental) {
+      return res.status(404).json({
+        message: "Аренда не найдена",
+      });
+    }
+
+    if (!existingRental.penalty) {
+      return res.status(400).json({
+        message: "У этой аренды нет штрафа",
+      });
+    }
+
+    await prisma.penalty.delete({
+      where: {
+        rentalId: Number(id),
+      },
+    });
+
+    const rental = await prisma.rental.findUnique({
+      where: { id: Number(id) },
+      include: {
+        penalty: true,
+        customer: true,
+        cloth: {
+          include: {
+            photos: true,
+          },
+        },
+      },
+    });
+
+    res.json(rental);
+  } catch (error) {
+    console.error("Delete penalty error:", error);
+    res.status(500).json({
+      message: "Ошибка при удалении штрафа",
+    });
   }
 });
 
