@@ -107,6 +107,7 @@ app.get("/clothes", async (req, res) => {
   }
 });
 
+// ✅ Поиск одежды с фильтрами (код, цвет, дата)
 app.get("/clothes/search/", async (req, res) => {
   try {
     const { code, date, color } = req.query;
@@ -182,6 +183,7 @@ app.get("/clothes/:code", async (req, res) => {
   }
 });
 
+//Поиск одежды по цвету
 app.get("/clothes/color/:color", async (req, res) => {
   try {
     const { color } = req.params; // Получаем параметр color из запроса
@@ -655,7 +657,7 @@ app.get("/rentals/month/:year/:month", async (req, res) => {
           lt: end,
         },
       },
-      include: { cloth: { include: { photos: true } }, customer: true },
+      include: { cloth: { include: { photos: true } }, customer: true  },
       orderBy: { rentDate: "asc" },
     });
 
@@ -681,7 +683,7 @@ app.get("/rentals/year/:year", async (req, res) => {
           lt: end,
         },
       },
-      include: { cloth: { include: { photos: true } } },
+      include: { cloth: { include: { photos: true } }, customer: true  },
       orderBy: { rentDate: "asc" },
     });
 
@@ -921,7 +923,6 @@ app.patch("/rentals/:id/penalty", async (req, res) => {
     });
   }
 });
-
 
 // ✅ Удалить штраф
 app.delete("/rentals/:id/penalty", async (req, res) => {
