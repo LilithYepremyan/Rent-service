@@ -15,6 +15,26 @@ export interface Rental {
   // userId: number;
   customer: Customer;
   cloth: Cloth;
+  createdAt: string;
+  updatedAt: string;
+  penalty?: Penalty | null;
+}
+
+export type PenaltyReason =
+  | "DAMAGE"
+  | "DIRTY"
+  | "LOST_ITEM"
+  | "LATE_RETURN"
+  | "OTHER";
+
+export interface Penalty {
+  id: number;
+  amount: number;
+  reason: PenaltyReason;
+  description?: string;
+  rentalId: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface RentalsState {
@@ -135,14 +155,14 @@ export const getRentalsByYear = createAsyncThunk(
 //   return response.data;
 // };
 
-export const cancelRentalRequest  = createAsyncThunk<Rental, number>(
+export const cancelRentalRequest = createAsyncThunk<Rental, number>(
   "rentals/cancel",
   async (rentalId: number) => {
     const response = await api.patch(`/rentals/${rentalId}/cancel`);
-    console.log("Cancel response:", response.data.rental );
+    console.log("Cancel response:", response.data.rental);
 
     return response.data.rental;
-  }
+  },
 );
 
 export const getCancelledRentalsByDateRequest = createAsyncThunk(
@@ -151,7 +171,35 @@ export const getCancelledRentalsByDateRequest = createAsyncThunk(
     const response = await api.get(`/rentals/cancelled?date=${date}`);
 
     return response.data;
+  },
+);
+
+export const updateRentalPenalty = createAsyncThunk<
+  Rental,
+  {
+    id: number;
+    amount: number;
+    reason: PenaltyReason;
+    description: string;
   }
+>("rentals/updatePenalty", async ({ id, amount, reason, description }) => {
+  const response = await api.patch<Rental>(`/rentals/${id}/penalty`, {
+    amount,
+    reason,
+    description,
+  });
+
+  console.log("Penalty response:", response.data);
+  return response.data;
+});
+
+export const deleteRentalPenalty = createAsyncThunk<Rental, number>(
+  "rentals/deletePenalty",
+  async (id) => {
+    const response = await api.delete<Rental>(`/rentals/${id}/penalty`);
+
+    return response.data;
+  },
 );
 
 const rentalsSlice = createSlice({
@@ -261,6 +309,37 @@ const rentalsSlice = createSlice({
         updateList(state.rentalsByDate);
         updateList(state.cleaningsRentalsByDate);
         updateList(state.endingRentalsByDate);
+      },
+    );
+    builder.addCase(
+      updateRentalPenalty.fulfilled,
+      (state, action: PayloadAction<Rental>) => {
+        const updated = action.payload;
+
+        const updateList = (list: Rental[]) => {
+          const index = list.findIndex((r) => r.id === updated.id);
+          if (index !== -1) {
+            list[index] = updated;
+          }
+        };
+
+        updateList(state.todayEndingRentals);
+      },
+    );
+
+    builder.addCase(
+      deleteRentalPenalty.fulfilled,
+      (state, action: PayloadAction<Rental>) => {
+        const updated = action.payload;
+
+        const updateList = (list: Rental[]) => {
+          const index = list.findIndex((r) => r.id === updated.id);
+          if (index !== -1) {
+            list[index] = updated;
+          }
+        };
+
+        updateList(state.todayEndingRentals);
       },
     );
   },

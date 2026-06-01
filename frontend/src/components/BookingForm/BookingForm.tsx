@@ -156,7 +156,7 @@ const BookingForm = ({
         className={`${styles.btn} ${styles.btnConfirm}`}
         disabled={!selectedDate || loading}
       >
-        {loading ? t("save") : t("confirmBooking")}
+        {loading ? t("saving") : t("confirmBooking")}
       </button>
 
       <button
