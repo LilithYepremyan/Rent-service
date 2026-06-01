@@ -69,11 +69,13 @@ const PenaltyModal = ({ open, rental, onClose, onSave }: PenaltyModalProps) => {
       onClose={onClose}
       fullWidth
       maxWidth="sm"
-      PaperProps={{
-        sx: {
-          borderRadius: "22px",
-          backgroundColor: "#fffaf7",
-          boxShadow: "0 22px 70px rgba(36, 55, 71, 0.22)",
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: "22px",
+            backgroundColor: "#fffaf7",
+            boxShadow: "0 22px 70px rgba(36, 55, 71, 0.22)",
+          },
         },
       }}
     >
