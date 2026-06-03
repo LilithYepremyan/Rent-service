@@ -21,7 +21,10 @@ const ProductCard = ({ product }: { product: Rental }) => {
         <img src={photoUrl} alt={product.cloth.name} className={styles.photo} />
         <div>
           <Item label={t("code")} value={cloth?.code} />
-          <Item label={t("color")} value={cloth?.color} />
+          <Item
+            label={t("color")}
+            value={cloth?.color ? t(`colors.${cloth.color}`) : "-"}
+          />
           <Item label={t("price")} value={cloth?.price} />
           <Item
             label={t("tenantName")}
