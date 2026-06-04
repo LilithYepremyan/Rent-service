@@ -68,7 +68,13 @@ const ProductTable = ({
                   )}
                 </td>
                 <td>{rental.cloth?.code || "-"}</td>
-                <td>{rental.cloth?.color || "-"}</td>
+                {/* <td>{rental.cloth?.color || "-"}</td>
+                 */}
+                <td>
+                  {rental.cloth?.color
+                    ? t(`colors.${rental.cloth.color}`)
+                    : "-"}
+                </td>
                 <td>{price || "-"}</td>
                 <td>
                   {rental.customer

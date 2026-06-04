@@ -27,7 +27,7 @@ const ClothCard = ({ cloth, children }: ClothCardProps) => {
         </p>
 
         <p className={styles.info}>
-          {t("color")}: {cloth.color}
+          {t("color")}: {cloth.color ? t(`colors.${cloth.color}`) : "-"}
         </p>
 
         <p className={styles.info}>

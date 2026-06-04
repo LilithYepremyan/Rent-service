@@ -47,16 +47,20 @@ app.post("/clothes", upload.array("photos", 5), async (req, res) => {
   try {
     const { code, name, color, price } = req.body;
     const photoUrls = req.files?.map((file) => file.path) || [];
+    const clothPrice = parseFloat(price);
 
     const cloth = await prisma.cloth.create({
       data: {
         code,
         name,
         color,
-        price: parseFloat(price),
+        price: clothPrice,
         photos: { create: photoUrls.map((url) => ({ url })) },
+        priceHistory: {
+          create: { price: clothPrice, validFrom: new Date(), validTo: null },
+        },
       },
-      include: { photos: true },
+      include: { photos: true, priceHistory: true },
     });
 
     res.json(cloth);
@@ -97,6 +101,7 @@ app.get("/clothes", async (req, res) => {
       include: {
         photos: true,
         rentals: { where: { status: { not: "CANCELLED" } } },
+        priceHistory: { orderBy: { validFrom: "desc" } },
       },
       orderBy: { id: "desc" },
     });
@@ -166,6 +171,7 @@ app.get("/clothes/:code", async (req, res) => {
       include: {
         photos: true,
         rentals: { where: { status: { not: "CANCELLED" } } },
+        priceHistory: { orderBy: { validFrom: "desc" } },
       },
     });
 
@@ -192,7 +198,7 @@ app.get("/clothes/color/:color", async (req, res) => {
         color,
         status: { not: "ARCHIVED" },
       },
-      include: { photos: true, rentals: true },
+      include: { photos: true, rentals: true ,priceHistory: { orderBy: { validFrom: "desc" } }},
       orderBy: { id: "desc" },
     });
     res.json(clothes); // Отправляем массив одежды в ответ
@@ -337,6 +343,7 @@ app.post("/rent", async (req, res) => {
           endDate,
           customerId: existingCustomer.id,
           status: "RESERVED",
+          priceAtRent: cloth.price
         },
       });
 
@@ -657,7 +664,7 @@ app.get("/rentals/month/:year/:month", async (req, res) => {
           lt: end,
         },
       },
-      include: { cloth: { include: { photos: true } }, customer: true  },
+      include: { cloth: { include: { photos: true } }, customer: true },
       orderBy: { rentDate: "asc" },
     });
 
@@ -683,7 +690,7 @@ app.get("/rentals/year/:year", async (req, res) => {
           lt: end,
         },
       },
-      include: { cloth: { include: { photos: true } }, customer: true  },
+      include: { cloth: { include: { photos: true } }, customer: true },
       orderBy: { rentDate: "asc" },
     });
 
@@ -972,6 +979,92 @@ app.delete("/rentals/:id/penalty", async (req, res) => {
     console.error("Delete penalty error:", error);
     res.status(500).json({
       message: "Ошибка при удалении штрафа",
+    });
+  }
+});
+
+app.patch("/clothes/:id/price", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { price, validFrom } = req.body;
+
+    const clothId = Number(id);
+    const newPrice = Number(price);
+
+    if (!newPrice || newPrice <= 0) {
+      return res.status(400).json({
+        message: "Цена должна быть больше 0",
+      });
+    }
+
+    if (!validFrom) {
+      return res.status(400).json({
+        message: "Дата начала действия цены обязательна",
+      });
+    }
+
+    const startDate = new Date(validFrom);
+
+    if (isNaN(startDate)) {
+      return res.status(400).json({
+        message: "Неверный формат даты",
+      });
+    }
+
+    const updatedCloth = await prisma.$transaction(async (tx) => {
+      const existingCloth = await tx.cloth.findUnique({
+        where: { id: clothId },
+        include: {
+          priceHistory: true,
+        },
+      });
+
+      if (!existingCloth) {
+        throw new Error("Одежда не найдена");
+      }
+
+      await tx.clothPriceHistory.updateMany({
+        where: {
+          clothId,
+          validTo: null,
+        },
+        data: {
+          validTo: startDate,
+        },
+      });
+
+      await tx.clothPriceHistory.create({
+        data: {
+          clothId,
+          price: newPrice,
+          validFrom: startDate,
+          validTo: null,
+        },
+      });
+
+      return tx.cloth.update({
+        where: { id: clothId },
+        data: {
+          price: newPrice,
+        },
+        include: {
+          photos: true,
+          rentals: true,
+          priceHistory: true,
+        },
+      });
+    });
+
+    res.json(updatedCloth);
+  } catch (error) {
+    console.error(error);
+
+    if (error.message === "Одежда не найдена") {
+      return res.status(404).json({ message: error.message });
+    }
+
+    res.status(500).json({
+      message: "Ошибка при изменении цены",
     });
   }
 });
