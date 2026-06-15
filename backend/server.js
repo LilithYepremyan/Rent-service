@@ -37,6 +37,30 @@ const getClothStatusByRentalStatus = (rentalStatus) => {
   }
 };
 
+const getRentalPriceByHistory = (rental) => {
+  if (rental.priceAtRent !== null && rental.priceAtRent !== undefined) {
+    return rental.priceAtRent;
+  }
+
+  const rentTime = new Date(rental.rentDate).getTime();
+
+  const historyItem = rental.cloth?.priceHistory?.find((item) => {
+    const from = new Date(item.validFrom).getTime();
+    const to = item.validTo ? new Date(item.validTo).getTime() : Infinity;
+
+    return rentTime >= from && rentTime < to;
+  });
+
+  return historyItem?.price ?? rental.cloth?.price ?? 0;
+};
+
+const addBookingPrice = (rental) => ({
+  ...rental,
+  bookingPrice: getRentalPriceByHistory(rental),
+});
+
+const addBookingPriceToList = (rentals) => rentals.map(addBookingPrice);
+
 app.get("/", (req, res) => {
   res.send("👋 Welcome to the Rent Service API");
   console.log("👋 Welcome to the Rent Service API");
@@ -247,53 +271,112 @@ app.get("/clothes/free/:date", async (req, res) => {
 app.post("/rent", async (req, res) => {
   try {
     const { clothId, rentDate, customer } = req.body;
-    const { firstName, lastName, phone, passport, deposit, description } =
-      customer;
 
-    // Проверка минимальных данных
-    if (!customer) {
+    if (!clothId) {
       return res.status(400).json({
-        message:
-          "В customer должны быть userId, firstName, lastName, phone, passport, deposit",
+        message: "clothId обязателен",
       });
     }
 
-    // Разбираем дату
+    if (!rentDate) {
+      return res.status(400).json({
+        message: "rentDate обязателен",
+      });
+    }
+
+    if (!customer) {
+      return res.status(400).json({
+        message:
+          "В customer должны быть firstName, lastName, phone, passport, deposit",
+      });
+    }
+
+    const { firstName, lastName, phone, passport, deposit, description } =
+      customer;
+
+    if (!firstName || !lastName || !phone || !passport) {
+      return res.status(400).json({
+        message: "Заполните обязательные данные клиента",
+      });
+    }
+
+    const clothIdNumber = Number(clothId);
+
+    if (!clothIdNumber) {
+      return res.status(400).json({
+        message: "Неверный clothId",
+      });
+    }
+
+    const cloth = await prisma.cloth.findUnique({
+      where: {
+        id: clothIdNumber,
+      },
+    });
+
+    if (!cloth) {
+      return res.status(404).json({
+        message: "Одежда не найдена",
+      });
+    }
+
+    if (cloth.status === "ARCHIVED") {
+      return res.status(400).json({
+        message: "Нельзя забронировать архивную вещь",
+      });
+    }
+
     const [year, month, day] = rentDate.split("-").map(Number);
     const rent = new Date(Date.UTC(year, month - 1, day));
 
-    const startDate = new Date(rent);
+    if (isNaN(rent.getTime())) {
+      return res.status(400).json({
+        message: "Неверный формат даты",
+      });
+    }
 
+    const startDate = new Date(rent);
     const endDate = new Date(rent);
 
     startDate.setUTCDate(startDate.getUTCDate() - 1);
     endDate.setUTCDate(endDate.getUTCDate() + 1);
 
     const formatYMD = (date) => {
-      const d = new Date(date); // date из Prisma (UTC)
+      const d = new Date(date);
       const year = d.getUTCFullYear();
       const month = String(d.getUTCMonth() + 1).padStart(2, "0");
       const day = String(d.getUTCDate()).padStart(2, "0");
+
       return `${year}-${month}-${day}`;
     };
 
-    // Проверка пересечений
     const overlapping = await prisma.rental.findFirst({
       where: {
-        clothId,
+        clothId: clothIdNumber,
         status: {
           not: "CANCELLED",
         },
-        OR: [{ startDate: { lte: endDate }, endDate: { gte: startDate } }],
+        OR: [
+          {
+            startDate: { lte: endDate },
+            endDate: { gte: startDate },
+          },
+        ],
       },
     });
 
-    // Ищем клиента
+    if (overlapping) {
+      return res.status(400).json({
+        message: "Вещь уже забронирована на эти даты",
+      });
+    }
+
     let existingCustomer = await prisma.customer.findUnique({
-      where: { passport },
+      where: {
+        passport,
+      },
     });
 
-    //  Если нет — создаём , если есть — обновляем данные (кроме паспорта)
     if (!existingCustomer) {
       existingCustomer = await prisma.customer.create({
         data: {
@@ -301,55 +384,51 @@ app.post("/rent", async (req, res) => {
           lastName,
           phone,
           passport,
-          deposit,
+          deposit: Number(deposit) || 0,
           description,
         },
       });
     } else {
       existingCustomer = await prisma.customer.update({
-        where: { id: existingCustomer.id },
+        where: {
+          id: existingCustomer.id,
+        },
         data: {
           firstName,
           lastName,
           phone,
-          deposit,
+          deposit: Number(deposit) || 0,
           description,
         },
       });
     }
 
-    if (overlapping)
-      return res
-        .status(400)
-        .json({ message: "Вещь уже забронирована на эти даты" });
-
-    // Создание брони
-    // const rental = await prisma.rental.create({
-    //   data: {
-    //     clothId,
-    //     rentDate: rent,
-    //     startDate,
-    //     endDate,
-    //     customerId: existingCustomer.id,
-    //   },
-    // });
-
     const rental = await prisma.$transaction(async (tx) => {
       const createdRental = await tx.rental.create({
         data: {
-          clothId,
+          clothId: clothIdNumber,
           rentDate: rent,
           startDate,
           endDate,
           customerId: existingCustomer.id,
           status: "RESERVED",
-          priceAtRent: cloth.price
+
+          // самая важная строка
+          priceAtRent: cloth.price,
+        },
+        include: {
+          cloth: {
+            include: {
+              photos: true,
+            },
+          },
+          customer: true,
         },
       });
 
       await tx.cloth.update({
         where: {
-          id: clothId,
+          id: clothIdNumber,
         },
         data: {
           status: "RESERVED",
@@ -359,20 +438,21 @@ app.post("/rent", async (req, res) => {
       return createdRental;
     });
 
-    // Отправляем даты как YYYY-MM-DD, без смещений
     res.json({
-      ...rental,
-
+      ...addBookingPrice(rental),
       rentDate: formatYMD(rent),
       startDate: formatYMD(startDate),
       endDate: formatYMD(endDate),
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Ошибка при бронировании" });
+    console.error("Booking error:", error);
+
+    res.status(500).json({
+      message: "Ошибка при бронировании",
+      error: error.message,
+    });
   }
 });
-
 // Обновление статуса одежды
 app.patch("/clothes/:id/status", async (req, res) => {
   try {
@@ -432,11 +512,11 @@ app.get("/rentals", async (req, res) => {
 
     if (date) {
       const d = new Date(date);
-      if (isNaN(d)) {
+
+      if (isNaN(d.getTime())) {
         return res.status(400).json({ message: "Неверный формат даты" });
       }
 
-      // фильтр только по указанной дате
       where = {
         status: {
           not: "CANCELLED",
@@ -448,13 +528,17 @@ app.get("/rentals", async (req, res) => {
     const rentals = await prisma.rental.findMany({
       where,
       include: {
-        cloth: { include: { photos: true } },
+        cloth: {
+          include: {
+            photos: true,
+          },
+        },
         customer: true,
       },
       orderBy: { id: "desc" },
     });
 
-    res.json(rentals);
+    res.json(addBookingPriceToList(rentals));
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Ошибка при получении броней" });
@@ -465,6 +549,7 @@ app.get("/rentals", async (req, res) => {
 app.get("/rentals/forSelectedDate", async (req, res) => {
   try {
     const { date } = req.query;
+
     if (!date) {
       return res.status(400).json({ message: "date обязателен" });
     }
@@ -477,20 +562,26 @@ app.get("/rentals/forSelectedDate", async (req, res) => {
 
     const rentals = await prisma.rental.findMany({
       where: {
-        status: "RESERVED", //?????
+        status: {
+          not: "CANCELLED",
+        },
         rentDate: {
           gte: d,
           lt: next,
         },
       },
       include: {
-        cloth: { include: { photos: true } },
+        cloth: {
+          include: {
+            photos: true,
+          },
+        },
         customer: true,
       },
       orderBy: { rentDate: "asc" },
     });
 
-    res.json(rentals);
+    res.json(addBookingPriceToList(rentals));
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Ошибка при получении бронирований" });
@@ -501,15 +592,14 @@ app.get("/rentals/forSelectedDate", async (req, res) => {
 app.get("/rentals/cleaning", async (req, res) => {
   try {
     const { date } = req.query;
+
     if (!date) {
       return res.status(400).json({ message: "date обязателен" });
     }
 
-    // День химчистки
     const cleaningDay = new Date(date);
     cleaningDay.setHours(0, 0, 0, 0);
 
-    // День аренды = следующий день
     const rentStart = new Date(cleaningDay);
     rentStart.setDate(rentStart.getDate() + 1);
 
@@ -534,7 +624,7 @@ app.get("/rentals/cleaning", async (req, res) => {
       },
     });
 
-    res.json(rentals);
+    res.json(addBookingPriceToList(rentals));
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Ошибка сервера" });
@@ -545,26 +635,35 @@ app.get("/rentals/cleaning", async (req, res) => {
 app.get("/rentals/today", async (req, res) => {
   try {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // начало дня
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1); // начало следующего дня
+    today.setHours(0, 0, 0, 0);
 
-    // Находим брони, которые созданы сегодня
-    // и при этом аренда ещё впереди (rentDate >= сегодня)
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
     const rentals = await prisma.rental.findMany({
       where: {
         createdAt: { gte: today, lt: tomorrow },
         rentDate: { gte: today },
       },
-      include: { cloth: { include: { photos: true } }, customer: true },
+      include: {
+        cloth: {
+          include: { photos: true },
+        },
+        customer: true,
+      },
     });
 
-    const totalDeposit = rentals.reduce(
-      (sum, r) => sum + (r.customer.deposit || 0),
+    const rentalsWithBookingPrice = addBookingPriceToList(rentals);
+
+    const totalDeposit = rentalsWithBookingPrice.reduce(
+      (sum, rental) => sum + (rental.customer?.deposit || 0),
       0,
     );
 
-    res.json({ rentals, totalDeposit });
+    res.json({
+      rentals: rentalsWithBookingPrice,
+      totalDeposit,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Ошибка при получении броней за сегодня" });
@@ -600,7 +699,7 @@ app.get("/rentals/ends-today", async (req, res) => {
       orderBy: { endDate: "asc" },
     });
 
-    res.json(rentals);
+    res.json(addBookingPriceToList(rentals));
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -608,11 +707,14 @@ app.get("/rentals/ends-today", async (req, res) => {
     });
   }
 });
-
 // ✅ Вещи, у которых аренда заканчивается на выбранную дату
 app.get("/rentals/ends", async (req, res) => {
   try {
     const { date } = req.query;
+
+    if (!date) {
+      return res.status(400).json({ message: "date обязателен" });
+    }
 
     const d = new Date(date);
     d.setHours(0, 0, 0, 0);
@@ -630,11 +732,17 @@ app.get("/rentals/ends", async (req, res) => {
           lt: next,
         },
       },
-      include: { cloth: { include: { photos: true } }, customer: true },
+      include: {
+        cloth: {
+          include: { photos: true },
+        },
+        customer: true,
+      },
     });
 
-    res.json(rentals);
-  } catch (e) {
+    res.json(addBookingPriceToList(rentals));
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Ошибка" });
   }
 });
@@ -647,15 +755,12 @@ app.get("/rentals/month/:year/:month", async (req, res) => {
     const yearNum = Number(year);
     const monthNum = Number(month);
 
-    // Проверка корректности
     if (isNaN(yearNum) || isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
       return res.status(400).json({ message: "Неверный год или месяц" });
     }
 
     const start = new Date(Date.UTC(yearNum, monthNum - 1, 1));
-    const end = new Date(Date.UTC(yearNum, monthNum, 1)); // первый день следующего месяца
-
-    console.log("Fetching rentals from", start, "to", end);
+    const end = new Date(Date.UTC(yearNum, monthNum, 1));
 
     const rentals = await prisma.rental.findMany({
       where: {
@@ -663,12 +768,28 @@ app.get("/rentals/month/:year/:month", async (req, res) => {
           gte: start,
           lt: end,
         },
+        status: {
+          not: "CANCELLED",
+        },
       },
-      include: { cloth: { include: { photos: true } }, customer: true },
+      include: {
+        cloth: {
+          include: {
+            photos: true,
+            priceHistory: {
+              orderBy: {
+                validFrom: "asc",
+              },
+            },
+          },
+        },
+        customer: true,
+        penalty: true,
+      },
       orderBy: { rentDate: "asc" },
     });
 
-    res.json(rentals);
+    res.json(addBookingPriceToList(rentals));
   } catch (error) {
     console.error("Ошибка в /rentals/month/:year/:month:", error);
     res.status(500).json({ message: error.message });
@@ -680,8 +801,14 @@ app.get("/rentals/year/:year", async (req, res) => {
   try {
     const { year } = req.params;
 
-    const start = new Date(Number(year), 0, 1); // 1 января
-    const end = new Date(Number(year) + 1, 0, 1); // 1 января следующего года
+    const yearNum = Number(year);
+
+    if (isNaN(yearNum)) {
+      return res.status(400).json({ message: "Неверный год" });
+    }
+
+    const start = new Date(Date.UTC(yearNum, 0, 1));
+    const end = new Date(Date.UTC(yearNum + 1, 0, 1));
 
     const rentals = await prisma.rental.findMany({
       where: {
@@ -689,14 +816,30 @@ app.get("/rentals/year/:year", async (req, res) => {
           gte: start,
           lt: end,
         },
+        status: {
+          not: "CANCELLED",
+        },
       },
-      include: { cloth: { include: { photos: true } }, customer: true },
+      include: {
+        cloth: {
+          include: {
+            photos: true,
+            priceHistory: {
+              orderBy: {
+                validFrom: "asc",
+              },
+            },
+          },
+        },
+        customer: true,
+        penalty: true,
+      },
       orderBy: { rentDate: "asc" },
     });
 
-    res.json(rentals);
+    res.json(addBookingPriceToList(rentals));
   } catch (error) {
-    console.error(error);
+    console.error("Ошибка в /rentals/year/:year:", error);
     res.status(500).json({ message: "Ошибка при получении броней за год" });
   }
 });
@@ -983,6 +1126,7 @@ app.delete("/rentals/:id/penalty", async (req, res) => {
   }
 });
 
+// Изменение цены одежды с сохранением истории
 app.patch("/clothes/:id/price", async (req, res) => {
   try {
     const { id } = req.params;
