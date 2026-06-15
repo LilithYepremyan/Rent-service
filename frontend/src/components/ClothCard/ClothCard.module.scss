@@ -34,3 +34,100 @@
   margin: 10px;
   flex-wrap: wrap;
 }
+.editPriceButton {
+  margin-left: 8px;
+  border: none;
+  background: transparent;
+  color: #7a5c50;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+
+  svg {
+    font-size: 15px;
+  }
+
+  &:hover {
+    color: #6c4b3e;
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.priceEditForm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+.priceInput {
+  width: 95px;
+  padding: 6px 8px;
+  border: 1px solid #d8c8bf;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+  background: #fff;
+  color: #3f312d;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:focus {
+    border-color: #8d6e63;
+    box-shadow: 0 0 0 3px rgba(141, 110, 99, 0.15);
+  }
+}
+
+.savePriceButton,
+.cancelPriceButton {
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.savePriceButton {
+  background: #e6f4ea;
+  color: #2e7d32;
+
+  &:hover {
+    background: #2e7d32;
+    color: #fff;
+  }
+}
+
+.cancelPriceButton {
+  background: #fdecea;
+  color: #c62828;
+
+  &:hover {
+    background: #c62828;
+    color: #fff;
+  }
+}

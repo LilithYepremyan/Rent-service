@@ -8,12 +8,20 @@ export interface Photo {
   url: string;
 }
 
+export interface ClothPriceHistory {
+  id: number;
+  price: number;
+  validFrom: string;
+  validTo: string | null;
+}
+
 export interface Cloth {
   id: number;
   code: string;
   name: string;
   color: string;
   price: number;
+  priceHistory: ClothPriceHistory[];
   photos: Photo[];
   status: string;
   rentals: Rental[];
@@ -102,6 +110,18 @@ export const unarchiveCloth = createAsyncThunk(
       status: "AVAILABLE",
     });
     return clothId;
+  },
+);
+
+export const changeClothPrice = createAsyncThunk(
+  "clothes/changeClothPrice",
+  async (data: { clothId: number; price: number; validFrom: string }) => {
+    const response = await api.patch<Cloth>(`/clothes/${data.clothId}/price`, {
+      price: data.price,
+      validFrom: data.validFrom,
+    });
+
+    return response.data;
   },
 );
 
@@ -213,6 +233,26 @@ const clothesSlice = createSlice({
         state.loading = false;
       })
       .addCase(filterClothes.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+    builder
+      .addCase(changeClothPrice.pending, (state) => {
+        state.loading = true;
+        state.error = undefined;
+      })
+      .addCase(changeClothPrice.fulfilled, (state, action) => {
+        const index = state.items.findIndex(
+          (cloth) => cloth.id === action.payload.id,
+        );
+
+        if (index !== -1) {
+          state.items[index] = action.payload;
+        }
+
+        state.loading = false;
+      })
+      .addCase(changeClothPrice.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

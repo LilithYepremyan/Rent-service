@@ -79,7 +79,6 @@ model Rental {
 
   @@index([clothId])
   @@index([customerId])
-  @@unique([clothId, rentDate])
 
 }
 

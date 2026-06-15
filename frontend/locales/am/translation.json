@@ -118,7 +118,8 @@
     "pink": "Վարդագույն",
     "gray": "Մոխրագույն",
     "brown": "Շագանակագույն",
-    "beige": "Բեժ"
+    "beige": "Բեժ",
+    "burgundy": "Բորդո"
   },
   "filteredByColor": "Ֆիլտրված է {{color}} գույնով",
   "filteredByDate": "Ֆիլտրված է {{date}} ամսաթվով",
@@ -140,5 +141,7 @@
   "lateReturn": "Ուշ վերադարձ",
   "other": "Այլ",
   "save": "Պահպանել",
-  "editPenalty": "Փոփոխել տուգանքի չափը"
+  "editPenalty": "Փոփոխել տուգանքի չափը",
+  "priceUpdatedSuccessfully": "Գինը հաջողությամբ թարմացվեց",
+  "priceUpdateError": "Գնի թարմացման ընթացքում տեղի ունեցավ սխալ"
 }

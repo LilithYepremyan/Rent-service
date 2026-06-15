@@ -41,6 +41,7 @@ const AdminPanel = () => {
         { value: "pink", label: t("colors.pink") },
         { value: "purple", label: t("colors.purple") },
         { value: "orange", label: t("colors.orange") },
+        { value: "burgundy", label: t("colors.burgundy") },
       ] as const,
     [t],
   );

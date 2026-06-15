@@ -10,6 +10,7 @@ export interface Rental {
   status: string;
   customer: Customer;
   cloth: Cloth;
+  priceAtRent?: number;
 }
 
 export interface TodayRentalsResponse {

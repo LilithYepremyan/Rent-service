@@ -18,6 +18,8 @@ export interface Rental {
   createdAt: string;
   updatedAt: string;
   penalty?: Penalty | null;
+  priceAtRent?: number | null;
+  bookingPrice?: number | null
 }
 
 export type PenaltyReason =

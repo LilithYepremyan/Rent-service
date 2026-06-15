@@ -118,7 +118,8 @@
     "pink": "Розовый",
     "gray": "Серый",
     "brown": "Коричневый",
-    "beige": "Бежевый"
+    "beige": "Бежевый",
+    "burgundy": "Бордовый"
   },
   "filteredByColor": "Отфильтровано по цвету: {{color}}",
   "filteredByCodeAndColor": "Отфильтровано по коду: {{code}} и цвету: {{color}}",
@@ -139,5 +140,7 @@
   "lateReturn": "Поздний возврат",
   "other": "Другое",
   "save": "Сохранить",
-  "editPenalty": "Редактировать штраф"
+  "editPenalty": "Редактировать штраф",
+  "priceUpdatedSuccessfully": "Цена успешно обновлена",
+  "priceUpdateError": "Ошибка при обновлении цены"
 }
