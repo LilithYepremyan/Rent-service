@@ -10,7 +10,7 @@ export interface Rental {
   status: string;
   customer: Customer;
   cloth: Cloth;
-  priceAtRent?: number;
+  priceAtRent?: number | null;
 }
 
 export interface TodayRentalsResponse {
