@@ -118,7 +118,8 @@
     "pink": "Pink",
     "gray": "Gray",
     "beige": "Beige",
-    "brown": "Brown"
+    "brown": "Brown",
+    "burgundy": "Burgundy"
   },
   "filteredByColor": "Filtered by color: {{color}}",
   "filteredByCodeAndColor": "Filtered by code: {{code}} and color: {{color}}",
@@ -139,5 +140,7 @@
   "lateReturn": "Late Return",
   "other": "Other",
   "save": "Save",
-  "editPenalty": "Edit Penalty"
+  "editPenalty": "Edit Penalty",
+  "priceUpdatedSuccessfully": "Price updated successfully",
+  "priceUpdateError": "Error during price update"
 }

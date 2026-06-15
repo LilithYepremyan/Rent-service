@@ -7,13 +7,18 @@ type Props = {
   products: Rental[];
 };
 
-const ProductTable = ({ products }: Props) => {
+const getRentalPrice = (rental: Rental) => {
+  return rental.bookingPrice ?? rental.priceAtRent ?? rental.cloth?.price ?? 0;
+};
+
+const BookingHistoryList = ({ products }: Props) => {
   const { t } = useTranslation();
 
   const totalPaid = useMemo(() => {
     return products.reduce((sum, rental) => {
-      const price = rental.cloth?.price ?? 0;
+      const price = getRentalPrice(rental);
       const deposit = rental.customer?.deposit ?? 0;
+
       return sum + (price - deposit);
     }, 0);
   }, [products]);
@@ -51,10 +56,9 @@ const ProductTable = ({ products }: Props) => {
               ? `${customer.firstName} ${customer.lastName}`
               : "-";
 
-            const price = cloth?.price ?? "-";
+            const price = getRentalPrice(rental);
             const deposit = customer?.deposit ?? 0;
-            const paid =
-              typeof cloth?.price === "number" ? cloth.price - deposit : "-";
+            const paid = price - deposit;
 
             const rentDate = rental.rentDate?.split("T")[0] ?? "-";
 
@@ -72,23 +76,27 @@ const ProductTable = ({ products }: Props) => {
                   )}
                 </td>
 
-                <td>{cloth?.name ?? "-"}</td>
-                <td>{cloth?.color ?? "-"}</td>
-                <td>{price}</td>
+                <td>{cloth?.code ?? "-"}</td>
+                <td>
+                  {cloth?.color ? t(`colors.${cloth.color}`) : "-"}
+                </td>
+
+                <td>{price ? `${price} AMD` : "-"}</td>
+
                 <td>{fullName}</td>
                 <td>{customer?.phone ?? "-"}</td>
                 <td>{customer?.passport ?? "-"}</td>
-                <td>{customer?.deposit ?? "-"}</td>
+                <td>{deposit ? `${deposit} AMD` : "-"}</td>
                 <td>{customer?.description ?? "-"}</td>
-                <td>{paid}</td>
+                <td>{paid ? `${paid} AMD` : "-"}</td>
                 <td>{rentDate}</td>
               </tr>
             );
           })}
 
           <tr>
-            <td className={styles.total} colSpan={2}>
-              {t("totalPaid")}: {totalPaid}
+            <td className={styles.total} colSpan={11}>
+              {t("totalPaid")}: {totalPaid} AMD
             </td>
           </tr>
         </tbody>
@@ -97,4 +105,4 @@ const ProductTable = ({ products }: Props) => {
   );
 };
 
-export default ProductTable;
+export default BookingHistoryList;

@@ -5,6 +5,7 @@ import {
   selectActiveClothes,
   filterClothes,
   type Cloth,
+  changeClothPrice,
 } from "../../features/clothes/clothesSlice";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -170,7 +171,25 @@ const ClothesPage: React.FC = () => {
 
               <div className={styles.wrapper}>
                 {clothes.map((cloth: Cloth) => (
-                  <ClothCard key={cloth.id} cloth={cloth}>
+                  <ClothCard
+                    key={cloth.id}
+                    cloth={cloth}
+                    onChangePrice={async ({ clothId, price, validFrom }) => {
+                      try {
+                        await dispatch(
+                          changeClothPrice({
+                            clothId,
+                            price,
+                            validFrom,
+                          }),
+                        ).unwrap();
+
+                        toast.success(t("priceUpdatedSuccessfully"));
+                      } catch {
+                        toast.error(t("priceUpdateError"));
+                      }
+                    }}
+                  >
                     <ActionButton
                       onClick={() => {
                         setSelectedCloth(cloth);

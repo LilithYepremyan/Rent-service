@@ -13,6 +13,10 @@ type ProductTableProps = {
   onPenalty?: (rental: Rental) => void;
 };
 
+const getRentalPrice = (rental: Rental) => {
+  return rental.priceAtRent ?? rental.bookingPrice ?? rental.cloth?.price ?? 0;
+};
+
 const ProductTable = ({
   products,
   onCheck,
@@ -48,7 +52,7 @@ const ProductTable = ({
 
         <tbody>
           {products.map((rental: Rental) => {
-            const price = rental.cloth?.price || 0;
+            const price = getRentalPrice(rental);
             const deposit = rental.customer?.deposit || 0;
             const penalty = rental.penalty?.amount || 0;
             const baseNeedToPay = price - deposit;
@@ -67,20 +71,23 @@ const ProductTable = ({
                     <div className={styles.noImage}>{t("noImg")}</div>
                   )}
                 </td>
+
                 <td>{rental.cloth?.code || "-"}</td>
-                {/* <td>{rental.cloth?.color || "-"}</td>
-                 */}
+
                 <td>
                   {rental.cloth?.color
                     ? t(`colors.${rental.cloth.color}`)
                     : "-"}
                 </td>
-                <td>{price || "-"}</td>
+
+                <td>{price ? `${price} AMD` : "-"}</td>
+
                 <td>
                   {rental.customer
                     ? `${rental.customer.firstName} ${rental.customer.lastName}`
                     : "-"}
                 </td>
+
                 <td>{rental.customer?.phone || "-"}</td>
                 <td>{rental.customer?.passport || "-"}</td>
                 <td>{deposit || "-"}</td>
@@ -143,6 +150,7 @@ const ProductTable = ({
               </tr>
             );
           })}
+
           {showPenaltyButton ? (
             <tr>
               <td colSpan={12} className={styles.total}>
@@ -161,18 +169,20 @@ const ProductTable = ({
                 {products.reduce(
                   (sum, rental) => sum + (rental.customer?.deposit || 0),
                   0,
-                )}
+                )}{" "}
+                AMD
               </td>
+
               <td colSpan={11} className={styles.total}>
                 {t("totalNeedToPay")}:{" "}
-                {products.reduce(
-                  (sum, rental) =>
-                    sum +
-                    (rental.cloth?.price -
-                      (rental.customer?.deposit || 0) +
-                      (rental.penalty?.amount || 0)),
-                  0,
-                )}
+                {products.reduce((sum, rental) => {
+                  const price = getRentalPrice(rental);
+                  const deposit = rental.customer?.deposit || 0;
+                  const penalty = rental.penalty?.amount || 0;
+
+                  return sum + price - deposit + penalty;
+                }, 0)}{" "}
+                AMD
               </td>
             </tr>
           )}
