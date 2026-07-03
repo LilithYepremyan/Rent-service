@@ -14,3 +14,9 @@
     padding: 20px 0;
     color: $primary-800;
 }
+
+@media (max-width: 768px) {
+  .wrapper {
+    justify-content: center;
+  }
+}

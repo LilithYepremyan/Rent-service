@@ -105,7 +105,7 @@ const BookingForm = ({
     <form onSubmit={handleSubmit(onSubmit)} className={styles.formFields}>
       <div>
         <label>{t("firstName")} *</label>
-        <input {...register("firstName")} />
+        <input {...register("firstName")} placeholder={t("firstName")} />
         {errors.firstName && (
           <span className={styles.error}>{t(errors.firstName.message!)}</span>
         )}
@@ -113,7 +113,7 @@ const BookingForm = ({
 
       <div>
         <label>{t("lastName")} *</label>
-        <input {...register("lastName")} />
+        <input {...register("lastName")} placeholder={t("lastName")} />
         {errors.lastName && (
           <span className={styles.error}>{t(errors.lastName.message!)}</span>
         )}
@@ -129,7 +129,7 @@ const BookingForm = ({
 
       <div>
         <label>{t("passport")} *</label>
-        <input {...register("passport")} />
+        <input {...register("passport")} placeholder="AM123456" />
         {errors.passport && (
           <span className={styles.error}>{t(errors.passport.message!)}</span>
         )}

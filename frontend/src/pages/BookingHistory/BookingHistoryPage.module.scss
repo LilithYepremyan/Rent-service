@@ -18,6 +18,9 @@
 }
 
 .filterCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   background: $white;
   padding: 10px;
   border-radius: 18px;

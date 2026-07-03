@@ -1,7 +1,6 @@
 @use "../../styles/colors.scss" as *;
 
 .page {
-  padding: 32px;
   max-width: 1500px;
   min-height: 100vh;
 }
@@ -52,4 +51,16 @@
   min-height: 400px;
   display: flex;
   justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
 }
