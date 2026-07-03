@@ -10,6 +10,8 @@ import {
 import Badge from "../../components/Badge/Badge";
 import ProductTable from "../../components/ProductTable/ProductTable";
 import { RentalStatus } from "../Booking/Booking";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
+import ProductCard from "../../components/ProductCard/ProductCard";
 
 const CleaningPage: React.FC = () => {
   const { t } = useTranslation();
@@ -29,6 +31,8 @@ const CleaningPage: React.FC = () => {
     dispatch(getAllRentals());
   }, [dispatch]);
 
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
   return (
     <>
       <div>
@@ -40,22 +44,46 @@ const CleaningPage: React.FC = () => {
               <h1 className={styles.title}>{t("cleaningToday")}</h1>
               <Badge count={count} />
             </div>
-            <ProductTable
-              products={todayCleanings}
-              isChecked={(r) => r.status === RentalStatus.CLEANING}
-              onCheck={(r) =>
-                dispatch(
-                  updateRentalStatus({
-                    id: r.id,
-                    status:
-                      r.status !== RentalStatus.CLEANING
-                        ? "CLEANING"
-                        : "RENTED",
-                  }),
-                )
-              }
-              checkBoxLabel={t("sentToCleaning")}
-            />
+            {isMobile ? (
+              <div className={styles.mobileCardWrapper}>
+                {todayCleanings.map((r) => (
+                  <ProductCard
+                    key={r.id}
+                    rental={r}
+                    isChecked={(r) => r.status === RentalStatus.CLEANING}
+                    onCheck={(r) =>
+                      dispatch(
+                        updateRentalStatus({
+                          id: r.id,
+                          status:
+                            r.status !== RentalStatus.CLEANING
+                              ? "CLEANING"
+                              : "RENTED",
+                        }),
+                      )
+                    }
+                    checkBoxLabel={t("sentToCleaning")}
+                  />
+                ))}
+              </div>
+            ) : (
+              <ProductTable
+                products={todayCleanings}
+                isChecked={(r) => r.status === RentalStatus.CLEANING}
+                onCheck={(r) =>
+                  dispatch(
+                    updateRentalStatus({
+                      id: r.id,
+                      status:
+                        r.status !== RentalStatus.CLEANING
+                          ? "CLEANING"
+                          : "RENTED",
+                    }),
+                  )
+                }
+                checkBoxLabel={t("sentToCleaning")}
+              />
+            )}
           </>
         )}
       </div>

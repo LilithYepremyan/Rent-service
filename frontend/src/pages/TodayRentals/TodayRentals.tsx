@@ -27,7 +27,7 @@ const TodayRentals = () => {
       ) : (
         <>
           <div className={styles.wrapper}>
-            <h2 className={styles.title}>{t("bookedForToday")}</h2>
+            <h1 className={styles.title}>{t("bookedForToday")}</h1>
             <Badge count={todayRentals.length} />
           </div>
           <ProductTable products={todayRentals} />

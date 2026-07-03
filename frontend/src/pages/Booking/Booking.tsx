@@ -46,7 +46,7 @@ const Booking: React.FC = () => {
       ) : (
         <>
           <div className={styles.wrapper}>
-            <h2 className={styles.title}>{t("bookedToday")}</h2>
+            <h1 className={styles.title}>{t("bookedToday")}</h1>
             <Badge count={todayRentals.length} />
           </div>
           <ProductTable
